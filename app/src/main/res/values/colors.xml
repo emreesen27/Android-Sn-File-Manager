@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="bg_color">#FFF9F9F9</color>
+    <color name="first_text_color">#FF333333</color>
+    <color name="second_text_color">#FF555555</color>
+    <color name="main_color">#FF2F65B9</color>
+    <color name="orange_folder">#FFFFA500</color>
+
+    <color name="orange">#FFFF731D</color>
+    <color name="soft_blue">#FF5F9DF7</color>
+    <color name="soft_red">#FFDD5353</color>
+    <color name="pale_green">#FF628E90</color>
+    <color name="pale_purple">#FFA084CA</color>
+    <color name="android_green">#FFA4C639</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/loading_fragment">
+
+    <fragment
+        android:id="@+id/loading_fragment"
+        android:name="com.sn.snfilemanager.ui.LoadingFragment"
+        tools:layout="@layout/fragment_loading">
+        <action
+            android:id="@+id/action_loading_to_start"
+            app:destination="@id/start_fragment"
+            app:popUpTo="@+id/loading_fragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loading_to_home"
+            app:destination="@id/home_fragment"
+            app:popUpTo="@id/loading_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/start_fragment"
+        android:name="com.sn.snfilemanager.ui.StartFragment"
+        tools:layout="@layout/fragment_start">
+
+        <action
+            android:id="@+id/action_start_to_home"
+            app:destination="@+id/home_fragment"
+            app:popUpTo="@+id/start_fragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.sn.snfilemanager.ui.HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_home_image"
+            app:destination="@+id/image_list_fragment" />
+
+        <action
+            android:id="@+id/action_home_file"
+            app:destination="@+id/file_list_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/image_list_fragment"
+        android:name="com.sn.snfilemanager.feature.images.presentation.ImageListFragment"
+        tools:layout="@layout/fragment_image_list">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/file_list_fragment"
+        android:name="com.sn.snfilemanager.files.FilesListFragment"
+        tools:layout="@layout/fragment_files_list">
+
+    </fragment>
+
+
+</navigation>

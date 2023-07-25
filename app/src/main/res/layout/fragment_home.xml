@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_color"
+        tools:context=".ui.HomeFragment">
+
+        <!--   <com.google.android.material.appbar.MaterialToolbar
+               android:id="@+id/toolbar"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent">
+
+               <androidx.appcompat.widget.AppCompatImageView
+                   android:id="@+id/iv_menu"
+                   android:layout_width="@dimen/_30sdp"
+                   android:layout_height="@dimen/_30sdp"
+                   android:layout_gravity="end"
+                   android:clickable="true"
+                   android:focusable="true"
+                   android:padding="@dimen/_3sdp"
+                   android:src="@drawable/ic_menu" />
+
+               <androidx.appcompat.widget.AppCompatImageView
+                   android:id="@+id/iv_search"
+                   android:layout_width="@dimen/_30sdp"
+                   android:layout_height="@dimen/_30sdp"
+                   android:layout_gravity="end"
+                   android:clickable="true"
+                   android:focusable="true"
+                   android:padding="@dimen/_3sdp"
+                   android:src="@drawable/ic_search"
+
+           </com.google.android.material.appbar.MaterialToolbar> /> -->
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:fontFamily="@font/adamina"
+            android:text="@string/categories"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_category_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:backgroundTint="@color/bg_color"
+            app:cardElevation="@dimen/_1sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mtv_categories">
+
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:stretchColumns="0,1,2">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/_1sdp"
+                    android:layout_weight="1">
+
+                    <com.sn.snfilemanager.components.ImageButton
+                        android:id="@+id/ib_images"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:btnImage="@drawable/ic_image"
+                        app:btnText="@string/images" />
+
+                    <com.sn.snfilemanager.components.ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:btnImage="@drawable/ic_sound"
+                        app:btnText="@string/sounds" />
+
+
+                    <com.sn.snfilemanager.components.ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:btnImage="@drawable/ic_video"
+                        app:btnText="@string/videos" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/_1sdp"
+                    android:layout_weight="1">
+
+                    <com.sn.snfilemanager.components.ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:btnImage="@drawable/ic_document"
+                        app:btnText="@string/documents" />
+
+                    <com.sn.snfilemanager.components.ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:btnImage="@drawable/ic_download"
+                        app:btnText="@string/downloads" />
+
+                    <com.sn.snfilemanager.components.ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:btnImage="@drawable/ic_android"
+                        app:btnText="@string/apk_files" />
+
+                </TableRow>
+
+            </TableLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_storage_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:backgroundTint="@color/bg_color"
+            app:layout_constraintTop_toBottomOf="@+id/cv_category_card">
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="go to file"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

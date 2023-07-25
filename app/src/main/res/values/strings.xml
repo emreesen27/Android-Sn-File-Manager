@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Sn File Manager</string>
+    <string name="continue_key">Continue</string>
+    <string name="open_source_license"><u>Open source license</u></string>
+    <string name="privacy_policy"><u>Privacy policy</u></string>
+    <string name="settings">Settings</string>
+    <string name="filter">Filter</string>
+    <string name="search">Search</string>
+    <string name="about">About</string>
+    <string name="downloads">Downloads</string>
+    <string name="images">Images</string>
+    <string name="sounds">Sounds</string>
+    <string name="videos">Videos</string>
+    <string name="documents">Documents</string>
+    <string name="apk_files">Apk files</string>
+    <string name="categories">Categories</string>
+    <string name="selected_count">%d items selected</string>
+    <string name="select_all">Select all</string>
+    <string name="cancel">Cancel</string>
+    <string name="search_image_hint">Enter the name of the image</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="type_search_image_info">"Type the name of the image you want to search"</string>
+    <string name="child_count">%s - ( %d )</string>
+    <string name="file_size">%s - %s </string>
+
+    <!--Description-->
+    <string name="desc_app_icon" translatable="false">desc_app_icon</string>
+
 </resources>

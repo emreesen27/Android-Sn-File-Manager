@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.sn.snfilemanager.feature.images.presentation.ImageListViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_5sdp">
+
+        <View
+            android:id="@+id/decor_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_3sdp"
+            android:layout_marginHorizontal="@dimen/_90sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/round"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/sv_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            app:iconifiedByDefault="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/decor_view"
+            app:queryHint="@string/search_image_hint" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_image_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="vertical"
+            android:visibility="@{vm.getImagesLiveData.empty ? View.GONE : View.VISIBLE}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sv_search" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/av_no_data_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:scaleType="center"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:visibility="@{vm.searchImagesLiveData.empty ? View.VISIBLE : View.GONE, default=gone}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.25"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="no_data_found.json" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_16sdp"
+            android:text="@string/type_search_image_info"
+            android:textAlignment="center"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_15ssp"
+            android:visibility="@{vm.searchImagesLiveData == null ? View.VISIBLE : View.GONE, default=visible}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.30" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_no_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/adamina"
+            android:text="@string/nothing_found"
+            android:textAlignment="center"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_13sdp"
+            android:visibility="@{vm.searchImagesLiveData.empty ? View.VISIBLE : View.GONE, default=gone}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/av_no_data_found" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tv_no_history" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
