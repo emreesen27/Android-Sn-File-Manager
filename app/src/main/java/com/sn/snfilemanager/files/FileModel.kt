@@ -14,7 +14,9 @@ data class FileModel(
     val absolutePath: String,
     val childCount: Int?,
     val lastModified: String,
-    val size: String
+    val size: String,
+    val extension: String,
+    val isHidden: Boolean,
 ) : Diffable {
     override val uniqueIdentifier: Long
         get() = id
@@ -30,7 +32,9 @@ fun File.toFileModel(): FileModel {
         absolutePath = this.absolutePath,
         childCount = if (this.isDirectory) this.listFiles()?.size ?: 0 else null,
         lastModified = convertLastModifiedToDate(this),
-        size = this.length().toHumanReadableByteCount()
+        size = this.length().toHumanReadableByteCount(),
+        extension = this.extension,
+        isHidden = this.isHidden
     )
 }
 
