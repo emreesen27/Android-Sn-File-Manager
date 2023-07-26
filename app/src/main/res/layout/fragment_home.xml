@@ -40,7 +40,7 @@
 
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/mtv_categories"
+            android:id="@+id/tv_categories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
@@ -48,7 +48,7 @@
             android:fontFamily="@font/adamina"
             android:text="@string/categories"
             android:textColor="@color/first_text_color"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="@dimen/_13ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,8 +62,7 @@
             app:cardElevation="@dimen/_1sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mtv_categories">
-
+            app:layout_constraintTop_toBottomOf="@+id/tv_categories">
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -135,6 +134,18 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_storage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:fontFamily="@font/adamina"
+            android:text="@string/storage"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_13ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cv_category_card" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cv_storage_card"
@@ -143,14 +154,15 @@
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:backgroundTint="@color/bg_color"
-            app:layout_constraintTop_toBottomOf="@+id/cv_category_card">
+            app:layout_constraintTop_toBottomOf="@+id/tv_storage">
 
-
-            <com.google.android.material.button.MaterialButton
+            <com.sn.snfilemanager.components.HrImageButton
                 android:id="@+id/btn_file"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="go to file"/>
+                app:icon="@drawable/ic_phone"
+                app:subTitle="20gb"
+                app:title="Telefon" />
 
         </com.google.android.material.card.MaterialCardView>
 

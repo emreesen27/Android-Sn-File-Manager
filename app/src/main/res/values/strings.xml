@@ -14,6 +14,7 @@
     <string name="documents">Documents</string>
     <string name="apk_files">Apk files</string>
     <string name="categories">Categories</string>
+    <string name="storage">Storage</string>
     <string name="selected_count">%d items selected</string>
     <string name="select_all">Select all</string>
     <string name="cancel">Cancel</string>

@@ -6,4 +6,10 @@
         <attr name="btnImage" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="HrImageButton">
+        <attr name="title" format="string" />
+        <attr name="subTitle" format="string" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+
 </resources>
