@@ -1,10 +1,9 @@
 package com.sn.snfilemanager.files
 
 import com.idanatz.oneadapter.external.interfaces.Diffable
-import com.sn.snfilemanager.R
+import com.sn.snfilemanager.extensions.convertLastModifiedToDate
 import com.sn.snfilemanager.extensions.toHumanReadableByteCount
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 data class FileModel(
@@ -31,17 +30,9 @@ fun File.toFileModel(): FileModel {
         isDirectory = this.isDirectory,
         absolutePath = this.absolutePath,
         childCount = if (this.isDirectory) this.listFiles()?.size ?: 0 else null,
-        lastModified = convertLastModifiedToDate(this),
+        lastModified = this.lastModified().convertLastModifiedToDate(),
         size = this.length().toHumanReadableByteCount(),
         extension = this.extension,
         isHidden = this.isHidden
     )
-}
-
-// Todo burdan taşı
-fun convertLastModifiedToDate(file: File): String {
-    val lastModified = file.lastModified()
-    val dateFormat = SimpleDateFormat("dd MM yyyy", Locale.getDefault())
-    val date = Date(lastModified)
-    return dateFormat.format(date)
 }
