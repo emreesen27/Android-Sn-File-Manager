@@ -1,7 +1,7 @@
 package com.sn.snfilemanager.files
 
-import android.os.Environment
 import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
 import com.sn.snfilemanager.core.BaseFragment
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewModel>() {
 
+    private val args: FilesListFragmentArgs by navArgs()
     private lateinit var oneAdapter: OneAdapter
 
     override fun getViewModelClass() = FilesListViewModel::class.java
@@ -21,7 +22,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     override fun setupViews() {
         initAdapter()
         handleBackPressed()
-        updateFileList(Environment.getExternalStorageDirectory().absolutePath)
+        updateFileList(viewModel.getStoragePath(args.storageArgs))
 
     }
 

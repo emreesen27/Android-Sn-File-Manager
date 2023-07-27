@@ -162,7 +162,26 @@
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_phone"
                 app:subTitle="20gb"
-                app:title="Telefon" />
+                app:title="@string/internal_storage" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_external_storage_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:backgroundTint="@color/bg_color"
+            app:layout_constraintTop_toBottomOf="@+id/cv_storage_card">
+
+            <com.sn.snfilemanager.components.HrImageButton
+                android:id="@+id/btn_external_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_sd_card"
+                app:subTitle="20gb"
+                app:title="@string/external_storage" />
 
         </com.google.android.material.card.MaterialCardView>
 

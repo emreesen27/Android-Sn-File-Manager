@@ -15,13 +15,13 @@ class HrImageButton @JvmOverloads constructor(
     private var subTitleTextView: MaterialTextView
     private var iconImageView: AppCompatImageView
 
-    private var title: String
+    var title: String
         get() = titleTextView.text.toString()
         set(value) {
             titleTextView.text = value
         }
 
-    private var subTitle: String
+    var subTitle: String
         get() = subTitleTextView.text.toString()
         set(value) {
             subTitleTextView.text = value

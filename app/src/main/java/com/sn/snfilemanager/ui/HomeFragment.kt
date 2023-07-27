@@ -1,21 +1,13 @@
 package com.sn.snfilemanager.ui
 
-import android.annotation.SuppressLint
-import android.os.Bundle
-import android.os.Environment
-import android.os.StatFs
-import android.util.Log
-import android.view.View
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.BaseFragment
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
-import java.io.File
-import java.text.CharacterIterator
-import java.text.DecimalFormat
-import java.text.StringCharacterIterator
-import kotlin.math.abs
+import com.sn.snfilemanager.extensions.observe
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     //private val moreMenu by powerMenu<PowerMenuFactory>()
@@ -28,41 +20,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun getMenuResId(): Int = R.menu.menu_home
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        //clickMenu()
-        //initListenerPowerMenuItem()
+    override fun setupViews() {
         initMenuButtonListener()
-
-
-        Log.d("emre",humanReadableByteCountSI2(getFreeInternalMemory()).toString())
-
     }
 
-    private fun humanReadableByteCountSI2(bytes: Long): String {
-        if (bytes < 1000) {
-            return "$bytes B"
+    override fun observeData() {
+        observe(viewModel.availableStorageLiveData) { memory ->
+            binding.btnFile.subTitle = getString(R.string.available_storage, memory)
         }
-        val units = arrayOf("B", "KB", "MB", "GB", "TB", "PB", "EB")
-        var value = bytes.toDouble()
-        var unitIndex = 0
-        while (value >= 1000 && unitIndex < units.size - 1) {
-            value /= 1000
-            unitIndex++
+        observe(viewModel.availableExternalStorageLiveData) { memory ->
+            binding.btnExternalFile.subTitle = getString(R.string.available_storage, memory)
         }
-        val decimalFormat = DecimalFormat("#,##0.##")
-        return "${decimalFormat.format(value)} ${units[unitIndex]}"
-    }
-
-
-
-    private fun getFreeInternalMemory(): Long {
-        return getFreeMemory(Environment.getDataDirectory())
-    }
-
-    private fun getFreeMemory(path: File): Long {
-        val stats = StatFs(path.getAbsolutePath())
-        return stats.availableBlocksLong * stats.blockSizeLong
     }
 
 
@@ -74,16 +42,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }*/
 
     private fun initMenuButtonListener() {
-        binding.ibImages.setOnClickListener {
-            navigate(HomeFragmentDirections.actionHomeImage())
-        }
-
-        binding.btnFile.setOnClickListener {
-            navigate(HomeFragmentDirections.actionHomeFile())
+        with(binding) {
+            ibImages.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage()) }
+            btnFile.setOnClickListener {
+                navigate(HomeFragmentDirections.actionHomeFile(StorageType.INTERNAL))
+            }
+            btnExternalFile.setOnClickListener {
+                navigate(HomeFragmentDirections.actionHomeFile(StorageType.EXTERNAL))
+            }
         }
     }
-
-    
 
     /*
     private fun initListenerPowerMenuItem() {

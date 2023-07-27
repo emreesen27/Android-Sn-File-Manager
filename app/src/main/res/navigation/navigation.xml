@@ -61,6 +61,10 @@
         android:name="com.sn.snfilemanager.files.FilesListFragment"
         tools:layout="@layout/fragment_files_list">
 
+        <argument
+            android:name="storageArgs"
+            app:argType="com.sn.snfilemanager.ui.StorageType" />
+
     </fragment>
 
 

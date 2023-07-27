@@ -15,6 +15,9 @@
     <string name="apk_files">Apk files</string>
     <string name="categories">Categories</string>
     <string name="storage">Storage</string>
+    <string name="internal_storage">Internal storage</string>
+    <string name="external_storage">External storage</string>
+    <string name="available_storage">Available storage %s</string>
     <string name="selected_count">%d items selected</string>
     <string name="select_all">Select all</string>
     <string name="cancel">Cancel</string>
