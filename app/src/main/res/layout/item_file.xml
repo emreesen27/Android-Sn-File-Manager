@@ -35,7 +35,7 @@
         android:fontFamily="@font/adamina"
         android:maxLines="1"
         android:text="@string/app_name"
-        android:textSize="@dimen/_13ssp"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintBaseline_toBaselineOf="@+id/iv_file_image"
         app:layout_constraintBottom_toTopOf="@+id/tv_file_info"
         app:layout_constraintEnd_toEndOf="parent"
