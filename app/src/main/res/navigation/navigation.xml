@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loading_fragment"
-        android:name="com.sn.snfilemanager.ui.LoadingFragment"
+        android:name="com.sn.snfilemanager.LoadingFragment"
         tools:layout="@layout/fragment_loading">
         <action
             android:id="@+id/action_loading_to_start"
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/start_fragment"
-        android:name="com.sn.snfilemanager.ui.StartFragment"
+        android:name="com.sn.snfilemanager.feature.start.StartFragment"
         tools:layout="@layout/fragment_start">
 
         <action
@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/home_fragment"
-        android:name="com.sn.snfilemanager.ui.HomeFragment"
+        android:name="com.sn.snfilemanager.feature.home.HomeFragment"
         tools:layout="@layout/fragment_home">
 
         <action
@@ -51,19 +51,23 @@
 
     <fragment
         android:id="@+id/image_list_fragment"
-        android:name="com.sn.snfilemanager.feature.images.presentation.ImageListFragment"
-        tools:layout="@layout/fragment_image_list">
+        android:name="com.sn.snfilemanager.feature.media.presentation.MediaFragment"
+        tools:layout="@layout/fragment_media">
+
+        <argument
+            android:name="mediaType"
+            app:argType="com.sn.snfilemanager.providers.mediastore.MediaType" />
 
     </fragment>
 
     <fragment
         android:id="@+id/file_list_fragment"
-        android:name="com.sn.snfilemanager.files.FilesListFragment"
+        android:name="com.sn.snfilemanager.feature.files.presentation.FilesListFragment"
         tools:layout="@layout/fragment_files_list">
 
         <argument
             android:name="storageArgs"
-            app:argType="com.sn.snfilemanager.ui.StorageType" />
+            app:argType="com.sn.snfilemanager.core.util.StorageType" />
 
     </fragment>
 

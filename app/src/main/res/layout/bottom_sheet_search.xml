@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.sn.snfilemanager.feature.images.presentation.ImageListViewModel" />
+            type="com.sn.snfilemanager.feature.media.presentation.MediaViewModel" />
 
     </data>
 
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:orientation="vertical"
-            android:visibility="@{vm.getImagesLiveData.empty ? View.GONE : View.VISIBLE}"
+            android:visibility="@{vm.getMediaLiveData.empty ? View.GONE : View.VISIBLE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +62,7 @@
             android:scaleType="center"
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:visibility="@{vm.searchImagesLiveData.empty ? View.VISIBLE : View.GONE, default=gone}"
+            android:visibility="@{vm.searchMediaLiveData.empty ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,9 +79,9 @@
             android:padding="@dimen/_16sdp"
             android:text="@string/type_search_image_info"
             android:textAlignment="center"
-            android:textColor="@color/first_text_color"
+            android:textColor="@color/second_text_color"
             android:textSize="@dimen/_15ssp"
-            android:visibility="@{vm.searchImagesLiveData == null ? View.VISIBLE : View.GONE, default=visible}"
+            android:visibility="@{vm.searchMediaLiveData == null ? View.VISIBLE : View.GONE, default=visible}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -89,15 +89,15 @@
             app:layout_constraintVertical_bias="0.30" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_no_history"
+            android:id="@+id/tv_nothing_found"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/adamina"
             android:text="@string/nothing_found"
             android:textAlignment="center"
-            android:textColor="@color/first_text_color"
+            android:textColor="@color/second_text_color"
             android:textSize="@dimen/_13sdp"
-            android:visibility="@{vm.searchImagesLiveData.empty ? View.VISIBLE : View.GONE, default=gone}"
+            android:visibility="@{vm.searchMediaLiveData.empty ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/av_no_data_found" />
@@ -105,7 +105,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tv_no_history" />
+            app:layout_constraintTop_toBottomOf="@id/tv_nothing_found" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

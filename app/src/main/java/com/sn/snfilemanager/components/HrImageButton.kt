@@ -43,6 +43,4 @@ class HrImageButton @JvmOverloads constructor(
         attributes.recycle()
 
     }
-
-
 }
