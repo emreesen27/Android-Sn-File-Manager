@@ -2,10 +2,10 @@ package com.sn.snfilemanager.feature.home
 
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.databinding.FragmentHomeBinding
 import com.sn.snfilemanager.core.extensions.observe
-import com.sn.snfilemanager.providers.mediastore.MediaType
 import com.sn.snfilemanager.core.util.StorageType
+import com.sn.snfilemanager.databinding.FragmentHomeBinding
+import com.sn.snfilemanager.providers.mediastore.MediaType
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -24,6 +24,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun setupViews() {
         initMenuButtonListener()
+
+        /*
+            val intent = Intent()
+            intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+            val uri: Uri = Uri.fromParts("package", requireActivity().packageName, null)
+            intent.data = uri
+            startActivity(intent)*/
     }
 
     override fun observeData() {
@@ -34,7 +41,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             binding.btnExternalFile.subTitle = getString(R.string.available_storage, memory)
         }
     }
-
 
     /*
     private fun clickMenu() {
@@ -47,6 +53,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         with(binding) {
             ibImages.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage(MediaType.IMAGES)) }
             ibVideo.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage(MediaType.VIDEOS)) }
+            ibSound.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage(MediaType.AUDIOS)) }
+            ibDocuments.setOnClickListener{navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES))}
 
             btnFile.setOnClickListener {
                 navigate(HomeFragmentDirections.actionHomeFile(StorageType.INTERNAL))

@@ -12,6 +12,7 @@ enum class PrefsTag(val tag: String) {
     FIRST_RUN("FIRST_RUN"),
     FILTER_IMAGES("FILTER_IMAGES"),
     FILTER_VIDEOS("FILTER_VIDEOS"),
+    FILTER_AUDIOS("FILTER_AUDIOS"),
     DEFAULT("DEFAULT")
 }
 

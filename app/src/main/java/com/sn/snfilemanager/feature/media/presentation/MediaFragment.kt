@@ -4,24 +4,22 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
-import com.sn.snfilemanager.feature.sheet.FilterBottomSheet
 import com.sn.snfilemanager.R
-import com.sn.snfilemanager.feature.sheet.SearchBottomSheet
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.visible
-import com.sn.snfilemanager.feature.media.module.MediaItemModule
-import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
-import com.sn.snfilemanager.providers.mediastore.MediaFile
+import com.sn.snfilemanager.databinding.FragmentMediaBinding
+import com.sn.snfilemanager.feature.media.module.*
+import com.sn.snfilemanager.feature.sheet.FilterBottomSheet
+import com.sn.snfilemanager.feature.sheet.SearchBottomSheet
 import com.sn.snfilemanager.providers.mediastore.MediaType
 import com.sn.snfilemanager.providers.mediastore.MimeTypes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
-    MediaSelectionModule.Selection, MediaItemModule.Selected {
+    MediaSelectionModule.Selection {
 
     private lateinit var oneAdapter: OneAdapter
     private val args: MediaFragmentArgs by navArgs()
@@ -87,10 +85,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun onEndSelection() {
         updateMenusOnSelection(false)
-    }
-
-    override fun onSelected(model: MediaFile, selected: Boolean) {
-        viewModel.addSelectedItem(model)
     }
 
     private fun handleBackPressed() {
@@ -172,12 +166,26 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         )
     }
 
+    private fun getItemModule() =
+        when (args.mediaType) {
+            MediaType.IMAGES -> ImageItemModule().apply {
+                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+            }
+            MediaType.VIDEOS -> VideoItemModule().apply {
+                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+            }
+            MediaType.AUDIOS -> AudioItemModule().apply {
+                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+            }
+            MediaType.FILES -> DocumentItemModule().apply {
+                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+            }
+            else -> null
+        }
+
     private fun initAdapter() {
         oneAdapter = OneAdapter(binding.recyclerView) {
-            itemModules += MediaItemModule().apply {
-                selected = this@MediaFragment
-                mediaType = args.mediaType
-            }
+            itemModules += getItemModule()!!
             itemSelectionModule = MediaSelectionModule().apply {
                 selection = this@MediaFragment
             }

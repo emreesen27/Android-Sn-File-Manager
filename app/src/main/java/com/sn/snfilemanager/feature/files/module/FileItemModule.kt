@@ -8,7 +8,7 @@ import com.sn.snfilemanager.databinding.ItemFileBinding
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.loadWithGlide
 import com.sn.snfilemanager.core.extensions.visible
-import com.sn.snfilemanager.feature.files.data.FileExtension
+import com.sn.snfilemanager.core.util.FileExtension
 import com.sn.snfilemanager.feature.files.data.FileModel
 
 class FileItemModule(val context: Context) :

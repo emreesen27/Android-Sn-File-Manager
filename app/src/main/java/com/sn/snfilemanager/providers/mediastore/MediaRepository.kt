@@ -3,6 +3,7 @@ package com.sn.snfilemanager.providers.mediastore
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
+import com.sn.snfilemanager.core.extensions.getFileExtension
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,8 +12,8 @@ import javax.inject.Singleton
 class MediaRepository @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun getMedia(mediaType: MediaType): MutableList<MediaFile> {
-        val selection = null
-        val selectionArgs = null
+        val selection = "${MediaStore.Files.FileColumns.MIME_TYPE} LIKE ? OR ${MediaStore.Files.FileColumns.MIME_TYPE} LIKE ?"
+        val selectionArgs = arrayOf("%application%", "%text%")
         val sortOrder = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
         val mediaList = mutableListOf<MediaFile>()
@@ -37,9 +38,9 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
                 val mimeType = cursor.getString(mimeTypeColumn).substringAfterLast("/")
                 val size = cursor.getLong(sizeColumn)
                 val uri = ContentUris.withAppendedId(mediaType.uri, id)
+                val ext = name.getFileExtension()
 
-                val mediaFile =
-                    MediaFile(id, name, dateAdded, mimeType, size, mediaType, uri)
+                val mediaFile = MediaFile(id, name, dateAdded, mimeType, size, mediaType, uri, ext)
                 mediaList.add(mediaFile)
             }
         }

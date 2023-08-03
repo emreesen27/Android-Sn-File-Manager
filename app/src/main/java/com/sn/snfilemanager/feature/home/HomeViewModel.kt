@@ -22,8 +22,8 @@ class HomeViewModel @Inject constructor(
     private val availableStorageMutableLiveData: MutableLiveData<String> = MutableLiveData()
     val availableStorageLiveData: LiveData<String> = availableStorageMutableLiveData
 
-    private val availableExternalStorageMutableLiveData: MutableLiveData<String> = MutableLiveData()
-    val availableExternalStorageLiveData: LiveData<String> = availableExternalStorageMutableLiveData
+    private val availableExternalStorageMutableLiveData: MutableLiveData<String?> = MutableLiveData()
+    val availableExternalStorageLiveData: LiveData<String?> = availableExternalStorageMutableLiveData
 
     init {
         getFreeInternalMemory()
@@ -42,7 +42,9 @@ class HomeViewModel @Inject constructor(
     private fun getFreeExternalMemory() {
         viewModelScope.launch {
             val memory = withContext(Dispatchers.IO) {
-                getFreeMemory(filePathProvider.externalSdCardDirectories.first()).toHumanReadableByteCount()
+                filePathProvider.externalSdCardDirectories.firstOrNull()?.let {
+                    getFreeMemory(it).toHumanReadableByteCount()
+                }
             }
             availableExternalStorageMutableLiveData.value = memory
         }

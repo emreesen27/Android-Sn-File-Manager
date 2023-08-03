@@ -85,6 +85,7 @@
                         app:btnText="@string/images" />
 
                     <com.sn.snfilemanager.components.ImageButton
+                        android:id="@+id/ib_sound"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -109,6 +110,7 @@
                     android:layout_weight="1">
 
                     <com.sn.snfilemanager.components.ImageButton
+                        android:id="@+id/ib_documents"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

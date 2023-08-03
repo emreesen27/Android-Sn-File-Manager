@@ -11,6 +11,7 @@ data class MediaFile(
     val size: Long,
     val mediaType: MediaType,
     val uri: Uri?,
+    val ext: String?
 ) : Diffable {
     override val uniqueIdentifier: Long
         get() = id

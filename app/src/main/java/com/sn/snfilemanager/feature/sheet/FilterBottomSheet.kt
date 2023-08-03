@@ -8,9 +8,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.databinding.BottomSheetFilterBinding
+import com.sn.snfilemanager.providers.mediastore.MimeTypes
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
-import com.sn.snfilemanager.providers.mediastore.MimeTypes
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -73,6 +73,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         prefsTag = when (mimeTypes) {
             MimeTypes.IMAGES -> PrefsTag.FILTER_IMAGES
             MimeTypes.VIDEOS -> PrefsTag.FILTER_VIDEOS
+            MimeTypes.AUDIOS -> PrefsTag.FILTER_AUDIOS
             else -> PrefsTag.DEFAULT
         }
     }

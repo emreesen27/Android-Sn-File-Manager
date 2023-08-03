@@ -5,53 +5,29 @@ import com.idanatz.oneadapter.external.modules.ItemModule
 import com.idanatz.oneadapter.external.states.SelectionState
 import com.idanatz.oneadapter.external.states.SelectionStateConfig
 import com.sn.snfilemanager.R
-import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.setMargins
 import com.sn.snfilemanager.core.extensions.visible
-import com.sn.snfilemanager.databinding.ItemMediaBinding
+import com.sn.snfilemanager.databinding.ItemImagesBinding
 import com.sn.snfilemanager.providers.mediastore.MediaFile
-import com.sn.snfilemanager.providers.mediastore.MediaType
 
 
-class MediaItemModule : ItemModule<MediaFile>() {
+class ImageItemModule : ItemModule<MediaFile>() {
 
-    interface Selected {
-        fun onSelected(model: MediaFile, selected: Boolean)
-    }
-
-    var selected: Selected? = null
-    var mediaType: MediaType? = null
+    var onSelected: ((MediaFile, Boolean) -> Unit)? = null
 
     init {
         config {
-            layoutResource = R.layout.item_media
+            layoutResource = R.layout.item_images
         }
         onBind { model, viewBinder, metaData ->
-            viewBinder.bindings(ItemMediaBinding::bind).run {
-                when (mediaType) {
-                    MediaType.VIDEOS -> {
-                        ivPlay.visible()
-                        Glide.with(viewBinder.rootView).load(model.uri).into(ivImage)
-                    }
-                    MediaType.IMAGES -> {
-                        ivPlay.gone()
-                        Glide.with(viewBinder.rootView).load(model.uri).into(ivImage)
-                    }
-                    MediaType.AUDIOS -> {
-                        ivPlay.gone()
-                        Glide.with(viewBinder.rootView).load(R.drawable.ic_folder).into(ivImage)
-                    }
-                    else -> {}
-                }
-
+            viewBinder.bindings(ItemImagesBinding::bind).run {
+                Glide.with(viewBinder.rootView).load(model.uri).into(ivImage)
                 if (metaData.isSelected) {
                     ivSelected.visible()
-                    ivImage.setBackgroundResource(R.drawable.border_selected)
                     ivImage.setMargins(50)
                 } else {
                     ivSelected.invisible()
-                    ivImage.setBackgroundResource(0)
                     ivImage.setMargins(0)
                 }
             }
@@ -62,7 +38,7 @@ class MediaItemModule : ItemModule<MediaFile>() {
                 selectionTrigger = SelectionStateConfig.SelectionTrigger.LongClick
             }
             onSelected { model, selectedItem ->
-                selected?.onSelected(model, selectedItem)
+                onSelected?.invoke(model, selectedItem)
             }
         }
     }

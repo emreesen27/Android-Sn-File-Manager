@@ -27,7 +27,7 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed"
             app:spanCount="3"
-            tools:listitem="@layout/item_media" />
+            tools:listitem="@layout/item_images" />
 
         <include
             android:id="@+id/layout_empty"

@@ -1,5 +1,6 @@
 package com.sn.snfilemanager.feature.media.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,6 +41,7 @@ class MediaViewModel @Inject constructor(
             when (mediaType) {
                 MediaType.IMAGES -> PrefsTag.FILTER_IMAGES
                 MediaType.VIDEOS -> PrefsTag.FILTER_VIDEOS
+                MediaType.AUDIOS -> PrefsTag.FILTER_AUDIOS
                 else -> PrefsTag.DEFAULT
             }
         )
@@ -61,7 +63,9 @@ class MediaViewModel @Inject constructor(
                         getMediaMutableLiveData.value = mediaList
                 }
             }
-            is BaseResult.Failure -> {}
+            is BaseResult.Failure -> {
+                Log.d("emre", result.exception.toString())
+            }
         }
     }
 
@@ -87,7 +91,7 @@ class MediaViewModel @Inject constructor(
     }
 
     fun applyFilter(filter: MutableSet<String>) {
-        fullMediaList?.filter { filter.contains(it.mimeType) }?.let { filteredMediaList ->
+        fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
             getMediaMutableLiveData.value = filteredMediaList
         }
     }
