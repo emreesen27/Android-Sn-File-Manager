@@ -5,11 +5,11 @@ import com.idanatz.oneadapter.external.modules.ItemModule
 import com.idanatz.oneadapter.external.states.SelectionState
 import com.idanatz.oneadapter.external.states.SelectionStateConfig
 import com.sn.snfilemanager.R
-import com.sn.snfilemanager.databinding.ItemMediaBinding
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.setMargins
 import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.databinding.ItemMediaBinding
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.providers.mediastore.MediaType
 
@@ -29,8 +29,22 @@ class MediaItemModule : ItemModule<MediaFile>() {
         }
         onBind { model, viewBinder, metaData ->
             viewBinder.bindings(ItemMediaBinding::bind).run {
-                if (mediaType == MediaType.VIDEOS) ivPlay.visible() else ivPlay.gone()
-                Glide.with(viewBinder.rootView).load(model.uri).into(ivImage)
+                when (mediaType) {
+                    MediaType.VIDEOS -> {
+                        ivPlay.visible()
+                        Glide.with(viewBinder.rootView).load(model.uri).into(ivImage)
+                    }
+                    MediaType.IMAGES -> {
+                        ivPlay.gone()
+                        Glide.with(viewBinder.rootView).load(model.uri).into(ivImage)
+                    }
+                    MediaType.AUDIOS -> {
+                        ivPlay.gone()
+                        Glide.with(viewBinder.rootView).load(R.drawable.ic_folder).into(ivImage)
+                    }
+                    else -> {}
+                }
+
                 if (metaData.isSelected) {
                     ivSelected.visible()
                     ivImage.setBackgroundResource(R.drawable.border_selected)
