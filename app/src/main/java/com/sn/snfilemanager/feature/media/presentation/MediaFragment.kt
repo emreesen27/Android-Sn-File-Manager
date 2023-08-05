@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
+import com.sn.mediastorepv.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.gone
@@ -13,8 +14,7 @@ import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.media.module.*
 import com.sn.snfilemanager.feature.sheet.FilterBottomSheet
 import com.sn.snfilemanager.feature.sheet.SearchBottomSheet
-import com.sn.snfilemanager.providers.mediastore.MediaType
-import com.sn.snfilemanager.providers.mediastore.MimeTypes
+import com.sn.snfilemanager.core.util.MimeTypes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

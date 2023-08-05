@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.providers.mediastore
+package com.sn.snfilemanager.core.util
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

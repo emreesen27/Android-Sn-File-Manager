@@ -5,12 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sn.mediastorepv.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
-import com.sn.snfilemanager.providers.mediastore.MediaType
+import com.sn.snfilemanager.providers.mediastore.toMedia
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -70,7 +71,7 @@ class MediaViewModel @Inject constructor(
     }
 
     fun deleteMedia() = viewModelScope.launch {
-        when (val result = mediaStoreProvider.deleteMedia(selectedItemList)) {
+        when (val result = mediaStoreProvider.deleteMedia(selectedItemList.map { it.toMedia() })) {
             is BaseResult.Success -> {
                 if (result.data) {
                     deleteMediaMutableLiveData.value = selectedItemList

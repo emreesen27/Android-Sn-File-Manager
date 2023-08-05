@@ -1,6 +1,7 @@
 package com.sn.snfilemanager.providers.mediastore
 
 import android.content.Context
+import com.sn.mediastorepv.MediaStoreBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,10 +11,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object MediaRepositoryModule {
+object MediaStoreModule {
     @Provides
     @Singleton
-    fun provideMediaRepository(@ApplicationContext context: Context): MediaRepository {
-        return MediaRepository(context)
+    fun provideMediaStoreBuilder(@ApplicationContext context: Context): MediaStoreBuilder {
+        return MediaStoreBuilder(context)
     }
 }

@@ -1,11 +1,11 @@
 package com.sn.snfilemanager.feature.home
 
+import com.sn.mediastorepv.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.util.StorageType
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
-import com.sn.snfilemanager.providers.mediastore.MediaType
 import dagger.hilt.android.AndroidEntryPoint
 
 

@@ -2,6 +2,8 @@ package com.sn.snfilemanager.providers.mediastore
 
 import android.net.Uri
 import com.idanatz.oneadapter.external.interfaces.Diffable
+import com.sn.mediastorepv.Media
+import com.sn.mediastorepv.MediaType
 
 data class MediaFile(
     var id: Long,
@@ -17,5 +19,30 @@ data class MediaFile(
         get() = id
 
     override fun areContentTheSame(other: Any): Boolean = id == (other as? MediaFile)?.id
-//val deletedRows = contentResolver.delete(uri, null, null)
+}
+
+fun MediaFile.toMedia(): Media {
+    return Media(
+        id = id,
+        name = name,
+        dateAdded = dateAdded,
+        mimeType = mimeType,
+        size = size,
+        mediaType = mediaType,
+        uri = uri,
+        ext = ext
+    )
+}
+
+fun Media.toMediaFile(): MediaFile {
+    return MediaFile(
+        id = id,
+        name = name,
+        dateAdded = dateAdded,
+        mimeType = mimeType,
+        size = size,
+        mediaType = mediaType,
+        uri = uri,
+        ext = ext
+    )
 }

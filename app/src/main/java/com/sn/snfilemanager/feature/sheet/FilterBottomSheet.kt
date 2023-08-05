@@ -8,7 +8,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.databinding.BottomSheetFilterBinding
-import com.sn.snfilemanager.providers.mediastore.MimeTypes
+import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.AndroidEntryPoint
