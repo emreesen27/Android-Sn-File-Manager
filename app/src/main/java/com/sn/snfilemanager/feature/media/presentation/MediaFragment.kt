@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
-import com.sn.mediastorepv.MediaType
+import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.gone

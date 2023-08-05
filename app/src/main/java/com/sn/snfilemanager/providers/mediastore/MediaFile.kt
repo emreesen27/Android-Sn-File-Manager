@@ -2,8 +2,8 @@ package com.sn.snfilemanager.providers.mediastore
 
 import android.net.Uri
 import com.idanatz.oneadapter.external.interfaces.Diffable
-import com.sn.mediastorepv.Media
-import com.sn.mediastorepv.MediaType
+import com.sn.mediastorepv.data.Media
+import com.sn.mediastorepv.data.MediaType
 
 data class MediaFile(
     var id: Long,

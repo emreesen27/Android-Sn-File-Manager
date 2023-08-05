@@ -1,6 +1,6 @@
 package com.sn.snfilemanager.feature.home
 
-import com.sn.mediastorepv.MediaType
+import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.observe

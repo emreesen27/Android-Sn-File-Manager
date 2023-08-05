@@ -1,8 +1,8 @@
 package com.sn.snfilemanager.providers.mediastore
 
-import com.sn.mediastorepv.Media
+import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.MediaStoreBuilder
-import com.sn.mediastorepv.MediaType
+import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
