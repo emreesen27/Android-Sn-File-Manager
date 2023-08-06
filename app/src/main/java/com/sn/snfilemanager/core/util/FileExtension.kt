@@ -50,7 +50,8 @@ enum class FileExtension(val extension: String, val iconResId: Int) {
     TEX("text", R.drawable.ic_tex),
     HTML("html", R.drawable.ic_html),
     MIDI("midi", R.drawable.ic_midi),
-    DMG("dmg", R.drawable.ic_dmg_file);
+    DMG("dmg", R.drawable.ic_dmg_file),
+    XML("xml", R.drawable.ic_xml);
 
 
     companion object {
