@@ -6,6 +6,7 @@
     <color name="second_text_color">#FF555555</color>
     <color name="main_color">#FF2F65B9</color>
     <color name="orange_folder">#FFFFA500</color>
+    <color name="orange_folder_secondary">#CCFFA500</color>
 
     <color name="orange">#FFFF731D</color>
     <color name="soft_blue">#FF5F9DF7</color>

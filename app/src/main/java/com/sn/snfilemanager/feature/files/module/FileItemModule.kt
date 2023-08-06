@@ -8,6 +8,7 @@ import com.sn.snfilemanager.databinding.ItemFileBinding
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.loadWithGlide
 import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.core.util.DirectoryType
 import com.sn.snfilemanager.core.util.FileExtension
 import com.sn.snfilemanager.feature.files.data.FileModel
 
@@ -44,7 +45,7 @@ class FileItemModule(val context: Context) :
         with(binding) {
             ivPlay.gone()
             if (model.isDirectory) {
-                ivFileImage.setImageResource(R.drawable.ic_folder)
+                ivFileImage.setImageResource(getDirectoryIcon(model.name))
             } else {
                 val iconResId = FileExtension.getIconResourceId(model.extension)
                 if (iconResId != 0) {
@@ -57,5 +58,15 @@ class FileItemModule(val context: Context) :
                 }
             }
         }
+    }
+    private fun getDirectoryIcon(name: String) = when (name) {
+        DirectoryType.MUSIC.type -> R.drawable.ic_directory_music
+        DirectoryType.MOVIES.type -> R.drawable.ic_directory_movies
+        DirectoryType.DOWNLOADS.type -> R.drawable.ic_directory_download
+        DirectoryType.DOCUMENTS.type -> R.drawable.ic_directory_document
+        DirectoryType.ANDROID.type -> R.drawable.ic_directory_android
+        DirectoryType.PICTURES.type -> R.drawable.ic_directory_pictures
+        DirectoryType.DCIM.type -> R.drawable.ic_directory_dcim
+        else -> R.drawable.ic_directory
     }
 }
