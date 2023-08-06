@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import com.sn.snfilemanager.providers.mediastore.MediaFile
@@ -26,6 +27,7 @@ class MediaViewModel @Inject constructor(
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
 
     private var mediaType: MediaType? = null
+    private var isApkFile: Boolean = false
 
     private val getMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
     val getMediaLiveData: LiveData<List<MediaFile>> = getMediaMutableLiveData
@@ -47,25 +49,35 @@ class MediaViewModel @Inject constructor(
             }
         )
 
-    fun setMediaType(mediaType: MediaType) {
-        this.mediaType = mediaType
+    fun setArguments(args: MediaFragmentArgs) {
+        mediaType = args.mediaType
+        isApkFile = args.isApkFile
     }
 
-    fun getMedia(type: MediaType) = viewModelScope.launch {
-        val filteredMediaTypes: MutableSet<String>? = getFilteredMediaTypes()
-        when (val result = mediaStoreProvider.getMedia(type)) {
-            is BaseResult.Success -> {
-                fullMediaList = result.data
+    private fun getMimeByMediaType(): List<String>? {
+        return when (mediaType) {
+            MediaType.FILES -> if (isApkFile) MimeTypes.APK.values else MimeTypes.DOCUMENT.values
+            else -> null
+        }
+    }
 
-                fullMediaList?.let { mediaList ->
-                    if (filteredMediaTypes != null)
-                        applyFilter(filteredMediaTypes)
-                    else
-                        getMediaMutableLiveData.value = mediaList
+    fun getMedia() = viewModelScope.launch {
+        val filteredMediaTypes: MutableSet<String>? = getFilteredMediaTypes()
+        mediaType?.let {
+            when (val result = mediaStoreProvider.getMedia(it, getMimeByMediaType())) {
+                is BaseResult.Success -> {
+                    fullMediaList = result.data
+
+                    fullMediaList?.let { mediaList ->
+                        if (filteredMediaTypes != null)
+                            applyFilter(filteredMediaTypes)
+                        else
+                            getMediaMutableLiveData.value = mediaList
+                    }
                 }
-            }
-            is BaseResult.Failure -> {
-                Log.d("emre", result.exception.toString())
+                is BaseResult.Failure -> {
+                    Log.d("err", result.exception.toString())
+                }
             }
         }
     }

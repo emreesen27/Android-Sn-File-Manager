@@ -3,6 +3,7 @@ package com.sn.snfilemanager.feature.home
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
+import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.util.StorageType
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
@@ -51,17 +52,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initMenuButtonListener() {
         with(binding) {
-            ibImages.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage(MediaType.IMAGES)) }
-            ibVideo.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage(MediaType.VIDEOS)) }
-            ibSound.setOnClickListener { navigate(HomeFragmentDirections.actionHomeImage(MediaType.AUDIOS)) }
-            ibDocuments.setOnClickListener{navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES))}
-
-            btnFile.setOnClickListener {
-                navigate(HomeFragmentDirections.actionHomeFile(StorageType.INTERNAL))
-            }
-            btnExternalFile.setOnClickListener {
-                navigate(HomeFragmentDirections.actionHomeFile(StorageType.EXTERNAL))
-            }
+            ibImages.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.IMAGES)) }
+            ibVideo.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.VIDEOS)) }
+            ibSound.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.AUDIOS)) }
+            ibDocuments.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES)) }
+            ibApk.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES, true)) }
+            btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(StorageType.INTERNAL)) }
+            btnExternalFile.click { navigate(HomeFragmentDirections.actionHomeFile(StorageType.EXTERNAL)) }
         }
     }
 

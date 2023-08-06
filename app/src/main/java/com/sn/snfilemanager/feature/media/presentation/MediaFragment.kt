@@ -50,8 +50,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getMedia(args.mediaType)
-        viewModel.setMediaType(args.mediaType)
+        viewModel.setArguments(args)
+        viewModel.getMedia()
     }
 
     override fun setupViews() {
