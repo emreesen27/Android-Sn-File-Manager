@@ -62,7 +62,7 @@ class FileItemModule(val context: Context) :
     private fun getDirectoryIcon(name: String) = when (name) {
         DirectoryType.MUSIC.type -> R.drawable.ic_directory_music
         DirectoryType.MOVIES.type -> R.drawable.ic_directory_movies
-        DirectoryType.DOWNLOADS.type -> R.drawable.ic_directory_download
+        DirectoryType.DOWNLOAD.type -> R.drawable.ic_directory_download
         DirectoryType.DOCUMENTS.type -> R.drawable.ic_directory_document
         DirectoryType.ANDROID.type -> R.drawable.ic_directory_android
         DirectoryType.PICTURES.type -> R.drawable.ic_directory_pictures
