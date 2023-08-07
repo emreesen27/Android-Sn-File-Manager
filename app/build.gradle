@@ -59,10 +59,6 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.44'
     kapt 'com.google.dagger:hilt-android-compiler:2.44'
 
-    // Permission
-    implementation 'com.github.permissions-dispatcher:permissionsdispatcher:4.9.2'
-    kapt 'com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.2'
-
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
@@ -84,6 +80,7 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
 
+    // Lottie
     implementation 'com.airbnb.android:lottie:5.0.3'
 
     testImplementation 'junit:junit:4.13.2'
