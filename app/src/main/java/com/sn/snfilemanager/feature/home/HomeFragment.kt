@@ -5,7 +5,7 @@ import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.observe
-import com.sn.snfilemanager.core.util.StorageType
+import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,8 +57,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ibSound.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.AUDIOS)) }
             ibDocuments.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES)) }
             ibApk.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES, true)) }
-            btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(StorageType.INTERNAL)) }
-            btnExternalFile.click { navigate(HomeFragmentDirections.actionHomeFile(StorageType.EXTERNAL)) }
+
+            ibDownload.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.DOWNLOAD)) }
+            btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.INTERNAL)) }
+            btnExternalFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.EXTERNAL)) }
         }
     }
 

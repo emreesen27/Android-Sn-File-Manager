@@ -1,6 +1,7 @@
 package com.sn.snfilemanager.core.util
 
-enum class StorageType {
+enum class RootPath {
     EXTERNAL,
-    INTERNAL
+    INTERNAL,
+    DOWNLOAD
 }

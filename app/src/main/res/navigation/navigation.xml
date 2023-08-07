@@ -72,7 +72,7 @@
 
         <argument
             android:name="storageArgs"
-            app:argType="com.sn.snfilemanager.core.util.StorageType" />
+            app:argType="com.sn.snfilemanager.core.util.RootPath" />
 
     </fragment>
 

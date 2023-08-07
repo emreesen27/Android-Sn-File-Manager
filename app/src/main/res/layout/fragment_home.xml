@@ -8,37 +8,6 @@
         android:background="@color/bg_color"
         tools:context=".feature.home.HomeFragment">
 
-        <!--   <com.google.android.material.appbar.MaterialToolbar
-               android:id="@+id/toolbar"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               app:layout_constraintEnd_toEndOf="parent"
-               app:layout_constraintStart_toStartOf="parent"
-               app:layout_constraintTop_toTopOf="parent">
-
-               <androidx.appcompat.widget.AppCompatImageView
-                   android:id="@+id/iv_menu"
-                   android:layout_width="@dimen/_30sdp"
-                   android:layout_height="@dimen/_30sdp"
-                   android:layout_gravity="end"
-                   android:clickable="true"
-                   android:focusable="true"
-                   android:padding="@dimen/_3sdp"
-                   android:src="@drawable/ic_menu" />
-
-               <androidx.appcompat.widget.AppCompatImageView
-                   android:id="@+id/iv_search"
-                   android:layout_width="@dimen/_30sdp"
-                   android:layout_height="@dimen/_30sdp"
-                   android:layout_gravity="end"
-                   android:clickable="true"
-                   android:focusable="true"
-                   android:padding="@dimen/_3sdp"
-                   android:src="@drawable/ic_search"
-
-           </com.google.android.material.appbar.MaterialToolbar> /> -->
-
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_categories"
             android:layout_width="wrap_content"
@@ -118,6 +87,7 @@
                         app:btnText="@string/documents" />
 
                     <com.sn.snfilemanager.components.ImageButton
+                        android:id="@+id/ib_download"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
