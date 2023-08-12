@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
 import com.sn.snfilemanager.providers.filepath.FilePathProvider
+import com.sn.snfilemanager.providers.preferences.MySharedPreferences
+import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,19 +18,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val filePathProvider: FilePathProvider
+    private val filePathProvider: FilePathProvider,
+    private val preferences: MySharedPreferences
 ) : ViewModel() {
 
     private val availableStorageMutableLiveData: MutableLiveData<String> = MutableLiveData()
     val availableStorageLiveData: LiveData<String> = availableStorageMutableLiveData
 
-    private val availableExternalStorageMutableLiveData: MutableLiveData<String?> = MutableLiveData()
-    val availableExternalStorageLiveData: LiveData<String?> = availableExternalStorageMutableLiveData
+    private val availableExternalStorageMutableLiveData: MutableLiveData<String?> =
+        MutableLiveData()
+    val availableExternalStorageLiveData: LiveData<String?> =
+        availableExternalStorageMutableLiveData
 
     init {
         getFreeInternalMemory()
         getFreeExternalMemory()
     }
+
+    fun hasRequestedPermissionBefore() = preferences.getBoolean(PrefsTag.PERMISSION_STORAGE)
+
+    fun setPermissionRequested() = preferences.putBoolean(PrefsTag.PERMISSION_STORAGE, true)
 
     private fun getFreeInternalMemory() {
         viewModelScope.launch {

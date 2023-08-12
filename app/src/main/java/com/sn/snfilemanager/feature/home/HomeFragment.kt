@@ -1,5 +1,16 @@
 package com.sn.snfilemanager.feature.home
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
@@ -7,13 +18,14 @@ import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
+import com.sn.snfilemanager.feature.permission.PermissionDialog
+import com.sn.snfilemanager.feature.permission.PermissionDialogListener
+import com.sn.snfilemanager.feature.permission.PermissionDialogType
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
-
-    //private val moreMenu by powerMenu<PowerMenuFactory>()
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), PermissionDialogListener {
 
     override fun getViewModelClass() = HomeViewModel::class.java
 
@@ -25,13 +37,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun setupViews() {
         initMenuButtonListener()
+    }
 
-        /*
-            val intent = Intent()
-            intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
-            val uri: Uri = Uri.fromParts("package", requireActivity().packageName, null)
-            intent.data = uri
-            startActivity(intent)*/
+    override fun onResume() {
+        super.onResume()
+        initPermission()
     }
 
     override fun observeData() {
@@ -43,12 +53,64 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    /*
-    private fun clickMenu() {
-        binding.ivMenu.setOnClickListener {
-            moreMenu?.showAsDropDown(it)
+    override fun allowCLick() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            routeFileAccessSettings()
+        } else {
+            if (viewModel.hasRequestedPermissionBefore())
+                routeAppSettings()
+            else
+                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
-    }*/
+        viewModel.setPermissionRequested()
+    }
+
+    private fun initPermission() {
+        val type =
+            if (viewModel.hasRequestedPermissionBefore()) PermissionDialogType.WARNING else PermissionDialogType.DEFAULT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager())
+                showPermissionDialog(type)
+        } else if (!checkStoragePermission(requireContext())) {
+            showPermissionDialog(type)
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                showPermissionDialog(PermissionDialogType.WARNING)
+            }
+        }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun routeFileAccessSettings() {
+        val intent = Intent(
+            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+            Uri.parse("package:${requireActivity().packageName}")
+        )
+        startActivity(intent)
+    }
+
+    private fun routeAppSettings() {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:${requireActivity().packageName}")
+        )
+        startActivity(intent)
+    }
+
+    private fun showPermissionDialog(type: PermissionDialogType = PermissionDialogType.DEFAULT) {
+        val customPopup = PermissionDialog(requireContext(), this, type)
+        customPopup.show()
+    }
+
+    private fun checkStoragePermission(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
     private fun initMenuButtonListener() {
         with(binding) {
@@ -63,31 +125,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             btnExternalFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.EXTERNAL)) }
         }
     }
-
-    /*
-    private fun initListenerPowerMenuItem() {
-        moreMenu?.setOnMenuItemClickListener { position, item ->
-            moreMenu?.selectedPosition = position
-            Toast.makeText(requireContext(), item.title, Toast.LENGTH_SHORT).show()
-        }
-    }*/
-
-    /*
-    * class YourViewModel : ViewModel() {
-    private val _formattedByteCount = MutableLiveData<String>()
-    val formattedByteCount: LiveData<String>
-        get() = _formattedByteCount
-
-    fun calculateAndSetFormattedByteCount(byteCount: Long) {
-        viewModelScope.launch {
-            val formattedCount = withContext(Dispatchers.Default) {
-                humanReadableByteCountSI(byteCount)
-            }
-            _formattedByteCount.value = formattedCount
-        }
-    }
-}
-    *
-    * */
-
 }

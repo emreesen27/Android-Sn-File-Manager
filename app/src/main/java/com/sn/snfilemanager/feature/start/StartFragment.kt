@@ -12,8 +12,6 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
 
     override fun getViewBinding() = FragmentStartBinding.inflate(layoutInflater)
 
-    //override fun getToolbar(): Toolbar? = null
-
     override fun getActionBarStatus(): Boolean = false
 
     override fun setupViews() {

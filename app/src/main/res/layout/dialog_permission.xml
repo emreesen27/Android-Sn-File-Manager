@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_300sdp"
+    android:layout_gravity="center"
+    android:background="@color/bg_color"
+    android:elevation="@dimen/_5sdp"
+    app:layout_constraintCircleRadius="@dimen/_20sdp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_permission"
+        app:layout_constraintBottom_toBottomOf="@+id/container"
+        app:layout_constraintEnd_toEndOf="@+id/container"
+        app:layout_constraintStart_toStartOf="@+id/container"
+        app:layout_constraintTop_toTopOf="@+id/container"
+        app:layout_constraintVertical_bias="0.15" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_permission_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_13sdp"
+        android:fontFamily="@font/adamina"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:text="@string/permission_message"
+        android:textAlignment="center"
+        android:textColor="@color/first_text_color"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintEnd_toEndOf="@+id/container"
+        app:layout_constraintStart_toStartOf="@+id/container"
+        app:layout_constraintTop_toBottomOf="@+id/iv_permission" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_allow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:backgroundTint="@color/main_color"
+        android:fontFamily="@font/adamina"
+        android:padding="10dp"
+        android:text="@string/click_to_allow"
+        app:layout_constraintBottom_toBottomOf="@+id/container"
+        app:layout_constraintEnd_toEndOf="@+id/container"
+        app:layout_constraintStart_toStartOf="@+id/container" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

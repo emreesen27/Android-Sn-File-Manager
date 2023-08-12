@@ -1,4 +1,7 @@
 <resources>
+    <!--Description-->
+    <string name="desc_app_icon" translatable="false">desc_app_icon</string>
+
     <string name="app_name">Sn File Manager</string>
     <string name="continue_key">Continue</string>
     <string name="open_source_license"><u>Open source license</u></string>
@@ -26,8 +29,9 @@
     <string name="type_search_image_info">"Type the name of the image you want to search"</string>
     <string name="child_count">%s - ( %d )</string>
     <string name="file_size">%s - %s </string>
-
-    <!--Description-->
-    <string name="desc_app_icon" translatable="false">desc_app_icon</string>
+    <string name="permission_message">Access permissions must be granted before the application can perform file operations</string>
+    <string name="permission_warning_message">The application cannot work properly without the necessary permissions. Please go to settings and provide necessary permissions</string>
+    <string name="click_to_allow">click to allow</string>
+    <string name="go_to_settings">go to settings</string>
 
 </resources>
