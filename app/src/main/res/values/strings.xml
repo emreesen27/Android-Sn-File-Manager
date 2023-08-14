@@ -33,5 +33,7 @@
     <string name="permission_warning_message">The application cannot work properly without the necessary permissions. Please go to settings and provide necessary permissions</string>
     <string name="click_to_allow">click to allow</string>
     <string name="go_to_settings">go to settings</string>
+    <string name="apply">apply</string>
+    <string name="all">all</string>
 
 </resources>

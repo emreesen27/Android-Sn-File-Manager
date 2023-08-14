@@ -25,9 +25,9 @@ class MediaViewModel @Inject constructor(
 
     private var fullMediaList: List<MediaFile>? = null
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
-
     private var mediaType: MediaType? = null
     private var isApkFile: Boolean = false
+    private var filterIsAll: Boolean = sharedPreferences.getBoolean(PrefsTag.FILTER_ALL)
 
     private val getMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
     val getMediaLiveData: LiveData<List<MediaFile>> = getMediaMutableLiveData
@@ -40,14 +40,13 @@ class MediaViewModel @Inject constructor(
 
 
     private fun getFilteredMediaTypes(): MutableSet<String>? =
-        sharedPreferences.getStringArray(
-            when (mediaType) {
-                MediaType.IMAGES -> PrefsTag.FILTER_IMAGES
-                MediaType.VIDEOS -> PrefsTag.FILTER_VIDEOS
-                MediaType.AUDIOS -> PrefsTag.FILTER_AUDIOS
-                else -> PrefsTag.DEFAULT
-            }
-        )
+        when (mediaType) {
+            MediaType.IMAGES -> PrefsTag.FILTER_IMAGES
+            MediaType.VIDEOS -> PrefsTag.FILTER_VIDEOS
+            MediaType.AUDIOS -> PrefsTag.FILTER_AUDIOS
+            MediaType.FILES -> PrefsTag.FILTER_DOCUMENTS
+            else -> null
+        }?.let { tag -> sharedPreferences.getStringArray(tag) }
 
     fun setArguments(args: MediaFragmentArgs) {
         mediaType = args.mediaType
@@ -70,7 +69,7 @@ class MediaViewModel @Inject constructor(
 
                     fullMediaList?.let { mediaList ->
                         if (filteredMediaTypes != null)
-                            applyFilter(filteredMediaTypes)
+                            applyFilter(filteredMediaTypes, filterIsAll)
                         else
                             getMediaMutableLiveData.value = mediaList
                     }
@@ -103,9 +102,13 @@ class MediaViewModel @Inject constructor(
         searchMediaMutableLiveData.value = null
     }
 
-    fun applyFilter(filter: MutableSet<String>) {
-        fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
-            getMediaMutableLiveData.value = filteredMediaList
+    fun applyFilter(filter: MutableSet<String>, isAll: Boolean) {
+        if (isAll) {
+            fullMediaList?.let { getMediaMutableLiveData.value = it }
+        } else {
+            fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
+                getMediaMutableLiveData.value = filteredMediaList
+            }
         }
     }
 

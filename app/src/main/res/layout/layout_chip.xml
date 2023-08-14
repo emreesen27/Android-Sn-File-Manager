@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.MaterialComponents.Chip.Filter"
-    android:layout_width="wrap_content"
+    style="@style/CustomChipChoice"
+    android:layout_width="@dimen/_45sdp"
     android:layout_height="wrap_content"
+    android:checkable="true"
+    android:elevation="@dimen/_3sdp"
     android:padding="@dimen/_5sdp"
     android:textAlignment="center"
+    app:checkedIconEnabled="false"
     app:chipIconSize="@dimen/_15sdp" />

@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class MimeTypes(val types: String, val values: List<String>) : Parcelable {
-    IMAGES("images", listOf("jpeg", "png", "gif", "bmp", "WebP", "HEIF")),
-    VIDEOS("videos", listOf("mp4", "3gp", "avi", "mkv", "wmv")),
-    AUDIOS("audios", listOf("mp3", "aac", "wav", "ogg", "mid", "flac", "amr")),
-    DOCUMENT("document", listOf("pdf", "xml", "log", "docx")),
+    IMAGES("images", listOf("all","jpeg", "jpg", "png", "gif", "bmp", "WebP", "HEIF")),
+    VIDEOS("videos", listOf("all","mp4", "3gp", "avi", "mkv", "wmv")),
+    AUDIOS("audios", listOf("all","mp3", "aac", "wav", "ogg", "mid", "flac", "amr")),
+    DOCUMENT("document", listOf("all", "pdf", "ppt", "pptx", "xml", "log", "docx", "doc", "xls", "xlsx", "txt","psd","ai","indd")),
     APK("apk", listOf("apk"))
 }

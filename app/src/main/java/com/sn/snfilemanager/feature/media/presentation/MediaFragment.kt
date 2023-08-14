@@ -30,7 +30,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun getActionBarStatus(): Boolean = true
 
-    override fun getMenuResId() = R.menu.menu_media
+    override fun getMenuResId() = if (args.isApkFile) R.menu.menu_base else R.menu.menu_media
 
     override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
         R.id.action_search -> {
@@ -141,18 +141,22 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun showFilterBottomSheet() {
-        FilterBottomSheet.newInstance(getMimeByMediaType()).apply {
-            onFilterApplyClick = { filters ->
-                viewModel.applyFilter(filters)
-            }
-        }.show(childFragmentManager, FilterBottomSheet.TAG)
+        getMimeByMediaType()?.let { type ->
+            FilterBottomSheet.newInstance(type).apply {
+                onFilterApplyClick = { filters, isAll ->
+                    viewModel.applyFilter(filters, isAll)
+                }
+            }.show(childFragmentManager, FilterBottomSheet.TAG)
+        }
     }
 
     private fun getMimeByMediaType() =
         when (args.mediaType) {
             MediaType.IMAGES -> MimeTypes.IMAGES
             MediaType.VIDEOS -> MimeTypes.VIDEOS
-            else -> MimeTypes.IMAGES
+            MediaType.AUDIOS -> MimeTypes.AUDIOS
+            MediaType.FILES -> if (args.isApkFile.not()) MimeTypes.DOCUMENT else null
+            else -> null
         }
 
     private fun showSearchBottomSheet() {

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_color">
 
@@ -19,12 +20,18 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="apply"
-            app:layout_constraintEnd_toEndOf="@id/chips_group"
-            app:layout_constraintStart_toStartOf="@id/chips_group"
-            app:layout_constraintTop_toBottomOf="@+id/chips_group" />
+            android:layout_margin="@dimen/_10sdp"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/apply"
+            android:textColor="@color/main_color"
+            app:layout_constraintEnd_toEndOf="@id/container"
+            app:layout_constraintStart_toStartOf="@+id/container"
+            app:layout_constraintTop_toBottomOf="@+id/chips_group"
+            app:strokeColor="@color/main_color" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

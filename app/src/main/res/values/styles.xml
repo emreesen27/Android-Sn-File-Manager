@@ -17,4 +17,9 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="CustomChipChoice" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_bg_state_list</item>
+        <item name="android:textColor">@color/chip_text_color_state_list</item>
+    </style>
+
 </resources>
