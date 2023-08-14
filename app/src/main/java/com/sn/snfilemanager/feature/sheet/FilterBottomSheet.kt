@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.forEach
-import androidx.core.view.forEachIndexed
 import androidx.core.view.get
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
@@ -31,7 +30,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         BottomSheetFilterBinding.inflate(layoutInflater)
     }
 
-    var onFilterApplyClick: ((MutableSet<String>, Boolean) -> Unit)? = null
+    var onFilterApplyClick: ((MutableSet<String>) -> Unit)? = null
 
     companion object {
         private const val ARG_MIME_TYPE = "ARG_CHIP"
@@ -64,21 +63,9 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         mimeTypes?.let {
             createChipsFromMimeTypes(it).also {
                 clickApply()
-                setAllChipBehavior()
             }
         }
 
-    }
-
-    private fun setAllChipBehavior() {
-        val allChip = binding.chipsGroup[0] as? Chip
-        if (allChip?.isChecked == true) {
-            binding.chipsGroup.forEachIndexed { index, chip ->
-                if (index != 0) {
-                    (chip as? Chip)?.isChecked = false
-                }
-            }
-        }
     }
 
     private fun setArguments() {
@@ -99,10 +86,6 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         prefsTag?.let { sharedPreferences.putStringArray(it, chips) }
     }
 
-    private fun saveFilterAllStatus(value: Boolean) {
-        sharedPreferences.putBoolean(PrefsTag.FILTER_ALL, value)
-    }
-
     private fun getChipsChoice(): MutableSet<String>? =
         prefsTag?.let { sharedPreferences.getStringArray(it) }
 
@@ -116,11 +99,11 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 chips.add(chip.text.toString())
             }
 
-            saveChipsChoice(chips)
+            if (chips.contains(getString(R.string.all)))
+                chips.clear()
 
-            val filterAllStatus = chips.contains(getString(R.string.all))
-            saveFilterAllStatus(filterAllStatus)
-            onFilterApplyClick?.invoke(chips, filterAllStatus)
+            saveChipsChoice(chips)
+            onFilterApplyClick?.invoke(chips)
 
             dismiss()
         }
@@ -131,12 +114,16 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         val chipsChoice = getChipsChoice()
         var isAllSelected: Boolean
 
-        for (value in mimeTypes.values) {
+        for ((index, value) in mimeTypes.values.withIndex()) {
+            if (index >= 8) break
             val chipLayout = layoutInflater.inflate(R.layout.layout_chip, chipsGroup, false) as Chip
 
             chipLayout.text = value
             chipLayout.isChecked =
-                chipsChoice.isNullOrEmpty() || chipsChoice.contains(chipLayout.text)
+                (chipsChoice.isNullOrEmpty() && value == getString(R.string.all)) || chipsChoice?.contains(
+                    chipLayout.text
+                ) == true
+
 
             if (chipLayout.text == getString(R.string.all)) {
                 isAllSelected = chipLayout.isChecked

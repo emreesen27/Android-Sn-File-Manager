@@ -8,6 +8,6 @@ enum class MimeTypes(val types: String, val values: List<String>) : Parcelable {
     IMAGES("images", listOf("all","jpeg", "jpg", "png", "gif", "bmp", "WebP", "HEIF")),
     VIDEOS("videos", listOf("all","mp4", "3gp", "avi", "mkv", "wmv")),
     AUDIOS("audios", listOf("all","mp3", "aac", "wav", "ogg", "mid", "flac", "amr")),
-    DOCUMENT("document", listOf("all", "pdf", "ppt", "pptx", "xml", "log", "docx", "doc", "xls", "xlsx", "txt","psd","ai","indd")),
+    DOCUMENT("document", listOf("all", "pdf", "ppt", "doc", "xls", "txt", "docx", "pptx", "xml", "xlsx", "log","psd","ai","indd")),
     APK("apk", listOf("apk"))
 }

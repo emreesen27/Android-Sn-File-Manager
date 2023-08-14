@@ -143,8 +143,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun showFilterBottomSheet() {
         getMimeByMediaType()?.let { type ->
             FilterBottomSheet.newInstance(type).apply {
-                onFilterApplyClick = { filters, isAll ->
-                    viewModel.applyFilter(filters, isAll)
+                onFilterApplyClick = { filters, ->
+                    viewModel.applyFilter(filters)
                 }
             }.show(childFragmentManager, FilterBottomSheet.TAG)
         }

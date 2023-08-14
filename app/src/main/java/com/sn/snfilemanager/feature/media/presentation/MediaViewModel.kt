@@ -27,7 +27,6 @@ class MediaViewModel @Inject constructor(
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
     private var mediaType: MediaType? = null
     private var isApkFile: Boolean = false
-    private var filterIsAll: Boolean = sharedPreferences.getBoolean(PrefsTag.FILTER_ALL)
 
     private val getMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
     val getMediaLiveData: LiveData<List<MediaFile>> = getMediaMutableLiveData
@@ -69,7 +68,7 @@ class MediaViewModel @Inject constructor(
 
                     fullMediaList?.let { mediaList ->
                         if (filteredMediaTypes != null)
-                            applyFilter(filteredMediaTypes, filterIsAll)
+                            applyFilter(filteredMediaTypes)
                         else
                             getMediaMutableLiveData.value = mediaList
                     }
@@ -102,8 +101,8 @@ class MediaViewModel @Inject constructor(
         searchMediaMutableLiveData.value = null
     }
 
-    fun applyFilter(filter: MutableSet<String>, isAll: Boolean) {
-        if (isAll) {
+    fun applyFilter(filter: MutableSet<String>) {
+        if (filter.isEmpty()) {
             fullMediaList?.let { getMediaMutableLiveData.value = it }
         } else {
             fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
