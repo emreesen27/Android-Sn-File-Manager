@@ -1,15 +1,12 @@
 package com.sn.snfilemanager
 
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.sn.snfilemanager.databinding.ActivityMainBinding
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
