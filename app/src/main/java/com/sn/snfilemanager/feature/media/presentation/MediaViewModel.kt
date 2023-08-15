@@ -85,7 +85,7 @@ class MediaViewModel @Inject constructor(
             is BaseResult.Success -> {
                 if (result.data) {
                     deleteMediaMutableLiveData.value = selectedItemList
-                    selectedItemList.clear()
+                    clearSelectionList()
                 }
             }
             is BaseResult.Failure -> {}
@@ -94,6 +94,10 @@ class MediaViewModel @Inject constructor(
 
     fun addSelectedItem(mediaFile: MediaFile) {
         selectedItemList.add(mediaFile)
+    }
+
+    fun clearSelectionList() {
+        selectedItemList.clear()
     }
 
 

@@ -113,8 +113,10 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
     }
 
-    private fun clearSelection(): Boolean? =
+    private fun clearSelection() {
         oneAdapter.modules.itemSelectionModule?.actions?.clearSelection()
+        viewModel.clearSelectionList()
+    }
 
 
     private fun updateMenusOnSelection(isSelectionActive: Boolean) {
@@ -143,7 +145,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun showFilterBottomSheet() {
         getMimeByMediaType()?.let { type ->
             FilterBottomSheet.newInstance(type).apply {
-                onFilterApplyClick = { filters, ->
+                onFilterApplyClick = { filters ->
                     viewModel.applyFilter(filters)
                 }
             }.show(childFragmentManager, FilterBottomSheet.TAG)
@@ -189,7 +191,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     private fun initAdapter() {
         oneAdapter = OneAdapter(binding.recyclerView) {
-            itemModules += getItemModule()!!
+            itemModules += getItemModule()!! //Todo null case module
             itemSelectionModule = MediaSelectionModule().apply {
                 selection = this@MediaFragment
             }

@@ -12,7 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -37,14 +36,4 @@ class MainActivity : AppCompatActivity() {
         findNavController(R.id.base_nav_host).navigate(destId)
     }
 
-
-    fun searchFile() {
-        val path = Environment.getExternalStorageDirectory().absolutePath
-        val spath = "/Download"
-        val fullPath = File(path + File.separator + spath)
-        val files = fullPath.listFiles()
-        if (files != null) {
-            Log.d("emre", files.toString())
-        }
-    }
 }
