@@ -37,4 +37,15 @@ class MediaStoreProvider @Inject constructor(private val mediaStoreBuilder: Medi
             BaseResult.Failure(e)
         }
     }
+
+    suspend fun moveMedia(sourceMedias: List<Media>, destinationPath: String): BaseResult<Boolean> {
+        return try {
+            withContext(Dispatchers.IO) {
+                val result = mediaStoreBuilder.build().moveMedia(sourceMedias, destinationPath)
+                BaseResult.Success(result)
+            }
+        } catch (e: Exception) {
+            BaseResult.Failure(e)
+        }
+    }
 }

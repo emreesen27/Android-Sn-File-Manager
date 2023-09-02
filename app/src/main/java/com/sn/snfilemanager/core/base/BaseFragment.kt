@@ -13,6 +13,8 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.visible
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
 
@@ -37,9 +39,9 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setActionBarStatus()
         getMenuResId()?.let { menuId ->
             initMenu(menuId)
-            setActionBarStatus()
         }
         return binding.root
     }
@@ -69,9 +71,12 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
 
     private fun setActionBarStatus() {
         if (getActionBarStatus()) {
+            setToolbarVisibility(true)
             (requireActivity() as? AppCompatActivity)?.let { activity ->
                 activity.setSupportActionBar(activity.findViewById(R.id.toolbar))
             }
+        } else {
+            setToolbarVisibility(false)
         }
     }
 
@@ -80,6 +85,12 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     }
 
     fun getToolbar(): Toolbar? = toolbar
+
+    private fun setToolbarVisibility(value: Boolean) {
+        activity?.findViewById<Toolbar>(R.id.toolbar)?.apply {
+            if (value) visible() else gone()
+        }
+    }
 
     private fun initMenu(menuId: Int) {
         requireActivity().addMenuProvider(object : MenuProvider {

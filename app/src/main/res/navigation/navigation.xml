@@ -41,7 +41,7 @@
 
         <action
             android:id="@+id/action_home_image"
-            app:destination="@+id/image_list_fragment" />
+            app:destination="@+id/media_list_fragment" />
 
         <action
             android:id="@+id/action_home_file"
@@ -50,9 +50,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/image_list_fragment"
+        android:id="@+id/media_list_fragment"
         android:name="com.sn.snfilemanager.feature.media.presentation.MediaFragment"
         tools:layout="@layout/fragment_media">
+
+        <action
+            android:id="@+id/action_media_picker"
+            app:destination="@+id/path_picker_fragment"
+            />
 
         <argument
             android:name="mediaType"
@@ -73,6 +78,14 @@
         <argument
             android:name="storageArgs"
             app:argType="com.sn.snfilemanager.core.util.RootPath" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/path_picker_fragment"
+        android:name="com.sn.snfilemanager.pathpicker.PathPickerFragment"
+        tools:layout="@layout/fragment_path_picker">
 
     </fragment>
 

@@ -8,11 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
 import com.sn.snfilemanager.core.util.MimeTypes
-import com.sn.snfilemanager.providers.preferences.MySharedPreferences
-import com.sn.snfilemanager.providers.preferences.PrefsTag
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
 import com.sn.snfilemanager.providers.mediastore.toMedia
+import com.sn.snfilemanager.providers.preferences.MySharedPreferences
+import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,6 +37,8 @@ class MediaViewModel @Inject constructor(
     private val deleteMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val deleteMediaLiveData: LiveData<List<MediaFile>?> = deleteMediaMutableLiveData
 
+    private val moveMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
+    val moveMediaLiveData: LiveData<List<MediaFile>> = moveMediaMutableLiveData
 
     private fun getFilteredMediaTypes(): MutableSet<String>? =
         when (mediaType) {
@@ -92,12 +94,33 @@ class MediaViewModel @Inject constructor(
         }
     }
 
+    fun moveMedia(path: String) = viewModelScope.launch() {
+        when (val result = mediaStoreProvider.moveMedia(
+            selectedItemList.map { it.toMedia() },
+            path
+        )) {
+            is BaseResult.Success -> {
+                result.data.let { value ->
+                    if (value) {
+                        moveMediaMutableLiveData.value = selectedItemList
+                        clearSelectionList()
+                    }
+                }
+            }
+            is BaseResult.Failure -> {}
+        }
+    }
+
     fun addSelectedItem(mediaFile: MediaFile) {
-        selectedItemList.add(mediaFile)
+        selectedItemList.run {
+            if (!contains(mediaFile))
+                add(mediaFile)
+        }
     }
 
     fun clearSelectionList() {
-        selectedItemList.clear()
+        if (selectedItemList.isNotEmpty())
+            selectedItemList.clear()
     }
 
 

@@ -7,21 +7,22 @@ import com.idanatz.oneadapter.OneAdapter
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
+import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.media.module.*
 import com.sn.snfilemanager.feature.sheet.FilterBottomSheet
 import com.sn.snfilemanager.feature.sheet.SearchBottomSheet
-import com.sn.snfilemanager.core.util.MimeTypes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     MediaSelectionModule.Selection {
 
-    private lateinit var oneAdapter: OneAdapter
+    private var oneAdapter: OneAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
 
     override fun getViewModelClass() = MediaViewModel::class.java
@@ -60,18 +61,22 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         initAdapter()
         initOperationsMenuClicks()
         handleBackPressed()
+        handlePathSelected()
     }
 
     override fun observeData() {
         observe(viewModel.getMediaLiveData) { data ->
-            oneAdapter.setItems(data)
+            oneAdapter?.setItems(data)
         }
         observe(viewModel.deleteMediaLiveData) { result ->
             if (result != null) {
-                oneAdapter.remove(result)
+                oneAdapter?.remove(result)
                 clearSelection()
                 updateMenusOnSelection(false)
             }
+        }
+        observe(viewModel.moveMediaLiveData) { result ->
+            oneAdapter?.remove(result)
         }
     }
 
@@ -87,10 +92,16 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         updateMenusOnSelection(false)
     }
 
+    private fun handlePathSelected() {
+        getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
+            viewModel.moveMedia(path)
+        }
+    }
+
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                oneAdapter.modules.itemSelectionModule?.actions?.let { action ->
+                oneAdapter?.modules?.itemSelectionModule?.actions?.let { action ->
                     if (action.isSelectionActive()) {
                         clearSelection()
                         updateMenusOnSelection(false)
@@ -110,11 +121,21 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             a.setOnClickListener {
                 viewModel.deleteMedia()
             }
+            b.setOnClickListener {
+                updateMenusOnSelection(false)
+                oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+                navigatePathSelection()
+            }
         }
     }
 
+    private fun navigatePathSelection() {
+        navigate(MediaFragmentDirections.actionMediaPicker())
+    }
+
+
     private fun clearSelection() {
-        oneAdapter.modules.itemSelectionModule?.actions?.clearSelection()
+        oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
         viewModel.clearSelectionList()
     }
 
@@ -125,14 +146,15 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             findItem(R.id.action_filter)?.isVisible = !isSelectionActive
             findItem(R.id.action_cancel)?.isVisible = isSelectionActive
         }
-        if (isSelectionActive)
+        if (isSelectionActive) {
             binding.bottomOperationsMenu.visible()
-        else
+        } else {
             binding.bottomOperationsMenu.gone()
+        }
     }
 
     private fun updateToolbarTitleOnSelection(selectedCount: Int) {
-        val selectionModule = oneAdapter.modules.itemSelectionModule
+        val selectionModule = oneAdapter?.modules?.itemSelectionModule
         getToolbar()?.title = selectionModule?.actions?.run {
             if (isSelectionActive()) {
                 getString(R.string.selected_count, selectedCount)
@@ -190,10 +212,12 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
 
     private fun initAdapter() {
-        oneAdapter = OneAdapter(binding.recyclerView) {
-            itemModules += getItemModule()!! //Todo null case module
-            itemSelectionModule = MediaSelectionModule().apply {
-                selection = this@MediaFragment
+        if (oneAdapter == null) {
+            oneAdapter = OneAdapter(binding.recyclerView) {
+                itemModules += getItemModule()!! //Todo null case module
+                itemSelectionModule = MediaSelectionModule().apply {
+                    selection = this@MediaFragment
+                }
             }
         }
     }

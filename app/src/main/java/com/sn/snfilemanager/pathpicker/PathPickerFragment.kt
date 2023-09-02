@@ -1,60 +1,86 @@
 package com.sn.snfilemanager.pathpicker
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
+import com.idanatz.oneadapter.OneAdapter
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.base.BaseFragment
+import com.sn.snfilemanager.core.extensions.setNavigationResult
+import com.sn.snfilemanager.core.util.RootPath
+import com.sn.snfilemanager.databinding.FragmentPathPickerBinding
+import com.sn.snfilemanager.feature.files.data.toFileModel
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class PathPickerFragment : BaseFragment<FragmentPathPickerBinding, PathPickerViewModel>() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [PathPickerFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class PathPickerFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var oneAdapter: OneAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun getViewModelClass() = PathPickerViewModel::class.java
+
+    override fun getViewBinding() = FragmentPathPickerBinding.inflate(layoutInflater)
+
+    override fun getActionBarStatus() = true
+
+    override fun getMenuResId() = R.menu.menu_path_picker
+
+    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
+        R.id.action_done -> {
+            actionMoveFile()
+            true
+        }
+        R.id.action_new_folder -> {
+            true
+        }
+        else -> super.onMenuItemSelected(menuItemId)
+    }
+
+    override fun setupViews() {
+        initAdapter()
+        handleBackPressed()
+        updateList(viewModel.getStoragePath(RootPath.INTERNAL))
+    }
+
+
+    private fun actionMoveFile() {
+        setNavigationResult(viewModel.currentPath.toString(), "path")
+        findNavController().popBackStack()
+    }
+
+    private fun updateList(directoryPath: String) {
+        with(viewModel) {
+            currentPath = directoryPath
+            updateDirectoryList(directoryPath)
+            oneAdapter.setItems(getDirectoryList(directoryPath).map { it.toFileModel() })
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_path_picker, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PathPickerFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PathPickerFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun initAdapter() {
+        oneAdapter = OneAdapter(binding.recycler) {
+            itemModules += DirectoryItemModule().apply {
+                onClick = { file ->
+                    if (file.isDirectory) {
+                        updateList(file.absolutePath)
+                    }
                 }
             }
+        }
     }
+
+    private fun handleBackPressed() {
+        val directoryList = viewModel.getDirectoryList()
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (directoryList.size > 1) {
+                    directoryList.removeAt(directoryList.lastIndex)
+                    updateList(directoryList.last())
+                } else {
+                    isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
 }
