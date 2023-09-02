@@ -20,13 +20,13 @@ class FilesListViewModel @Inject constructor(
         else -> filePathProvider.downloadDirectoryPath
     }
 
-    fun updateDirectoryList(directoryPath: String) {
-        if (!directoryList.contains(directoryPath))
-            directoryList.add(directoryPath)
+    fun updateDirectoryList(path: String) {
+        if (!directoryList.contains(path))
+            directoryList.add(path)
     }
 
-    fun getFilesList(directoryPath: String): List<File> {
-        val directory = File(directoryPath)
+    fun getFilesList(path: String): List<File> {
+        val directory = File(path)
         return directory.listFiles()?.toList() ?: emptyList()
     }
 

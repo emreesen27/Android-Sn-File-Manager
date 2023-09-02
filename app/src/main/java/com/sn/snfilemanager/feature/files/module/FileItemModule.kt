@@ -12,8 +12,7 @@ import com.sn.snfilemanager.core.util.DirectoryType
 import com.sn.snfilemanager.core.util.FileExtension
 import com.sn.snfilemanager.feature.files.data.FileModel
 
-class FileItemModule(val context: Context) :
-    ItemModule<FileModel>() {
+class FileItemModule(val context: Context) : ItemModule<FileModel>() {
 
     var onClick: ((FileModel) -> Unit)? = null
 

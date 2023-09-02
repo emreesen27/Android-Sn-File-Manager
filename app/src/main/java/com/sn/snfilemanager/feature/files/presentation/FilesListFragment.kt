@@ -28,10 +28,10 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
 
     }
 
-    private fun updateFileList(directoryPath: String) {
+    private fun updateFileList(path: String) {
         with(viewModel) {
-            updateDirectoryList(directoryPath)
-            oneAdapter.setItems(getFilesList(directoryPath).map { it.toFileModel() })
+            updateDirectoryList(path)
+            oneAdapter.setItems(getFilesList(path).map { it.toFileModel() })
         }
     }
 
