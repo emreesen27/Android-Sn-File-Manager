@@ -1,3 +1,7 @@
 [submodule "mediastorepv"]
 	path = mediastorepv
 	url = https://github.com/emreesen27/media-store
+[submodule "filepicker"]
+	path = filepicker
+	url = https://github.com/emreesen27/AndroidFilePicker
+	branch = sn-file-manager

@@ -66,6 +66,10 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
+        binding.btnCancel.click {
+            dismiss()
+        }
+
     }
 
     private fun setArguments() {
@@ -90,7 +94,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         prefsTag?.let { sharedPreferences.getStringArray(it) }
 
     private fun clickApply() {
-        binding.btnApply.setOnClickListener {
+        binding.btnApply.click {
             val ids = binding.chipsGroup.checkedChipIds
             val chips: MutableSet<String> = hashSetOf()
 
