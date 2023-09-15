@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
@@ -15,6 +16,7 @@ import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,9 +26,11 @@ class MediaViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var fullMediaList: List<MediaFile>? = null
+    private var conflictList: MutableList<MediaFile> = mutableListOf()
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
     private var mediaType: MediaType? = null
     private var isApkFile: Boolean = false
+    var selectedPath: String? = null
 
     private val getMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
     val getMediaLiveData: LiveData<List<MediaFile>> = getMediaMutableLiveData
@@ -37,8 +41,13 @@ class MediaViewModel @Inject constructor(
     private val deleteMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val deleteMediaLiveData: LiveData<List<MediaFile>?> = deleteMediaMutableLiveData
 
-    private val moveMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
-    val moveMediaLiveData: LiveData<List<MediaFile>> = moveMediaMutableLiveData
+    private val moveMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> =
+        MutableLiveData()
+    val moveMediaLiveData: LiveData<Event<List<MediaFile>>> = moveMediaMutableLiveData
+
+    private val conflictMutableLiveData: MutableLiveData<Event<MutableList<MediaFile>>> =
+        MutableLiveData()
+    val conflictMediaLiveData: LiveData<Event<MutableList<MediaFile>>> = conflictMutableLiveData
 
     private fun getFilteredMediaTypes(): MutableSet<String>? =
         when (mediaType) {
@@ -94,20 +103,33 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    fun moveMedia(path: String) = viewModelScope.launch() {
-        when (val result = mediaStoreProvider.moveMedia(
-            selectedItemList.map { it.toMedia() },
-            path
-        )) {
-            is BaseResult.Success -> {
-                result.data.let { value ->
-                    if (value) {
-                        moveMediaMutableLiveData.value = selectedItemList
-                        clearSelectionList()
-                    }
+    fun moveMedia(checkConflict: Boolean = false) {
+        selectedPath?.let { path ->
+            if (checkConflict) {
+                val conflict = checkForConflicts(path)
+                if (conflict.isNotEmpty()) {
+                    conflictMutableLiveData.value = Event(conflict)
+                    return
                 }
             }
-            is BaseResult.Failure -> {}
+
+            viewModelScope.launch {
+                when (val result = mediaStoreProvider.moveMedia(
+                    selectedItemList.map { it.toMedia() },
+                    path
+                )) {
+                    is BaseResult.Success -> {
+                        result.data.let { value ->
+                            if (value) {
+                                moveMediaMutableLiveData.value = Event(selectedItemList)
+                                clearSelectionList()
+                                clearConflictList()
+                            }
+                        }
+                    }
+                    is BaseResult.Failure -> {}
+                }
+            }
         }
     }
 
@@ -144,5 +166,23 @@ class MediaViewModel @Inject constructor(
         }
     }
 
+    private fun checkForConflicts(path: String): MutableList<MediaFile> {
+        selectedItemList.removeIf { path == it.data.substringBeforeLast("/") }
+        return selectedItemList.filter { File(path, it.name).exists() }.toMutableList()
+    }
+
+    fun clearConflictList() {
+        if (conflictList.isNotEmpty())
+            conflictList.clear()
+    }
+
+    fun updateSelectionList(newList: MutableList<MediaFile>) {
+        for (item in newList) {
+            val index = selectedItemList.indexOf(item)
+            if (index != -1) {
+                selectedItemList[index] = item
+            }
+        }
+    }
 }
 

@@ -37,4 +37,5 @@
     <string name="all">all</string>
     <string name="confirm">Confirm</string>
     <string name="move">move</string>
+    <string name="conflict_warning">Conflict found in these files</string>
 </resources>
