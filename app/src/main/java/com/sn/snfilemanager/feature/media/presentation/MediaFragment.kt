@@ -8,10 +8,7 @@ import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.core.extensions.getNavigationResult
-import com.sn.snfilemanager.core.extensions.gone
-import com.sn.snfilemanager.core.extensions.observe
-import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.core.extensions.*
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.conflict.ConflictDialog
@@ -146,13 +143,12 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
-    //Todo buraya bakılacak menu tasarlanınca
     private fun initOperationsMenuClicks() {
         with(binding) {
-            a.setOnClickListener {
-                viewModel.deleteMedia()
-            }
-            b.setOnClickListener {
+            tvDelete.click { viewModel.deleteMedia() }
+            tvCopy.click { /* todo*/ }
+            tvShare.click { /* todo*/ }
+            tvMove.click {
                 updateMenusOnSelection(false)
                 oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
                 navigatePathSelection()

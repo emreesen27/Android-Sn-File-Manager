@@ -38,4 +38,7 @@
     <string name="confirm">Confirm</string>
     <string name="move">move</string>
     <string name="conflict_warning">Conflict found in these files</string>
+    <string name="delete">delete</string>
+    <string name="copy">copy</string>
+    <string name="share">share</string>
 </resources>
