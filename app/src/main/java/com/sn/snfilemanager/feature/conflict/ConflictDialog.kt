@@ -31,6 +31,7 @@ class ConflictDialog(
         initAdapter()
         initView()
         setItems()
+        initRecyclerLayoutChangeListener()
     }
 
     private fun setItems() {
@@ -72,4 +73,35 @@ class ConflictDialog(
             }
         }
     }
+
+    private fun initRecyclerLayoutChangeListener() {
+        with(binding.recycler) {
+            addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                val layoutManager = layoutManager
+                val adapter = adapter
+
+                if (layoutManager != null && adapter != null) {
+                    val itemCount = adapter.itemCount
+                    val height = calculateRecyclerViewHeight(itemCount)
+                    val newLayoutParams = window?.attributes
+                    newLayoutParams?.height = height
+                    window?.attributes = newLayoutParams
+                }
+            }
+        }
+    }
+
+    private fun calculateRecyclerViewHeight(itemCount: Int): Int {
+        val itemHeightInDp = context.resources.getDimension(com.intuit.sdp.R.dimen._50sdp)
+        val minHeightInDp = context.resources.getDimension(com.intuit.sdp.R.dimen._300sdp)
+        val maxHeightInDp = context.resources.getDimension(com.intuit.sdp.R.dimen._500sdp)
+        val calculatedHeightInDp = itemCount * itemHeightInDp
+
+        return when {
+            calculatedHeightInDp < minHeightInDp -> minHeightInDp.toInt()
+            calculatedHeightInDp > maxHeightInDp -> maxHeightInDp.toInt()
+            else -> calculatedHeightInDp.toInt()
+        }
+    }
+
 }

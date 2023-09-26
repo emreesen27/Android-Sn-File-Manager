@@ -20,10 +20,10 @@
 
         <View
             android:id="@+id/center_view"
-            android:layout_width="1dp"
-            android:layout_height="40dp"
+            android:layout_width="0.5dp"
+            android:layout_height="@dimen/_40sdp"
             android:layout_marginVertical="@dimen/_5sdp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/divider_color"
             app:layout_constraintBottom_toBottomOf="@+id/container"
             app:layout_constraintEnd_toEndOf="@+id/container"
             app:layout_constraintHorizontal_bias="0.5"
