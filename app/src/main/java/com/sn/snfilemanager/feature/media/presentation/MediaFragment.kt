@@ -4,23 +4,25 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
+import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.data.MediaType
+import com.sn.mediastorepv.util.MediaScanCallback
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.core.extensions.getNavigationResult
-import com.sn.snfilemanager.core.extensions.gone
-import com.sn.snfilemanager.core.extensions.observe
-import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.core.extensions.*
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
+import com.sn.snfilemanager.feature.conflict.ConflictDialog
+import com.sn.snfilemanager.feature.conflict.ConflictDialogListener
 import com.sn.snfilemanager.feature.media.module.*
 import com.sn.snfilemanager.feature.sheet.FilterBottomSheet
 import com.sn.snfilemanager.feature.sheet.SearchBottomSheet
+import com.sn.snfilemanager.providers.mediastore.MediaFile
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
-    MediaSelectionModule.Selection {
+    MediaSelectionModule.Selection, ConflictDialogListener {
 
     private var oneAdapter: OneAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
@@ -75,8 +77,25 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 updateMenusOnSelection(false)
             }
         }
-        observe(viewModel.moveMediaLiveData) { result ->
-            oneAdapter?.remove(result)
+        observe(viewModel.moveMediaLiveData) { event ->
+            event.getContentIfNotHandled()?.let { list ->
+                MediaScannerBuilder()
+                    .addContext(requireContext())
+                    .addMediaList(list)
+                    .addCallback(object : MediaScanCallback {
+                        override fun onMediaScanned(filePath: String) {
+                            viewModel.getMedia()
+                        }
+                    }).build().scanMediaFiles()
+            }
+        }
+        observe(viewModel.conflictMediaLiveData) { event ->
+            event.getContentIfNotHandled()?.let { list ->
+                ConflictDialog(requireContext(), list, this@MediaFragment).apply {
+                }.also {
+                    it.show()
+                }
+            }
         }
     }
 
@@ -92,9 +111,26 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         updateMenusOnSelection(false)
     }
 
+    override fun onApply(newList: MutableList<MediaFile>) {
+        with(viewModel) {
+            updateSelectionList(newList)
+            moveMedia()
+        }
+    }
+
+    override fun onCancel() {
+        with(viewModel) {
+            clearConflictList()
+            clearSelectionList()
+        }
+    }
+
     private fun handlePathSelected() {
         getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
-            viewModel.moveMedia(path)
+            with(viewModel) {
+                selectedPath = path
+                moveMedia(true)
+            }
         }
     }
 
@@ -115,13 +151,12 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
-    //Todo buraya bakılacak menu tasarlanınca
     private fun initOperationsMenuClicks() {
         with(binding) {
-            a.setOnClickListener {
-                viewModel.deleteMedia()
-            }
-            b.setOnClickListener {
+            tvDelete.click { viewModel.deleteMedia() }
+            tvCopy.click { /* todo*/ }
+            tvShare.click { /* todo*/ }
+            tvMove.click {
                 updateMenusOnSelection(false)
                 oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
                 navigatePathSelection()

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_5sdp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_file_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/app_name"
+        android:textColor="@color/first_text_color"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/tv_file_name">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rb_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/radio_state_list"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_3sdp"
+            android:text="@string/skip"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_10ssp" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rb_keep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/radio_state_list"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_3sdp"
+            android:text="@string/keep_both"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_10ssp" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rb_overwrite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/radio_state_list"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_3sdp"
+            android:text="@string/overwrite"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_10ssp" />
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/divider_color"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

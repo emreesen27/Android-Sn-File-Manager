@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/_300sdp"
+    android:padding="@dimen/_5sdp">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/conflict_warning"
+        android:textAlignment="center"
+        android:textColor="@color/first_text_color"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/center_view"
+        app:layout_constraintEnd_toEndOf="@+id/container"
+        app:layout_constraintStart_toStartOf="@+id/container"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <View
+        android:id="@+id/center_view"
+        android:layout_width="0.5dp"
+        android:layout_height="@dimen/_40sdp"
+        android:background="@color/divider_color"
+        app:layout_constraintBottom_toBottomOf="@+id/container"
+        app:layout_constraintEnd_toEndOf="@+id/container"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/container" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/cancel"
+        android:textColor="@color/app_buton_state_list"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintBottom_toBottomOf="@id/center_view"
+        app:layout_constraintEnd_toStartOf="@+id/center_view"
+        app:layout_constraintTop_toTopOf="@id/center_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/apply"
+        android:textColor="@color/app_buton_state_list"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintBottom_toBottomOf="@id/center_view"
+        app:layout_constraintStart_toEndOf="@+id/center_view"
+        app:layout_constraintTop_toTopOf="@id/center_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

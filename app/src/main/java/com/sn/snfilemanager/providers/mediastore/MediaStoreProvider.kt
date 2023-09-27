@@ -38,7 +38,7 @@ class MediaStoreProvider @Inject constructor(private val mediaStoreBuilder: Medi
         }
     }
 
-    suspend fun moveMedia(sourceMedias: List<Media>, destinationPath: String): BaseResult<Boolean> {
+    suspend fun moveMedia(sourceMedias: List<Media>, destinationPath: String): BaseResult<MutableList<Pair<String, String>>? > {
         return try {
             withContext(Dispatchers.IO) {
                 val result = mediaStoreBuilder.build().moveMedia(sourceMedias, destinationPath)
