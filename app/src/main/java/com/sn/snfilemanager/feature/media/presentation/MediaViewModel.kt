@@ -41,9 +41,9 @@ class MediaViewModel @Inject constructor(
     private val deleteMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val deleteMediaLiveData: LiveData<List<MediaFile>?> = deleteMediaMutableLiveData
 
-    private val moveMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> =
+    private val moveMediaMutableLiveData: MutableLiveData<Event<MutableList<Pair<String, String>>?>> =
         MutableLiveData()
-    val moveMediaLiveData: LiveData<Event<List<MediaFile>>> = moveMediaMutableLiveData
+    val moveMediaLiveData: LiveData<Event<MutableList<Pair<String, String>>?>> = moveMediaMutableLiveData
 
     private val conflictMutableLiveData: MutableLiveData<Event<MutableList<MediaFile>>> =
         MutableLiveData()
@@ -120,8 +120,8 @@ class MediaViewModel @Inject constructor(
                 )) {
                     is BaseResult.Success -> {
                         result.data.let { value ->
-                            if (value) {
-                                moveMediaMutableLiveData.value = Event(selectedItemList)
+                            if (value.isNullOrEmpty().not()) {
+                                moveMediaMutableLiveData.value = Event(value)
                                 clearSelectionList()
                                 clearConflictList()
                             }

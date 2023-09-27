@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
-import com.sn.mediastorepv.data.ConflictStrategy
+import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.data.MediaType
+import com.sn.mediastorepv.util.MediaScanCallback
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.*
@@ -78,7 +79,14 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
         observe(viewModel.moveMediaLiveData) { event ->
             event.getContentIfNotHandled()?.let { list ->
-                oneAdapter?.remove(list.filterNot { it.conflict == ConflictStrategy.KEEP_BOTH })
+                MediaScannerBuilder()
+                    .addContext(requireContext())
+                    .addMediaList(list)
+                    .addCallback(object : MediaScanCallback {
+                        override fun onMediaScanned(filePath: String) {
+                            viewModel.getMedia()
+                        }
+                    }).build().scanMediaFiles()
             }
         }
         observe(viewModel.conflictMediaLiveData) { event ->
