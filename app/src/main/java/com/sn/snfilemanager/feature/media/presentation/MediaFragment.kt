@@ -232,16 +232,16 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun getItemModule() =
         when (args.mediaType) {
             MediaType.IMAGES -> ImageItemModule().apply {
-                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
             MediaType.VIDEOS -> VideoItemModule().apply {
-                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
             MediaType.AUDIOS -> AudioItemModule().apply {
-                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
             MediaType.FILES -> DocumentItemModule().apply {
-                onSelected = { model, _ -> viewModel.addSelectedItem(model) }
+                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
             else -> null
         }

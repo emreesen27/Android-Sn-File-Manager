@@ -43,7 +43,8 @@ class MediaViewModel @Inject constructor(
 
     private val moveMediaMutableLiveData: MutableLiveData<Event<MutableList<Pair<String, String>>?>> =
         MutableLiveData()
-    val moveMediaLiveData: LiveData<Event<MutableList<Pair<String, String>>?>> = moveMediaMutableLiveData
+    val moveMediaLiveData: LiveData<Event<MutableList<Pair<String, String>>?>> =
+        moveMediaMutableLiveData
 
     private val conflictMutableLiveData: MutableLiveData<Event<MutableList<MediaFile>>> =
         MutableLiveData()
@@ -133,10 +134,13 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    fun addSelectedItem(mediaFile: MediaFile) {
-        selectedItemList.run {
-            if (!contains(mediaFile))
-                add(mediaFile)
+    fun addSelectedItem(mediaFile: MediaFile, selected: Boolean) {
+        if (selected) {
+            if (mediaFile !in selectedItemList) {
+                selectedItemList.add(mediaFile)
+            }
+        } else {
+            selectedItemList.remove(mediaFile)
         }
     }
 
