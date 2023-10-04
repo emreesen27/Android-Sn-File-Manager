@@ -15,8 +15,8 @@ import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.conflict.ConflictDialog
 import com.sn.snfilemanager.feature.conflict.ConflictDialogListener
 import com.sn.snfilemanager.feature.media.module.*
-import com.sn.snfilemanager.feature.sheet.FilterBottomSheet
-import com.sn.snfilemanager.feature.sheet.SearchBottomSheet
+import com.sn.snfilemanager.feature.filter.FilterBottomSheet
+import com.sn.snfilemanager.feature.search.presentation.SearchBottomSheet
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,7 +37,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
         R.id.action_search -> {
-            showSearchBottomSheet()
+            //showSearchBottomSheet()
+            navigate(MediaFragmentDirections.actionMediaSearch())
             true
         }
         R.id.action_cancel -> {
@@ -67,33 +68,28 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     override fun observeData() {
-        observe(viewModel.getMediaLiveData) { data ->
-            oneAdapter?.setItems(data)
-        }
-        observe(viewModel.deleteMediaLiveData) { result ->
-            if (result != null) {
-                oneAdapter?.remove(result)
-                clearSelection()
-                updateMenusOnSelection(false)
+        viewModel.run {
+            observe(getMediaLiveData) { data ->
+                oneAdapter?.setItems(data)
             }
-        }
-        observe(viewModel.moveMediaLiveData) { event ->
-            event.getContentIfNotHandled()?.let { list ->
-                MediaScannerBuilder()
-                    .addContext(requireContext())
-                    .addMediaList(list)
-                    .addCallback(object : MediaScanCallback {
-                        override fun onMediaScanned(filePath: String) {
-                            viewModel.getMedia()
-                        }
-                    }).build().scanMediaFiles()
+            observe(deleteMediaLiveData) { result ->
+                if (result != null) {
+                    oneAdapter?.remove(result)
+                    clearSelection()
+                    updateMenusOnSelection(false)
+                }
             }
-        }
-        observe(viewModel.conflictMediaLiveData) { event ->
-            event.getContentIfNotHandled()?.let { list ->
-                ConflictDialog(requireContext(), list, this@MediaFragment).apply {
-                }.also {
-                    it.show()
+            observe(moveMediaLiveData) { event ->
+                event.getContentIfNotHandled()?.let { mediaList ->
+                    buildMediaScanner(mediaList)
+                }
+            }
+            observe(conflictMediaLiveData) { event ->
+                event.getContentIfNotHandled()?.let { list ->
+                    ConflictDialog(requireContext(), list, this@MediaFragment).apply {
+                    }.also {
+                        it.show()
+                    }
                 }
             }
         }
@@ -149,6 +145,17 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
+    private fun buildMediaScanner(mediaList: List<Pair<String, String>>) {
+        MediaScannerBuilder()
+            .addContext(requireContext())
+            .addMediaList(mediaList)
+            .addCallback(object : MediaScanCallback {
+                override fun onMediaScanned(filePath: String) {
+                    viewModel.getMedia()
+                }
+            }).build().scanMediaFiles()
     }
 
     private fun initOperationsMenuClicks() {
