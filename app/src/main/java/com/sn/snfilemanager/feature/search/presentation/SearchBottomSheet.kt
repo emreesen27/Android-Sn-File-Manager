@@ -13,11 +13,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.idanatz.oneadapter.OneAdapter
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.*
+import com.sn.snfilemanager.core.util.FileExtension
 import com.sn.snfilemanager.databinding.BottomSheetSearchBinding
-import com.sn.snfilemanager.core.extensions.gone
-import com.sn.snfilemanager.core.extensions.hideKeyboard
-import com.sn.snfilemanager.core.extensions.observe
-import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.databinding.ItemFileBinding
+import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.feature.media.presentation.MediaViewModel
 import com.sn.snfilemanager.feature.media.module.SearchMediaItemModule
 

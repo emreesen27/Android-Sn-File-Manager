@@ -19,7 +19,7 @@ class DocumentItemModule : ItemModule<MediaFile>() {
 
     init {
         config {
-            layoutResource = R.layout.item_audio
+            layoutResource = R.layout.item_document
         }
         onBind { model, viewBinder, metaData ->
             viewBinder.bindings(ItemAudioBinding::bind).run {
