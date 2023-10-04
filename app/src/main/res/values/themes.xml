@@ -14,5 +14,6 @@
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialog</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
 </resources>

@@ -22,4 +22,8 @@
         <item name="android:textColor">@color/chip_text_color_state_list</item>
     </style>
 
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+    </style>
+
 </resources>
