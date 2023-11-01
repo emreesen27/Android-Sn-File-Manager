@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.media.module
+package com.sn.snfilemanager.feature.search.module
 
 import com.bumptech.glide.Glide
 import com.idanatz.oneadapter.external.modules.ItemModule
@@ -6,7 +6,6 @@ import com.idanatz.oneadapter.external.states.SelectionState
 import com.idanatz.oneadapter.external.states.SelectionStateConfig
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.gone
-import com.sn.snfilemanager.core.extensions.loadWithGlide
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.FileExtension
 import com.sn.snfilemanager.databinding.ItemSearchImageBinding
@@ -14,11 +13,7 @@ import com.sn.snfilemanager.providers.mediastore.MediaFile
 
 class SearchMediaItemModule : ItemModule<MediaFile>() {
 
-    interface Selected {
-        fun onSelected(model: MediaFile, selected: Boolean)
-    }
-
-    var selected: Selected? = null
+    var onSelected: ((MediaFile, Boolean) -> Unit)? = null
 
     init {
         config {
@@ -36,12 +31,13 @@ class SearchMediaItemModule : ItemModule<MediaFile>() {
                 selectionTrigger = SelectionStateConfig.SelectionTrigger.LongClick
             }
             onSelected { model, selectedItem ->
-                selected?.onSelected(model, selectedItem)
+                onSelected?.invoke(model, selectedItem)
             }
         }
     }
 
 
+    // Todo check loadWithGlide
     private fun updateUIForModel(model: MediaFile, binding: ItemSearchImageBinding) {
         with(binding) {
             ivPlay.gone()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<layout>
 
     <data>
 
@@ -12,24 +12,15 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/_5sdp">
-
-        <View
-            android:id="@+id/decor_view"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_3sdp"
-            android:layout_marginHorizontal="@dimen/_90sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/round"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        tools:context=".feature.search.presentation.SearchFragment">
 
         <androidx.appcompat.widget.SearchView
-            android:id="@+id/sv_search"
+            android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_25sdp"
@@ -37,22 +28,17 @@
             app:iconifiedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/decor_view"
+            app:layout_constraintTop_toTopOf="parent"
             app:queryHint="@string/search_image_hint" />
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_image_search"
+            android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:orientation="vertical"
-            android:visibility="@{vm.getMediaLiveData.empty ? View.GONE : View.VISIBLE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sv_search" />
-
+            app:layout_constraintTop_toBottomOf="@+id/search" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/av_no_data_found"
@@ -102,11 +88,76 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/av_no_data_found" />
 
-        <View
+        <LinearLayout
+            android:id="@+id/bottom_operations_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tv_nothing_found" />
+            android:background="@color/bg_color"
+            android:elevation="@dimen/_5sdp"
+            android:orientation="horizontal"
+            android:padding="@dimen/_10sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_delete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_delete"
+                android:drawablePadding="@dimen/_2sdp"
+                android:fontFamily="@font/adamina"
+                android:text="@string/delete"
+                android:textAlignment="center"
+                android:textColor="@color/first_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:fontFamily="@font/adamina" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_move"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_move"
+                android:drawablePadding="@dimen/_2sdp"
+                android:fontFamily="@font/adamina"
+                android:text="@string/move"
+                android:textAlignment="center"
+                android:textColor="@color/first_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:fontFamily="@font/adamina" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_copy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_copy"
+                android:drawablePadding="@dimen/_2sdp"
+                android:fontFamily="@font/adamina"
+                android:text="@string/copy"
+                android:textAlignment="center"
+                android:textColor="@color/first_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:fontFamily="@font/adamina" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_share"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_share"
+                android:drawablePadding="@dimen/_2sdp"
+                android:fontFamily="@font/adamina"
+                android:text="@string/share"
+                android:textAlignment="center"
+                android:textColor="@color/first_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:fontFamily="@font/adamina" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>
