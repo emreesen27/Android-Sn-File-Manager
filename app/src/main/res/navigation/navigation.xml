@@ -56,8 +56,11 @@
 
         <action
             android:id="@+id/action_media_picker"
-            app:destination="@+id/path_picker_fragment"
-            />
+            app:destination="@+id/path_picker_fragment" />
+
+        <action
+            android:id="@+id/action_media_search"
+            app:destination="@+id/search_fragment" />
 
         <argument
             android:name="mediaType"
@@ -89,5 +92,9 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.sn.snfilemanager.feature.search.presentation.SearchFragment"
+        tools:layout="@layout/fragment_search"/>
 
 </navigation>

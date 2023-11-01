@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.sheet
+package com.sn.snfilemanager.feature.filter
 
 import android.os.Bundle
 import android.view.LayoutInflater

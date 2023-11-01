@@ -16,7 +16,6 @@ import com.sn.snfilemanager.feature.conflict.ConflictDialog
 import com.sn.snfilemanager.feature.conflict.ConflictDialogListener
 import com.sn.snfilemanager.feature.media.module.*
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
-import com.sn.snfilemanager.feature.search.presentation.SearchBottomSheet
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +26,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private var oneAdapter: OneAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
 
+    override var useSharedViewModel: Boolean = true
     override fun getViewModelClass() = MediaViewModel::class.java
 
     override fun getViewBinding() = FragmentMediaBinding.inflate(layoutInflater)
@@ -224,17 +224,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             MediaType.FILES -> if (args.isApkFile.not()) MimeTypes.DOCUMENT else null
             else -> null
         }
-
-    private fun showSearchBottomSheet() {
-        SearchBottomSheet().apply {
-            onSearchClick = { query ->
-                viewModel.searchMedia(query)
-            }
-        }.show(
-            childFragmentManager,
-            SearchBottomSheet.TAG
-        )
-    }
 
     private fun getItemModule() =
         when (args.mediaType) {
