@@ -120,7 +120,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), Permiss
             ibDocuments.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES)) }
             ibApk.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES, true)) }
 
-            ibDownload.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.DOWNLOAD)) }
+            btnDownload.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.DOWNLOAD)) }
             btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.INTERNAL)) }
             btnExternalFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.EXTERNAL)) }
         }
