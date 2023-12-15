@@ -56,7 +56,7 @@ class MediaViewModel @Inject constructor(
             MediaType.IMAGES -> PrefsTag.FILTER_IMAGES
             MediaType.VIDEOS -> PrefsTag.FILTER_VIDEOS
             MediaType.AUDIOS -> PrefsTag.FILTER_AUDIOS
-            MediaType.FILES -> PrefsTag.FILTER_DOCUMENTS
+            MediaType.FILES -> if (documentType == DocumentType.ARCHIVE.name) PrefsTag.FILTER_ARCHIVES else PrefsTag.FILTER_DOCUMENTS
             else -> null
         }?.let { tag -> sharedPreferences.getStringArray(tag) }
 
@@ -75,8 +75,8 @@ class MediaViewModel @Inject constructor(
     private fun getDocumentType(): List<String> {
         return when (documentType) {
             DocumentType.APK.name -> MimeTypes.APK.values
-            DocumentType.ARCHIVE.name -> MimeTypes.ARCHIVE.values
-            else -> MimeTypes.DOCUMENT.values
+            DocumentType.ARCHIVE.name -> MimeTypes.ARCHIVES.values
+            else -> MimeTypes.DOCUMENTS.values
         }
     }
 

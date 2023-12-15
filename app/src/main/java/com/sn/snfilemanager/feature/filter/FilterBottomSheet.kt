@@ -81,7 +81,8 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             MimeTypes.IMAGES -> PrefsTag.FILTER_IMAGES
             MimeTypes.VIDEOS -> PrefsTag.FILTER_VIDEOS
             MimeTypes.AUDIOS -> PrefsTag.FILTER_AUDIOS
-            MimeTypes.DOCUMENT -> PrefsTag.FILTER_DOCUMENTS
+            MimeTypes.DOCUMENTS -> PrefsTag.FILTER_DOCUMENTS
+            MimeTypes.ARCHIVES -> PrefsTag.FILTER_ARCHIVES
             else -> null
         }
     }

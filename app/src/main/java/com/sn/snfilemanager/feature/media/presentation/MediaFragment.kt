@@ -34,9 +34,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun getActionBarStatus(): Boolean = true
 
-    override fun getMenuResId() = args.documentType?.let { type ->
-        if (type == DocumentType.APK.name) R.menu.menu_base else R.menu.menu_media
-    }
+    override fun getMenuResId() =
+        if (args.documentType == DocumentType.APK.name) R.menu.menu_base else R.menu.menu_media
 
     override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
         R.id.action_search -> {
@@ -229,7 +228,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             MediaType.IMAGES -> MimeTypes.IMAGES
             MediaType.VIDEOS -> MimeTypes.VIDEOS
             MediaType.AUDIOS -> MimeTypes.AUDIOS
-            MediaType.FILES -> MimeTypes.DOCUMENT
+            MediaType.FILES -> if (args.documentType == DocumentType.ARCHIVE.name) MimeTypes.ARCHIVES else MimeTypes.DOCUMENTS
             else -> null
         }
 
