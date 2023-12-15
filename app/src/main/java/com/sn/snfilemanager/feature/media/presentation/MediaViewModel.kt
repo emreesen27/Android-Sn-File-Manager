@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.providers.mediastore.MediaFile
@@ -29,11 +30,11 @@ class MediaViewModel @Inject constructor(
     private var conflictList: MutableList<MediaFile> = mutableListOf()
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
     private var mediaType: MediaType? = null
-    private var isApkFile: Boolean = false
+    private var documentType: String? = null
     var selectedPath: String? = null
 
-    private val getMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
-    val getMediaLiveData: LiveData<List<MediaFile>> = getMediaMutableLiveData
+    private val getMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> = MutableLiveData()
+    val getMediaLiveData: LiveData<Event<List<MediaFile>>> = getMediaMutableLiveData
 
     private val searchMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val searchMediaLiveData: LiveData<List<MediaFile>?> = searchMediaMutableLiveData
@@ -55,19 +56,27 @@ class MediaViewModel @Inject constructor(
             MediaType.IMAGES -> PrefsTag.FILTER_IMAGES
             MediaType.VIDEOS -> PrefsTag.FILTER_VIDEOS
             MediaType.AUDIOS -> PrefsTag.FILTER_AUDIOS
-            MediaType.FILES -> PrefsTag.FILTER_DOCUMENTS
+            MediaType.FILES -> if (documentType == DocumentType.ARCHIVE.name) PrefsTag.FILTER_ARCHIVES else PrefsTag.FILTER_DOCUMENTS
             else -> null
         }?.let { tag -> sharedPreferences.getStringArray(tag) }
 
     fun setArguments(args: MediaFragmentArgs) {
         mediaType = args.mediaType
-        isApkFile = args.isApkFile
+        documentType = args.documentType
     }
 
     private fun getMimeByMediaType(): List<String>? {
         return when (mediaType) {
-            MediaType.FILES -> if (isApkFile) MimeTypes.APK.values else MimeTypes.DOCUMENT.values
+            MediaType.FILES -> getDocumentType()
             else -> null
+        }
+    }
+
+    private fun getDocumentType(): List<String> {
+        return when (documentType) {
+            DocumentType.APK.name -> MimeTypes.APK.values
+            DocumentType.ARCHIVE.name -> MimeTypes.ARCHIVES.values
+            else -> MimeTypes.DOCUMENTS.values
         }
     }
 
@@ -82,9 +91,10 @@ class MediaViewModel @Inject constructor(
                         if (filteredMediaTypes != null)
                             applyFilter(filteredMediaTypes)
                         else
-                            getMediaMutableLiveData.value = mediaList
+                            getMediaMutableLiveData.value = Event(mediaList)
                     }
                 }
+
                 is BaseResult.Failure -> {
                     Log.d("err", result.exception.toString())
                 }
@@ -100,6 +110,7 @@ class MediaViewModel @Inject constructor(
                     clearSelectionList()
                 }
             }
+
             is BaseResult.Failure -> {}
         }
     }
@@ -128,6 +139,7 @@ class MediaViewModel @Inject constructor(
                             }
                         }
                     }
+
                     is BaseResult.Failure -> {}
                 }
             }
@@ -156,10 +168,10 @@ class MediaViewModel @Inject constructor(
 
     fun applyFilter(filter: MutableSet<String>) {
         if (filter.isEmpty()) {
-            fullMediaList?.let { getMediaMutableLiveData.value = it }
+            fullMediaList?.let { getMediaMutableLiveData.value = Event(it) }
         } else {
             fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
-                getMediaMutableLiveData.value = filteredMediaList
+                getMediaMutableLiveData.value = Event(filteredMediaList)
             }
         }
     }
