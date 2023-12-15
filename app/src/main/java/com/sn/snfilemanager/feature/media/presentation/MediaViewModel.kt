@@ -32,8 +32,8 @@ class MediaViewModel @Inject constructor(
     private var isApkFile: Boolean = false
     var selectedPath: String? = null
 
-    private val getMediaMutableLiveData: MutableLiveData<List<MediaFile>> = MutableLiveData()
-    val getMediaLiveData: LiveData<List<MediaFile>> = getMediaMutableLiveData
+    private val getMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> = MutableLiveData()
+    val getMediaLiveData: LiveData<Event<List<MediaFile>>> = getMediaMutableLiveData
 
     private val searchMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val searchMediaLiveData: LiveData<List<MediaFile>?> = searchMediaMutableLiveData
@@ -82,7 +82,7 @@ class MediaViewModel @Inject constructor(
                         if (filteredMediaTypes != null)
                             applyFilter(filteredMediaTypes)
                         else
-                            getMediaMutableLiveData.value = mediaList
+                            getMediaMutableLiveData.value = Event(mediaList)
                     }
                 }
                 is BaseResult.Failure -> {
@@ -156,10 +156,10 @@ class MediaViewModel @Inject constructor(
 
     fun applyFilter(filter: MutableSet<String>) {
         if (filter.isEmpty()) {
-            fullMediaList?.let { getMediaMutableLiveData.value = it }
+            fullMediaList?.let { getMediaMutableLiveData.value = Event(it) }
         } else {
             fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
-                getMediaMutableLiveData.value = filteredMediaList
+                getMediaMutableLiveData.value = Event(filteredMediaList)
             }
         }
     }

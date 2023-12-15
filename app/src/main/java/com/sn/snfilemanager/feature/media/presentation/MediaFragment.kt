@@ -69,8 +69,10 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun observeData() {
         viewModel.run {
-            observe(getMediaLiveData) { data ->
-                oneAdapter?.setItems(data)
+            observe(getMediaLiveData) { event ->
+                event.getContentIfNotHandled()?.let {data ->
+                    oneAdapter?.setItems(data)
+                }
             }
             observe(deleteMediaLiveData) { result ->
                 if (result != null) {
