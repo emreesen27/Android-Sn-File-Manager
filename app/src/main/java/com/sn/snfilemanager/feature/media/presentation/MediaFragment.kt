@@ -10,6 +10,7 @@ import com.sn.mediastorepv.util.MediaScanCallback
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.*
+import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.conflict.ConflictDialog
@@ -33,7 +34,9 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun getActionBarStatus(): Boolean = true
 
-    override fun getMenuResId() = if (args.isApkFile) R.menu.menu_base else R.menu.menu_media
+    override fun getMenuResId() = args.documentType?.let { type ->
+        if (type == DocumentType.APK.name) R.menu.menu_base else R.menu.menu_media
+    }
 
     override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
         R.id.action_search -> {
@@ -41,14 +44,17 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             navigate(MediaFragmentDirections.actionMediaSearch())
             true
         }
+
         R.id.action_cancel -> {
             clearSelection()
             true
         }
+
         R.id.action_filter -> {
             showFilterBottomSheet()
             true
         }
+
         else -> super.onMenuItemSelected(menuItemId)
     }
 
@@ -70,7 +76,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     override fun observeData() {
         viewModel.run {
             observe(getMediaLiveData) { event ->
-                event.getContentIfNotHandled()?.let {data ->
+                event.getContentIfNotHandled()?.let { data ->
                     oneAdapter?.setItems(data)
                 }
             }
@@ -223,7 +229,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             MediaType.IMAGES -> MimeTypes.IMAGES
             MediaType.VIDEOS -> MimeTypes.VIDEOS
             MediaType.AUDIOS -> MimeTypes.AUDIOS
-            MediaType.FILES -> if (args.isApkFile.not()) MimeTypes.DOCUMENT else null
+            MediaType.FILES -> MimeTypes.DOCUMENT
             else -> null
         }
 
@@ -232,15 +238,19 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             MediaType.IMAGES -> ImageItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
+
             MediaType.VIDEOS -> VideoItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
+
             MediaType.AUDIOS -> AudioItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
+
             MediaType.FILES -> DocumentItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
             }
+
             else -> null
         }
 

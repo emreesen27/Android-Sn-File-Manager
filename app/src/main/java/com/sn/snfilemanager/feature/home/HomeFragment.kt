@@ -16,6 +16,7 @@ import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.observe
+import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
 import com.sn.snfilemanager.feature.permission.PermissionDialog
@@ -118,7 +119,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), Permiss
             ibVideo.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.VIDEOS)) }
             ibSound.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.AUDIOS)) }
             ibDocuments.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES)) }
-            ibApk.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES, true)) }
+            ibApk.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES, DocumentType.APK.name)) }
+            ibArchives.click{ navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES, DocumentType.ARCHIVE.name)) }
 
             btnDownload.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.DOWNLOAD)) }
             btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.INTERNAL)) }

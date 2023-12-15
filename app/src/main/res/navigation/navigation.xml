@@ -67,9 +67,10 @@
             app:argType="com.sn.mediastorepv.data.MediaType" />
 
         <argument
-            android:name="isApkFile"
-            android:defaultValue="false"
-            app:argType="boolean" />
+            android:name="documentType"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="string"/>
 
     </fragment>
 

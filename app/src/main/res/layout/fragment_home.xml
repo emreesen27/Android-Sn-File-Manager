@@ -87,7 +87,7 @@
                         app:btnText="@string/documents" />
 
                     <com.sn.snfilemanager.components.ImageButton
-                        android:id="@+id/ib_download"
+                        android:id="@+id/ib_archives"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

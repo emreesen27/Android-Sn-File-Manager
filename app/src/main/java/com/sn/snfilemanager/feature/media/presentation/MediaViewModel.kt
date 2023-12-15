@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.providers.mediastore.MediaFile
@@ -29,7 +30,7 @@ class MediaViewModel @Inject constructor(
     private var conflictList: MutableList<MediaFile> = mutableListOf()
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
     private var mediaType: MediaType? = null
-    private var isApkFile: Boolean = false
+    private var documentType: String? = null
     var selectedPath: String? = null
 
     private val getMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> = MutableLiveData()
@@ -61,13 +62,21 @@ class MediaViewModel @Inject constructor(
 
     fun setArguments(args: MediaFragmentArgs) {
         mediaType = args.mediaType
-        isApkFile = args.isApkFile
+        documentType = args.documentType
     }
 
     private fun getMimeByMediaType(): List<String>? {
         return when (mediaType) {
-            MediaType.FILES -> if (isApkFile) MimeTypes.APK.values else MimeTypes.DOCUMENT.values
+            MediaType.FILES -> getDocumentType()
             else -> null
+        }
+    }
+
+    private fun getDocumentType(): List<String> {
+        return when (documentType) {
+            DocumentType.APK.name -> MimeTypes.APK.values
+            DocumentType.ARCHIVE.name -> MimeTypes.ARCHIVE.values
+            else -> MimeTypes.DOCUMENT.values
         }
     }
 
@@ -85,6 +94,7 @@ class MediaViewModel @Inject constructor(
                             getMediaMutableLiveData.value = Event(mediaList)
                     }
                 }
+
                 is BaseResult.Failure -> {
                     Log.d("err", result.exception.toString())
                 }
@@ -100,6 +110,7 @@ class MediaViewModel @Inject constructor(
                     clearSelectionList()
                 }
             }
+
             is BaseResult.Failure -> {}
         }
     }
@@ -128,6 +139,7 @@ class MediaViewModel @Inject constructor(
                             }
                         }
                     }
+
                     is BaseResult.Failure -> {}
                 }
             }
