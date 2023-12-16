@@ -50,7 +50,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), Permiss
             binding.btnFile.subTitle = getString(R.string.available_storage, memory)
         }
         observe(viewModel.availableExternalStorageLiveData) { memory ->
-            binding.btnExternalFile.subTitle = getString(R.string.available_storage, memory)
+            binding.btnExternalFile.subTitle =
+                memory?.let { getString(R.string.available_storage, it) }
+                    ?: getString(R.string.no_external_storage)
         }
     }
 
@@ -124,7 +126,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), Permiss
 
             btnDownload.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.DOWNLOAD)) }
             btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.INTERNAL)) }
-            btnExternalFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.EXTERNAL)) }
+            btnExternalFile.click {
+                viewModel.availableExternalStorageLiveData.value?.let {
+                    navigate(HomeFragmentDirections.actionHomeFile(RootPath.EXTERNAL))
+                }
+            }
         }
     }
 }
