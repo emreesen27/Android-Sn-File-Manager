@@ -115,11 +115,14 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun createChipsFromMimeTypes(mimeTypes: MimeTypes) {
+        val types = mimeTypes.values.toMutableList()
+        types.add(0, getString(R.string.all))
+
         val chipsGroup = binding.chipsGroup
         val chipsChoice = getChipsChoice()
         var isAllSelected: Boolean
 
-        for ((index, value) in mimeTypes.values.withIndex()) {
+        for ((index, value) in types.withIndex()) {
             if (index >= 8) break
             val chipLayout = layoutInflater.inflate(R.layout.layout_chip, chipsGroup, false) as Chip
 
