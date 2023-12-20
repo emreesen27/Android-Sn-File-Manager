@@ -9,14 +9,22 @@ import com.sn.mediastorepv.data.MediaType
 import com.sn.mediastorepv.util.MediaScanCallback
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.core.extensions.*
+import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.getNavigationResult
+import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.observe
+import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.conflict.ConflictDialog
 import com.sn.snfilemanager.feature.conflict.ConflictDialogListener
-import com.sn.snfilemanager.feature.media.module.*
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
+import com.sn.snfilemanager.feature.media.module.AudioItemModule
+import com.sn.snfilemanager.feature.media.module.DocumentItemModule
+import com.sn.snfilemanager.feature.media.module.ImageItemModule
+import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
+import com.sn.snfilemanager.feature.media.module.VideoItemModule
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -88,6 +96,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             }
             observe(moveMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { mediaList ->
+                    oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
                     buildMediaScanner(mediaList)
                 }
             }
@@ -125,6 +134,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         with(viewModel) {
             clearConflictList()
             clearSelectionList()
+            oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
         }
     }
 
@@ -172,7 +182,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             tvShare.click { /* todo*/ }
             tvMove.click {
                 updateMenusOnSelection(false)
-                oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
                 navigatePathSelection()
             }
         }
