@@ -15,7 +15,6 @@ data class MediaFile(
     val mediaType: MediaType,
     val uri: Uri?,
     val ext: String?,
-    var conflict: ConflictStrategy,
     val data: String
 ) : Diffable {
     override val uniqueIdentifier: Long
@@ -34,7 +33,6 @@ fun MediaFile.toMedia(): Media {
         mediaType = mediaType,
         uri = uri,
         ext = ext,
-        conflict = conflict,
         data = data
     )
 }
@@ -49,7 +47,6 @@ fun Media.toMediaFile(): MediaFile {
         mediaType = mediaType,
         uri = uri,
         ext = ext,
-        conflict = conflict,
         data = data
     )
 }
