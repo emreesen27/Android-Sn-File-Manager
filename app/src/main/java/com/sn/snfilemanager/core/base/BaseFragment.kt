@@ -15,9 +15,11 @@ import androidx.viewbinding.ViewBinding
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.feature.progress.ProgressDialog
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
 
+    private var progressDialog: ProgressDialog? = null
     private var toolbar: Toolbar? = null
     open var useSharedViewModel: Boolean = false
 
@@ -49,6 +51,7 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar = requireActivity().findViewById(R.id.toolbar)
+        progressDialog = ProgressDialog(requireContext())
         setupViews()
         observeData()
     }
@@ -85,6 +88,17 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     }
 
     fun getToolbar(): Toolbar? = toolbar
+
+    fun updateProgressDialog(value: Int) {
+        if (progressDialog?.isShowing == false) {
+            progressDialog?.show()
+        }
+        progressDialog?.setProgressValue(value)
+    }
+
+    fun hideProgressDialog() {
+        progressDialog?.dismiss()
+    }
 
     private fun setToolbarVisibility(value: Boolean) {
         activity?.findViewById<Toolbar>(R.id.toolbar)?.apply {

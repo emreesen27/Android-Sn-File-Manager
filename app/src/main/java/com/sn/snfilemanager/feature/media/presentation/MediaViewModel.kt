@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
+import com.sn.mediastorepv.util.MediaOperationCallback
 import com.sn.snfilemanager.core.base.BaseResult
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.Event
@@ -16,6 +18,7 @@ import com.sn.snfilemanager.providers.mediastore.toMedia
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -27,11 +30,11 @@ class MediaViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var fullMediaList: List<MediaFile>? = null
-    private var conflictList: MutableList<MediaFile> = mutableListOf()
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
     private var mediaType: MediaType? = null
     private var documentType: String? = null
     var selectedPath: String? = null
+    var isCopy: Boolean = false
 
     private val getMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> = MutableLiveData()
     val getMediaLiveData: LiveData<Event<List<MediaFile>>> = getMediaMutableLiveData
@@ -47,9 +50,16 @@ class MediaViewModel @Inject constructor(
     val moveMediaLiveData: LiveData<Event<MutableList<Pair<String, String>>?>> =
         moveMediaMutableLiveData
 
-    private val conflictMutableLiveData: MutableLiveData<Event<MutableList<MediaFile>>> =
-        MutableLiveData()
-    val conflictMediaLiveData: LiveData<Event<MutableList<MediaFile>>> = conflictMutableLiveData
+    private val conflictQuestionMutableLiveData: MutableLiveData<Event<File>> = MutableLiveData()
+    val conflictQuestionLiveData: LiveData<Event<File>> = conflictQuestionMutableLiveData
+
+    private val progressMutableLiveData: MutableLiveData<Event<Int>> = MutableLiveData()
+    val progressLiveData: LiveData<Event<Int>> = progressMutableLiveData
+
+    private val clearListMutableLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val clearListLiveData: LiveData<Event<Unit>> = clearListMutableLiveData
+
+    val conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
     private fun getFilteredMediaTypes(): MutableSet<String>? =
         when (mediaType) {
@@ -115,33 +125,40 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    fun moveMedia(checkConflict: Boolean = false) {
+    fun moveMedia() {
         selectedPath?.let { path ->
-            if (checkConflict) {
-                val conflict = checkForConflicts(path)
-                if (conflict.isNotEmpty()) {
-                    conflictMutableLiveData.value = Event(conflict)
-                    return
-                }
-            }
+            if (!isCopy) checkPathConflicts(path)
+            if (selectedItemList.isNotEmpty()) {
+                viewModelScope.launch {
+                    when (val result = mediaStoreProvider.moveMedia(
+                        isCopy = isCopy,
+                        sourceMedias = selectedItemList.map { it.toMedia() },
+                        destinationPath = path,
+                        callback = object : MediaOperationCallback {
+                            override suspend fun fileConflict(file: File): Pair<ConflictStrategy, Boolean> {
+                                conflictQuestionMutableLiveData.postValue(Event(file))
+                                return conflictDialogDeferred.await()
+                            }
 
-            viewModelScope.launch {
-                when (val result = mediaStoreProvider.moveMedia(
-                    selectedItemList.map { it.toMedia() },
-                    path
-                )) {
-                    is BaseResult.Success -> {
-                        result.data.let { value ->
-                            if (value.isNullOrEmpty().not()) {
-                                moveMediaMutableLiveData.value = Event(value)
-                                clearSelectionList()
-                                clearConflictList()
+                            override suspend fun onProgress(progress: Int) {
+                                progressMutableLiveData.postValue(Event(progress))
                             }
                         }
-                    }
+                    )) {
+                        is BaseResult.Success -> {
+                            result.data.let { value ->
+                                if (value.isNullOrEmpty().not()) {
+                                    moveMediaMutableLiveData.value = Event(value)
+                                    clearSelectionList()
+                                }
+                            }
+                        }
 
-                    is BaseResult.Failure -> {}
+                        is BaseResult.Failure -> {}
+                    }
                 }
+            } else {
+                clearListMutableLiveData.value = Event(Unit)
             }
         }
     }
@@ -182,23 +199,9 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    private fun checkForConflicts(path: String): MutableList<MediaFile> {
-        selectedItemList.removeIf { path == it.data.substringBeforeLast("/") }
-        return selectedItemList.filter { File(path, it.name).exists() }.toMutableList()
+    private fun checkPathConflicts(path: String): Boolean {
+        return selectedItemList.removeIf { path == it.data.substringBeforeLast("/") }
     }
 
-    fun clearConflictList() {
-        if (conflictList.isNotEmpty())
-            conflictList.clear()
-    }
-
-    fun updateSelectionList(newList: MutableList<MediaFile>) {
-        for (item in newList) {
-            val index = selectedItemList.indexOf(item)
-            if (index != -1) {
-                selectedItemList[index] = item
-            }
-        }
-    }
 }
 

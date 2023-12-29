@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.pathpicker
+package com.sn.snfilemanager.feature.pathpicker
 
 import androidx.lifecycle.ViewModel
 import com.sn.snfilemanager.core.util.RootPath
