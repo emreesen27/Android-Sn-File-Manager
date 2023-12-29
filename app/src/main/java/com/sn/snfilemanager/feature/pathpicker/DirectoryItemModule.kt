@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.pathpicker
+package com.sn.snfilemanager.feature.pathpicker
 
 import com.idanatz.oneadapter.external.event_hooks.ClickEventHook
 import com.idanatz.oneadapter.external.modules.ItemModule

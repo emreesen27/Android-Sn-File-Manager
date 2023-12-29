@@ -5,6 +5,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
 import com.sn.mediastorepv.MediaScannerBuilder
+import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
 import com.sn.mediastorepv.util.MediaScanCallback
 import com.sn.snfilemanager.R
@@ -25,7 +26,6 @@ import com.sn.snfilemanager.feature.media.module.DocumentItemModule
 import com.sn.snfilemanager.feature.media.module.ImageItemModule
 import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
 import com.sn.snfilemanager.feature.media.module.VideoItemModule
-import com.sn.snfilemanager.providers.mediastore.MediaFile
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,7 +47,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
         R.id.action_search -> {
-            //showSearchBottomSheet()
             navigate(MediaFragmentDirections.actionMediaSearch())
             true
         }
@@ -98,14 +97,22 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 event.getContentIfNotHandled()?.let { mediaList ->
                     oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
                     buildMediaScanner(mediaList)
+                    hideProgressDialog()
                 }
             }
-            observe(conflictMediaLiveData) { event ->
-                event.getContentIfNotHandled()?.let { list ->
-                    ConflictDialog(requireContext(), list, this@MediaFragment).apply {
-                    }.also {
-                        it.show()
-                    }
+            observe(conflictQuestionLiveData) { event ->
+                event.getContentIfNotHandled()?.let { file ->
+                    ConflictDialog(requireContext(), file.name, this@MediaFragment).show()
+                }
+            }
+            observe(clearListLiveData) { event ->
+                event.getContentIfNotHandled()?.let {
+                    oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+                }
+            }
+            observe(progressLiveData) { event ->
+                event.getContentIfNotHandled()?.let {
+                    updateProgressDialog(it)
                 }
             }
         }
@@ -123,26 +130,26 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         updateMenusOnSelection(false)
     }
 
-    override fun onApply(newList: MutableList<MediaFile>) {
-        with(viewModel) {
-            updateSelectionList(newList)
-            moveMedia()
-        }
-    }
 
     override fun onCancel() {
-        with(viewModel) {
-            clearConflictList()
-            clearSelectionList()
-            oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
-        }
+        viewModel.clearSelectionList()
+        oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+    }
+
+    override fun onDismiss() {
+        viewModel.clearSelectionList()
+        oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+    }
+
+    override fun onConflictSelected(conflictStrategy: ConflictStrategy, isAll: Boolean) {
+        viewModel.conflictDialogDeferred.complete(Pair(conflictStrategy, isAll))
     }
 
     private fun handlePathSelected() {
         getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
             with(viewModel) {
                 selectedPath = path
-                moveMedia(true)
+                moveMedia()
             }
         }
     }
@@ -178,9 +185,14 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun initOperationsMenuClicks() {
         with(binding) {
             tvDelete.click { viewModel.deleteMedia() }
-            tvCopy.click { /* todo*/ }
+            tvCopy.click {
+                viewModel.isCopy = true
+                updateMenusOnSelection(false)
+                navigatePathSelection()
+            }
             tvShare.click { /* todo*/ }
             tvMove.click {
+                viewModel.isCopy = false
                 updateMenusOnSelection(false)
                 navigatePathSelection()
             }

@@ -3,6 +3,7 @@ package com.sn.snfilemanager.providers.mediastore
 import com.sn.mediastorepv.MediaStoreBuilder
 import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
+import com.sn.mediastorepv.util.MediaOperationCallback
 import com.sn.snfilemanager.core.base.BaseResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,10 +39,17 @@ class MediaStoreProvider @Inject constructor(private val mediaStoreBuilder: Medi
         }
     }
 
-    suspend fun moveMedia(sourceMedias: List<Media>, destinationPath: String): BaseResult<MutableList<Pair<String, String>>? > {
+    suspend fun moveMedia(
+        sourceMedias: List<Media>,
+        destinationPath: String,
+        callback: MediaOperationCallback,
+        isCopy: Boolean
+    ): BaseResult<MutableList<Pair<String, String>>?> {
         return try {
             withContext(Dispatchers.IO) {
-                val result = mediaStoreBuilder.build().moveMedia(sourceMedias, destinationPath)
+                val result =
+                    mediaStoreBuilder.build()
+                        .moveMedia(sourceMedias, destinationPath, callback, isCopy)
                 BaseResult.Success(result)
             }
         } catch (e: Exception) {

@@ -1,6 +1,6 @@
 package com.sn.snfilemanager.feature.conflict
 
-import com.sn.snfilemanager.providers.mediastore.MediaFile
+import com.sn.mediastorepv.data.ConflictStrategy
 
 interface ConflictDialogListener {
     /**
@@ -8,8 +8,14 @@ interface ConflictDialogListener {
      */
     fun onCancel()
 
+
     /**
-     * Triggered when apply button is clicked
+     * Triggered when dialog closes
      */
-    fun onApply(newList: MutableList<MediaFile>)
+    fun onDismiss()
+
+    /**
+     * Triggered when conflict strategy is selected
+     */
+    fun onConflictSelected(conflictStrategy: ConflictStrategy, isAll: Boolean)
 }
