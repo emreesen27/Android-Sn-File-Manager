@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.pathpicker
+package com.sn.snfilemanager.feature.pathpicker.presentation
 
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
@@ -9,6 +9,7 @@ import com.sn.snfilemanager.core.extensions.setNavigationResult
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentPathPickerBinding
 import com.sn.snfilemanager.feature.files.data.toFileModel
+import com.sn.snfilemanager.feature.pathpicker.module.DirectoryItemModule
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

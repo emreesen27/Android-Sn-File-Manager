@@ -49,4 +49,8 @@
     <string name="keep_both">Keep both</string>
     <string name="overwrite">Overwrite</string>
     <string name="apply_selection_to_all">apply selection to all</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="delete_warning">Selected files will be deleted</string>
 </resources>

@@ -88,7 +88,7 @@
 
     <fragment
         android:id="@+id/path_picker_fragment"
-        android:name="com.sn.snfilemanager.feature.pathpicker.PathPickerFragment"
+        android:name="com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment"
         tools:layout="@layout/fragment_path_picker">
 
     </fragment>
