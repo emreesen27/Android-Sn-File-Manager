@@ -18,8 +18,8 @@ import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
-import com.sn.snfilemanager.feature.conflict.ConflictDialog
-import com.sn.snfilemanager.feature.conflict.ConflictDialogListener
+import com.sn.snfilemanager.view.dialog.conflict.ConflictDialog
+import com.sn.snfilemanager.view.dialog.conflict.ConflictDialogListener
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
 import com.sn.snfilemanager.feature.media.module.AudioItemModule
 import com.sn.snfilemanager.feature.media.module.DocumentItemModule

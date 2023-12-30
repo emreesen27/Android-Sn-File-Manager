@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.components
+package com.sn.snfilemanager.view.component
 
 import android.content.Context
 import android.util.AttributeSet

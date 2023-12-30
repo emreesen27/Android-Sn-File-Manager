@@ -19,9 +19,9 @@ import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
-import com.sn.snfilemanager.feature.permission.PermissionDialog
-import com.sn.snfilemanager.feature.permission.PermissionDialogListener
-import com.sn.snfilemanager.feature.permission.PermissionDialogType
+import com.sn.snfilemanager.view.dialog.permission.PermissionDialog
+import com.sn.snfilemanager.view.dialog.permission.PermissionDialogListener
+import com.sn.snfilemanager.view.dialog.permission.PermissionDialogType
 import dagger.hilt.android.AndroidEntryPoint
 
 

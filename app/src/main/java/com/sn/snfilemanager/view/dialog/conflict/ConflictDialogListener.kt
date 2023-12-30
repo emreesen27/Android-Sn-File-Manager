@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.conflict
+package com.sn.snfilemanager.view.dialog.conflict
 
 import com.sn.mediastorepv.data.ConflictStrategy
 

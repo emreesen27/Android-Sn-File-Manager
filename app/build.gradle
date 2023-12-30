@@ -67,9 +67,6 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation 'com.intuit.ssp:ssp-android:1.1.0'
 
-    // Menu
-    implementation 'com.github.skydoves:powermenu:2.2.2'
-
     // Adapter
     implementation 'com.github.idanatz:OneAdapter:2.1.4'
 

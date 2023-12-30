@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.conflict
+package com.sn.snfilemanager.view.dialog.conflict
 
 import android.app.Dialog
 import android.content.Context

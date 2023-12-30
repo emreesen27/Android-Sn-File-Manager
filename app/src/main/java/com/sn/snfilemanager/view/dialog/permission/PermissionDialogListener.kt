@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.permission
+package com.sn.snfilemanager.view.dialog.permission
 
 interface PermissionDialogListener {
     fun allowCLick()
