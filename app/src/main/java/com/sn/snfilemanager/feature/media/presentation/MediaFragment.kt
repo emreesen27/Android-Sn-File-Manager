@@ -26,6 +26,7 @@ import com.sn.snfilemanager.feature.media.module.DocumentItemModule
 import com.sn.snfilemanager.feature.media.module.ImageItemModule
 import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
 import com.sn.snfilemanager.feature.media.module.VideoItemModule
+import com.sn.snfilemanager.view.dialog.confirmation.ConfirmationDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -184,7 +185,22 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     private fun initOperationsMenuClicks() {
         with(binding) {
-            tvDelete.click { viewModel.deleteMedia() }
+            tvDelete.click {
+                ConfirmationDialog(
+                    requireContext(),
+                    getString(R.string.are_you_sure),
+                    getString(R.string.delete_warning)
+                ).apply {
+                    onSelected = { selected ->
+                        if (selected) {
+                            viewModel.deleteMedia()
+                        } else {
+                            clearSelection()
+                            updateMenusOnSelection(false)
+                        }
+                    }
+                }.show()
+            }
             tvCopy.click {
                 viewModel.isCopy = true
                 updateMenusOnSelection(false)

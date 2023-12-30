@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.progress
+package com.sn.snfilemanager.view.dialog.progress
 
 import android.app.Dialog
 import android.content.Context
