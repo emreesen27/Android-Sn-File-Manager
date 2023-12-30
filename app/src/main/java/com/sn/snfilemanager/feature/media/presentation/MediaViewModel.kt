@@ -42,8 +42,8 @@ class MediaViewModel @Inject constructor(
     private val searchMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val searchMediaLiveData: LiveData<List<MediaFile>?> = searchMediaMutableLiveData
 
-    private val deleteMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
-    val deleteMediaLiveData: LiveData<List<MediaFile>?> = deleteMediaMutableLiveData
+    private val deleteMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>?>> = MutableLiveData()
+    val deleteMediaLiveData: LiveData<Event<List<MediaFile>?>> = deleteMediaMutableLiveData
 
     private val moveMediaMutableLiveData: MutableLiveData<Event<MutableList<Pair<String, String>>?>> =
         MutableLiveData()
@@ -116,7 +116,7 @@ class MediaViewModel @Inject constructor(
         when (val result = mediaStoreProvider.deleteMedia(selectedItemList.map { it.toMedia() })) {
             is BaseResult.Success -> {
                 if (result.data) {
-                    deleteMediaMutableLiveData.value = selectedItemList
+                    deleteMediaMutableLiveData.value = Event(selectedItemList)
                     clearSelectionList()
                 }
             }

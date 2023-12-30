@@ -18,8 +18,6 @@ import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
-import com.sn.snfilemanager.view.dialog.conflict.ConflictDialog
-import com.sn.snfilemanager.view.dialog.conflict.ConflictDialogListener
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
 import com.sn.snfilemanager.feature.media.module.AudioItemModule
 import com.sn.snfilemanager.feature.media.module.DocumentItemModule
@@ -27,11 +25,12 @@ import com.sn.snfilemanager.feature.media.module.ImageItemModule
 import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
 import com.sn.snfilemanager.feature.media.module.VideoItemModule
 import com.sn.snfilemanager.view.dialog.confirmation.ConfirmationDialog
+import com.sn.snfilemanager.view.dialog.conflict.ConflictDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
-    MediaSelectionModule.Selection, ConflictDialogListener {
+    MediaSelectionModule.Selection {
 
     private var oneAdapter: OneAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
@@ -87,8 +86,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                     oneAdapter?.setItems(data)
                 }
             }
-            observe(deleteMediaLiveData) { result ->
-                if (result != null) {
+            observe(deleteMediaLiveData) { event ->
+                event.getContentIfNotHandled()?.let { result ->
                     oneAdapter?.remove(result)
                     clearSelection()
                     updateMenusOnSelection(false)
@@ -103,7 +102,14 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             }
             observe(conflictQuestionLiveData) { event ->
                 event.getContentIfNotHandled()?.let { file ->
-                    ConflictDialog(requireContext(), file.name, this@MediaFragment).show()
+                    ConflictDialog(requireContext(), file.name).apply {
+                        onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
+                            viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
+                        }
+                        onDismiss = { cancel ->
+                            clearSelection()
+                        }
+                    }.show()
                 }
             }
             observe(clearListLiveData) { event ->
@@ -131,20 +137,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         updateMenusOnSelection(false)
     }
 
-
-    override fun onCancel() {
-        viewModel.clearSelectionList()
-        oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
-    }
-
-    override fun onDismiss() {
-        viewModel.clearSelectionList()
-        oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
-    }
-
-    override fun onConflictSelected(conflictStrategy: ConflictStrategy, isAll: Boolean) {
-        viewModel.conflictDialogDeferred.complete(Pair(conflictStrategy, isAll))
-    }
 
     private fun handlePathSelected() {
         getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->

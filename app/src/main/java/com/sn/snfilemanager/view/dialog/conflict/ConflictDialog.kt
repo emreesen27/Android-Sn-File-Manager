@@ -12,17 +12,19 @@ import com.sn.snfilemanager.databinding.DialogConflictBinding
 
 class ConflictDialog(
     context: Context,
-    private val fileName: String,
-    private val listener: ConflictDialogListener
+    private val fileName: String
 ) : Dialog(context) {
 
     private val binding: DialogConflictBinding by lazy {
         DialogConflictBinding.inflate(layoutInflater)
     }
 
+    var onSelected: ((ConflictStrategy, Boolean) -> Unit)? = null
+    var onDismiss: ((Boolean) -> Unit)? = null
+
     init {
         setOnDismissListener {
-            listener.onDismiss()
+            onDismiss?.invoke(false)
         }
     }
 
@@ -45,15 +47,15 @@ class ConflictDialog(
         with(binding) {
             tvFileName.text = fileName
             btnSkip.click {
-                listener.onConflictSelected(ConflictStrategy.SKIP, cbAll.isChecked)
+                onSelected?.invoke(ConflictStrategy.SKIP, cbAll.isChecked)
                 dismiss()
             }
             btnKeepBoth.click {
-                listener.onConflictSelected(ConflictStrategy.KEEP_BOTH, cbAll.isChecked)
+                onSelected?.invoke(ConflictStrategy.KEEP_BOTH, cbAll.isChecked)
                 dismiss()
             }
             btnOverwrite.click {
-                listener.onConflictSelected(ConflictStrategy.OVERWRITE, cbAll.isChecked)
+                onSelected?.invoke(ConflictStrategy.OVERWRITE, cbAll.isChecked)
                 dismiss()
             }
         }
