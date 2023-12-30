@@ -42,7 +42,8 @@ class MediaViewModel @Inject constructor(
     private val searchMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
     val searchMediaLiveData: LiveData<List<MediaFile>?> = searchMediaMutableLiveData
 
-    private val deleteMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>?>> = MutableLiveData()
+    private val deleteMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>?>> =
+        MutableLiveData()
     val deleteMediaLiveData: LiveData<Event<List<MediaFile>?>> = deleteMediaMutableLiveData
 
     private val moveMediaMutableLiveData: MutableLiveData<Event<MutableList<Pair<String, String>>?>> =
@@ -140,7 +141,7 @@ class MediaViewModel @Inject constructor(
                                 return conflictDialogDeferred.await()
                             }
 
-                            override suspend fun onProgress(progress: Int) {
+                            override fun onProgress(progress: Int) {
                                 progressMutableLiveData.postValue(Event(progress))
                             }
                         }

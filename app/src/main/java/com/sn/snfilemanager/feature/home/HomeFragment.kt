@@ -20,13 +20,12 @@ import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
 import com.sn.snfilemanager.view.dialog.permission.PermissionDialog
-import com.sn.snfilemanager.view.dialog.permission.PermissionDialogListener
 import com.sn.snfilemanager.view.dialog.permission.PermissionDialogType
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), PermissionDialogListener {
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(){
 
     override fun getViewModelClass() = HomeViewModel::class.java
 
@@ -56,7 +55,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), Permiss
         }
     }
 
-    override fun allowCLick() {
+    private fun allowPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             routeFileAccessSettings()
         } else {
@@ -104,8 +103,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(), Permiss
     }
 
     private fun showPermissionDialog(type: PermissionDialogType = PermissionDialogType.DEFAULT) {
-        val customPopup = PermissionDialog(requireContext(), this, type)
-        customPopup.show()
+        PermissionDialog(requireContext(), type).apply {
+            onAllow = { allowPermission() }
+        }.show()
     }
 
     private fun checkStoragePermission(context: Context): Boolean {

@@ -15,7 +15,7 @@ import androidx.viewbinding.ViewBinding
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.visible
-import com.sn.snfilemanager.view.dialog.progress.ProgressDialog
+import com.sn.snfilemanager.view.dialog.ProgressDialog
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
 

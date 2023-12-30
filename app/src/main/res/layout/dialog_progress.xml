@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:max="100"
         android:paddingHorizontal="@dimen/_10sdp"
+        app:indicatorColor="@color/main_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_progress"
         app:layout_constraintStart_toStartOf="parent"

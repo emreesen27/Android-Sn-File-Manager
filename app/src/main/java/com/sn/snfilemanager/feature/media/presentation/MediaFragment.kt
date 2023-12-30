@@ -24,8 +24,8 @@ import com.sn.snfilemanager.feature.media.module.DocumentItemModule
 import com.sn.snfilemanager.feature.media.module.ImageItemModule
 import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
 import com.sn.snfilemanager.feature.media.module.VideoItemModule
-import com.sn.snfilemanager.view.dialog.confirmation.ConfirmationDialog
-import com.sn.snfilemanager.view.dialog.conflict.ConflictDialog
+import com.sn.snfilemanager.view.dialog.ConfirmationDialog
+import com.sn.snfilemanager.view.dialog.ConflictDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

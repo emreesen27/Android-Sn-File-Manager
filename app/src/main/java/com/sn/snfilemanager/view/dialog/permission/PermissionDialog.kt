@@ -15,9 +15,10 @@ import com.sn.snfilemanager.providers.preferences.PrefsTag
 
 class PermissionDialog(
     context: Context,
-    private val listener: PermissionDialogListener,
     private val type: PermissionDialogType
 ) : Dialog(context) {
+
+    var onAllow: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,7 @@ class PermissionDialog(
         findViewById<MaterialButton>(R.id.btn_allow).apply {
             text = values.second
             click {
-                listener.allowCLick()
+                onAllow?.invoke()
                 dismiss()
             }
         }
