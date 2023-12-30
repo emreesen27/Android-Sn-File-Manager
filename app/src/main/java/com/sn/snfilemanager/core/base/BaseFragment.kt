@@ -1,7 +1,12 @@
 package com.sn.snfilemanager.core.base
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuProvider
@@ -12,14 +17,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.visible
-import com.sn.snfilemanager.view.dialog.ProgressDialog
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
 
-    private var progressDialog: ProgressDialog? = null
     private var toolbar: Toolbar? = null
     open var useSharedViewModel: Boolean = false
 
@@ -51,7 +56,6 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar = requireActivity().findViewById(R.id.toolbar)
-        progressDialog = ProgressDialog(requireContext())
         setupViews()
         observeData()
     }
@@ -90,14 +94,14 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     fun getToolbar(): Toolbar? = toolbar
 
     fun updateProgressDialog(value: Int) {
-        if (progressDialog?.isShowing == false) {
-            progressDialog?.show()
+        activity?.findViewById<LinearProgressIndicator>(R.id.progress)?.apply {
+            visible()
+            progress = value
         }
-        progressDialog?.setProgressValue(value)
     }
 
     fun hideProgressDialog() {
-        progressDialog?.dismiss()
+        activity?.findViewById<LinearProgressIndicator>(R.id.progress)?.invisible()
     }
 
     private fun setToolbarVisibility(value: Boolean) {

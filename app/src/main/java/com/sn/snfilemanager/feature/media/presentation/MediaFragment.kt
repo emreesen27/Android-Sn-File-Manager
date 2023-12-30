@@ -143,6 +143,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             with(viewModel) {
                 selectedPath = path
                 moveMedia()
+                oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
             }
         }
     }
