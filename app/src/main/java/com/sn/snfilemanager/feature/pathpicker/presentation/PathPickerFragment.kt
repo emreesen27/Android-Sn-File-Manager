@@ -30,9 +30,11 @@ class PathPickerFragment : BaseFragment<FragmentPathPickerBinding, PathPickerVie
             actionMoveFile()
             true
         }
+
         R.id.action_new_folder -> {
             true
         }
+
         else -> super.onMenuItemSelected(menuItemId)
     }
 
@@ -77,6 +79,7 @@ class PathPickerFragment : BaseFragment<FragmentPathPickerBinding, PathPickerVie
                     updateList(directoryList.last())
                 } else {
                     isEnabled = false
+                    setNavigationResult(getString(R.string.path_not_selected), "no_selected")
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }

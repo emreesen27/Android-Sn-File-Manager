@@ -1,6 +1,7 @@
 package com.sn.snfilemanager.feature.media.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
@@ -145,6 +146,10 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 moveMedia()
                 oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
             }
+        }
+        getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
+            clearSelection()
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
     }
 
