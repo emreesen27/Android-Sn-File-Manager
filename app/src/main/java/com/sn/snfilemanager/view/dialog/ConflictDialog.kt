@@ -20,11 +20,11 @@ class ConflictDialog(
     }
 
     var onSelected: ((ConflictStrategy, Boolean) -> Unit)? = null
-    var onDismiss: ((Boolean) -> Unit)? = null
+    var onDismiss: (() -> Unit)? = null
 
     init {
         setOnDismissListener {
-            onDismiss?.invoke(false)
+            onDismiss?.invoke()
         }
     }
 

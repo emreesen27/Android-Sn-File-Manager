@@ -1,8 +1,10 @@
 package com.sn.snfilemanager.feature.media.presentation
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
 import com.idanatz.oneadapter.OneAdapter
 import com.sn.mediastorepv.MediaScannerBuilder
@@ -47,28 +49,32 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         if (args.documentType == DocumentType.APK.name) R.menu.menu_base else R.menu.menu_media
 
     override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
-        R.id.action_search -> {
-            navigate(MediaFragmentDirections.actionMediaSearch())
-            true
-        }
-
-        R.id.action_cancel -> {
-            clearSelection()
-            true
-        }
-
         R.id.action_filter -> {
             showFilterBottomSheet()
+            true
+        }
+
+        R.id.action_search -> {
+            initSearch()
             true
         }
 
         else -> super.onMenuItemSelected(menuItemId)
     }
 
+    override var actionCancelCLick: (() -> Unit)? = {
+        clearSelection()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.setArguments(args)
         viewModel.getMedia()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.clearFilteredList()
     }
 
     override fun setupViews() {
@@ -91,7 +97,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 event.getContentIfNotHandled()?.let { result ->
                     oneAdapter?.remove(result)
                     clearSelection()
-                    updateMenusOnSelection(false)
                 }
             }
             observe(moveMediaLiveData) { event ->
@@ -107,9 +112,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                         onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                             viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                         }
-                        onDismiss = { cancel ->
-                            clearSelection()
-                        }
+                        onDismiss = { clearSelection() }
                     }.show()
                 }
             }
@@ -131,7 +134,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     override fun onUpdateSelection(selectedCount: Int) {
-        updateToolbarTitleOnSelection(selectedCount)
+        updateSelection(selectedCount)
     }
 
     override fun onEndSelection() {
@@ -159,7 +162,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 oneAdapter?.modules?.itemSelectionModule?.actions?.let { action ->
                     if (action.isSelectionActive()) {
                         clearSelection()
-                        updateMenusOnSelection(false)
                     } else {
                         isEnabled = false
                         requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -194,7 +196,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                             viewModel.deleteMedia()
                         } else {
                             clearSelection()
-                            updateMenusOnSelection(false)
                         }
                     }
                 }.show()
@@ -225,11 +226,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
 
     private fun updateMenusOnSelection(isSelectionActive: Boolean) {
-        getToolbar()?.menu?.apply {
-            findItem(R.id.action_search)?.isVisible = !isSelectionActive
-            findItem(R.id.action_filter)?.isVisible = !isSelectionActive
-            findItem(R.id.action_cancel)?.isVisible = isSelectionActive
-        }
+        setToolbarVisibility(!isSelectionActive)
+        setActionMenuVisibility(isSelectionActive)
         if (isSelectionActive) {
             binding.bottomOperationsMenu.visible()
         } else {
@@ -237,14 +235,41 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
     }
 
-    private fun updateToolbarTitleOnSelection(selectedCount: Int) {
-        val selectionModule = oneAdapter?.modules?.itemSelectionModule
-        getToolbar()?.title = selectionModule?.actions?.run {
-            if (isSelectionActive()) {
-                getString(R.string.selected_count, selectedCount)
-            } else {
-                getString(R.string.app_name)
-            }
+    private fun updateSelection(value: Int) {
+        updateActionMenu(getString(R.string.selected_count, value))
+    }
+
+    private fun initSearch() {
+        getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
+            val searchView = item.actionView as? SearchView
+            searchView?.setOnQueryTextListener(object :
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    query?.let { viewModel.searchMedia(it) }
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.searchMedia(newText)
+                    return true
+                }
+            })
+
+            item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
+                    val action = oneAdapter?.modules?.itemSelectionModule?.actions
+                    return if (action?.isSelectionActive() == true) {
+                        clearSelection()
+                        false
+                    } else {
+                        true
+                    }
+                }
+            })
         }
     }
 

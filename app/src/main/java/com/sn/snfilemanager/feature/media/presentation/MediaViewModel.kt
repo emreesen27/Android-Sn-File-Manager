@@ -31,6 +31,8 @@ class MediaViewModel @Inject constructor(
 
     private var fullMediaList: List<MediaFile>? = null
     private var selectedItemList: MutableList<MediaFile> = mutableListOf()
+    private var filteredMediaList: List<MediaFile>? = null
+
     private var mediaType: MediaType? = null
     private var documentType: String? = null
     var selectedPath: String? = null
@@ -38,9 +40,6 @@ class MediaViewModel @Inject constructor(
 
     private val getMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> = MutableLiveData()
     val getMediaLiveData: LiveData<Event<List<MediaFile>>> = getMediaMutableLiveData
-
-    private val searchMediaMutableLiveData: MutableLiveData<List<MediaFile>?> = MutableLiveData()
-    val searchMediaLiveData: LiveData<List<MediaFile>?> = searchMediaMutableLiveData
 
     private val deleteMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>?>> =
         MutableLiveData()
@@ -99,10 +98,12 @@ class MediaViewModel @Inject constructor(
                     fullMediaList = result.data
 
                     fullMediaList?.let { mediaList ->
-                        if (filteredMediaTypes != null)
+                        if (filteredMediaTypes != null) {
                             applyFilter(filteredMediaTypes)
-                        else
+                        } else {
                             getMediaMutableLiveData.value = Event(mediaList)
+                            filteredMediaList = mediaList
+                        }
                     }
                 }
 
@@ -180,28 +181,38 @@ class MediaViewModel @Inject constructor(
     }
 
 
-    fun clearSearchMediaResult() {
-        searchMediaMutableLiveData.value = null
-    }
-
     fun applyFilter(filter: MutableSet<String>) {
         if (filter.isEmpty()) {
-            fullMediaList?.let { getMediaMutableLiveData.value = Event(it) }
+            fullMediaList?.let {
+                filteredMediaList = it
+                getMediaMutableLiveData.value = Event(it)
+            }
         } else {
-            fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredMediaList ->
-                getMediaMutableLiveData.value = Event(filteredMediaList)
+            fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredList ->
+                filteredMediaList = filteredList
+                getMediaMutableLiveData.value = Event(filteredList)
             }
         }
     }
 
-    fun searchMedia(query: String) {
-        fullMediaList?.filter { it.name.contains(query) }?.let { filteredMediaList ->
-            searchMediaMutableLiveData.value = filteredMediaList
+    fun searchMedia(query: String?) {
+        if (query.isNullOrEmpty()) {
+            filteredMediaList?.let { result ->
+                getMediaMutableLiveData.value = Event(result)
+            }
+        } else {
+            filteredMediaList?.filter { it.name.contains(query) }?.let { result ->
+                getMediaMutableLiveData.value = Event(result)
+            }
         }
     }
 
     private fun checkPathConflicts(path: String): Boolean {
         return selectedItemList.removeIf { path == it.data.substringBeforeLast("/") }
+    }
+
+    fun clearFilteredList() {
+        filteredMediaList = null
     }
 
 }

@@ -7,8 +7,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -18,15 +21,21 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.textview.MaterialTextView
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.visible
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
 
+    private var progress: LinearProgressIndicator? = null
+    private var actionMenu: FrameLayout? = null
     private var toolbar: Toolbar? = null
+
     open var useSharedViewModel: Boolean = false
+    open var actionCancelCLick: (() -> Unit)? = null
 
     protected lateinit var viewModel: VModel
     protected abstract fun getViewModelClass(): Class<VModel>
@@ -55,9 +64,12 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar = requireActivity().findViewById(R.id.toolbar)
+        toolbar = activity?.findViewById(R.id.toolbar)
+        actionMenu = activity?.findViewById(R.id.action_menu)
+        progress = activity?.findViewById(R.id.progress)
         setupViews()
         observeData()
+        initActionCancel()
     }
 
     open fun setupViews() {}
@@ -94,19 +106,33 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     fun getToolbar(): Toolbar? = toolbar
 
     fun updateProgressDialog(value: Int) {
-        activity?.findViewById<LinearProgressIndicator>(R.id.progress)?.apply {
+        progress?.apply {
             visible()
             progress = value
         }
     }
 
     fun hideProgressDialog() {
-        activity?.findViewById<LinearProgressIndicator>(R.id.progress)?.invisible()
+        progress?.invisible()
     }
 
-    private fun setToolbarVisibility(value: Boolean) {
+    fun setToolbarVisibility(value: Boolean) {
         activity?.findViewById<Toolbar>(R.id.toolbar)?.apply {
             if (value) visible() else gone()
+        }
+    }
+
+    fun setActionMenuVisibility(value: Boolean) {
+        actionMenu?.apply { if (value) visible() else gone() }
+    }
+
+    fun updateActionMenu(value: String) {
+        actionMenu?.findViewById<MaterialTextView>(R.id.tv_selected_item)?.text = value
+    }
+
+    private fun initActionCancel() {
+        actionMenu?.findViewById<ImageView>(R.id.iv_cancel)?.click {
+            actionCancelCLick?.invoke()
         }
     }
 
