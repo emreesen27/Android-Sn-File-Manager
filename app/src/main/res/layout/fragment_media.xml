@@ -32,7 +32,7 @@
 
         <include
             android:id="@+id/layout_empty"
-            layout="@layout/layout_empty_state"
+            layout="@layout/layout_empty"
             android:visibility="@{vm.getMediaLiveData.peekContent().empty == true ? View.VISIBLE : View.GONE}"
             app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 

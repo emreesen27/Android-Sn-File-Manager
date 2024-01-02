@@ -54,4 +54,5 @@
     <string name="are_you_sure">Are you sure ?</string>
     <string name="delete_warning">Selected files will be deleted</string>
     <string name="path_not_selected">Path not selected</string>
+    <string name="no_item">"There is nothing here "</string>
 </resources>
