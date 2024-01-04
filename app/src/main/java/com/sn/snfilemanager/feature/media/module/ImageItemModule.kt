@@ -5,6 +5,7 @@ import com.idanatz.oneadapter.external.modules.ItemModule
 import com.idanatz.oneadapter.external.states.SelectionState
 import com.idanatz.oneadapter.external.states.SelectionStateConfig
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.setMargins
 import com.sn.snfilemanager.core.extensions.visible
@@ -15,6 +16,7 @@ import com.sn.snfilemanager.providers.mediastore.MediaFile
 class ImageItemModule : ItemModule<MediaFile>() {
 
     var onSelected: ((MediaFile, Boolean) -> Unit)? = null
+    var onClick: ((MediaFile) -> Unit)? = null
 
     init {
         config {
@@ -29,6 +31,9 @@ class ImageItemModule : ItemModule<MediaFile>() {
                 } else {
                     ivSelected.invisible()
                     ivImage.setMargins(0)
+                }
+                viewBinder.rootView.click {
+                    onClick?.invoke(model)
                 }
             }
         }

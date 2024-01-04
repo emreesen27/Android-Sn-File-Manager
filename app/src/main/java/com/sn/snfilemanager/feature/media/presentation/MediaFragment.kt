@@ -17,6 +17,7 @@ import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.observe
+import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.MimeTypes
@@ -27,9 +28,11 @@ import com.sn.snfilemanager.feature.media.module.DocumentItemModule
 import com.sn.snfilemanager.feature.media.module.ImageItemModule
 import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
 import com.sn.snfilemanager.feature.media.module.VideoItemModule
+import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
@@ -261,8 +264,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 }
 
                 override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
-                    val action = oneAdapter?.modules?.itemSelectionModule?.actions
-                    return if (action?.isSelectionActive() == true) {
+                    return if (isSelectionActive()) {
                         clearSelection()
                         false
                     } else {
@@ -296,22 +298,36 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         when (args.mediaType) {
             MediaType.IMAGES -> ImageItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
+                onClick = { openFile(it) }
             }
 
             MediaType.VIDEOS -> VideoItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
+                onClick = { openFile(it) }
             }
 
             MediaType.AUDIOS -> AudioItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
+                onClick = { openFile(it) }
             }
 
             MediaType.FILES -> DocumentItemModule().apply {
                 onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
+                onClick = { openFile(it) }
             }
 
             else -> null
         }
+
+
+    private fun openFile(model: MediaFile) {
+        if (isSelectionActive().not()) {
+            context?.openFile(model.data, model.mimeType)
+        }
+    }
+
+    private fun isSelectionActive(): Boolean =
+        oneAdapter?.modules?.itemSelectionModule?.actions?.isSelectionActive() ?: false
 
     private fun initAdapter() {
         if (oneAdapter == null) {
