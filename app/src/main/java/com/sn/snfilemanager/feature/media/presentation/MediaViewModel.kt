@@ -211,6 +211,8 @@ class MediaViewModel @Inject constructor(
         return selectedItemList.removeIf { path == it.data.substringBeforeLast("/") }
     }
 
+    fun getSelectedItem() = selectedItemList
+
     fun clearFilteredList() {
         filteredMediaList = null
     }

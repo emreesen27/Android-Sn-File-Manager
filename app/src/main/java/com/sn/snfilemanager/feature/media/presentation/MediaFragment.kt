@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
+import com.emreesen.sntoast.Type
 import com.idanatz.oneadapter.OneAdapter
 import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.data.ConflictStrategy
@@ -18,6 +19,8 @@ import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
+import com.sn.snfilemanager.core.extensions.shareFiles
+import com.sn.snfilemanager.core.extensions.toast
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.MimeTypes
@@ -155,7 +158,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
         getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
             clearSelection()
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            context?.toast(msg, Type.INFORMATION)
         }
     }
 
@@ -208,7 +211,10 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 updateMenusOnSelection(false)
                 navigatePathSelection()
             }
-            tvShare.click { /* todo*/ }
+            tvShare.click {
+                val uris = viewModel.getSelectedItem().mapNotNull { it.uri }
+                context?.shareFiles(uris)
+            }
             tvMove.click {
                 viewModel.isCopy = false
                 updateMenusOnSelection(false)
