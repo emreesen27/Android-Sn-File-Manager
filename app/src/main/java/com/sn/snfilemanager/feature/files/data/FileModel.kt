@@ -1,7 +1,7 @@
 package com.sn.snfilemanager.feature.files.data
 
 import com.idanatz.oneadapter.external.interfaces.Diffable
-import com.sn.snfilemanager.core.extensions.convertLastModifiedToDate
+import com.sn.snfilemanager.core.extensions.toFormattedDate
 import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
 import java.io.File
 import java.util.*
@@ -30,7 +30,7 @@ fun File.toFileModel(): FileModel {
         isDirectory = this.isDirectory,
         absolutePath = this.absolutePath,
         childCount = if (this.isDirectory) this.listFiles()?.size ?: 0 else null,
-        lastModified = this.lastModified().convertLastModifiedToDate(),
+        lastModified = this.lastModified().toFormattedDate(),
         size = this.length().toHumanReadableByteCount(),
         extension = this.extension,
         isHidden = this.isHidden

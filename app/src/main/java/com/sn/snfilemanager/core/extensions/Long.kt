@@ -20,8 +20,14 @@ fun Long.toHumanReadableByteCount(): String {
     return "${decimalFormat.format(value)} ${units[unitIndex]}"
 }
 
-fun Long.convertLastModifiedToDate(): String {
+fun Long.toFormattedDate(): String {
     val dateFormat = SimpleDateFormat("dd MM yyyy", Locale.getDefault())
     val date = Date(this)
+    return dateFormat.format(date)
+}
+
+fun Long.toFormattedDateFromUnixTime(): String {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val date = Date(this * 1000)
     return dateFormat.format(date)
 }

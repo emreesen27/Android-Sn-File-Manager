@@ -67,4 +67,6 @@
     <string name="total_size">Total Size</string>
     <string name="open_with">Open With</string>
     <string name="no_app_open_with">No application found to open the file</string>
+    <string name="last_modified">Last Modified</string>
+    <string name="added_date">Added Date</string>
 </resources>
