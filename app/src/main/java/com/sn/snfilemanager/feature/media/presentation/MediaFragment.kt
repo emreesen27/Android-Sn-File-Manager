@@ -2,7 +2,8 @@ package com.sn.snfilemanager.feature.media.presentation
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
+import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
@@ -19,6 +20,7 @@ import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
+import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.toast
 import com.sn.snfilemanager.core.extensions.visible
@@ -34,6 +36,7 @@ import com.sn.snfilemanager.feature.media.module.VideoItemModule
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
+import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -220,13 +223,46 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 updateMenusOnSelection(false)
                 navigatePathSelection()
             }
+            tvMenu.setOnClickListener {
+                showPopupMenu(it)
+            }
+        }
+    }
+
+    private fun showPopupMenu(v: View) {
+        val popup = PopupMenu(requireContext(), v)
+        popup.menuInflater.inflate(R.menu.menu_more, popup.menu)
+
+        if (!viewModel.isSingleItemSelected()) {
+            popup.menu.removeItem(R.id.open_with)
+        }
+
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.detail -> showDetailDialog()
+                R.id.open_with -> openWith()
+            }
+            true
+        }
+        popup.setOnDismissListener {}
+        popup.show()
+    }
+
+    private fun showDetailDialog() {
+        DetailDialog(requireContext(), viewModel.getDetailList()).apply {
+            //onDismiss = { clearSelection() }
+        }.show()
+    }
+
+    private fun openWith() {
+        viewModel.getSelectedItem().firstOrNull()?.let { selectedItem ->
+            context?.openFileWithOtherApp(selectedItem.data, selectedItem.mimeType)
         }
     }
 
     private fun navigatePathSelection() {
         navigate(MediaFragmentDirections.actionMediaPicker())
     }
-
 
     private fun clearSelection() {
         oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()

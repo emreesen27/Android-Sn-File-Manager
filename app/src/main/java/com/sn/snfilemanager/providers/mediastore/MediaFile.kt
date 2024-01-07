@@ -2,7 +2,6 @@ package com.sn.snfilemanager.providers.mediastore
 
 import android.net.Uri
 import com.idanatz.oneadapter.external.interfaces.Diffable
-import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
 
@@ -15,7 +14,9 @@ data class MediaFile(
     val mediaType: MediaType,
     val uri: Uri?,
     val ext: String?,
-    val data: String
+    val data: String,
+    val dateModified: Long,
+    val directoryPath: String
 ) : Diffable {
     override val uniqueIdentifier: Long
         get() = id
@@ -33,7 +34,9 @@ fun MediaFile.toMedia(): Media {
         mediaType = mediaType,
         uri = uri,
         ext = ext,
-        data = data
+        data = data,
+        dateModified = dateModified,
+        directoryPath = directoryPath
     )
 }
 
@@ -47,6 +50,8 @@ fun Media.toMediaFile(): MediaFile {
         mediaType = mediaType,
         uri = uri,
         ext = ext,
-        data = data
+        data = data,
+        dateModified = dateModified,
+        directoryPath = directoryPath
     )
 }

@@ -35,6 +35,26 @@ fun Context.openFile(filePath: String, fileType: String) {
     }
 }
 
+fun Context.openFileWithOtherApp(filePath: String, fileType: String) {
+    val file = File(filePath)
+    val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
+
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.setDataAndType(uri, fileType)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+    try {
+        if (intent.resolveActivity(this.packageManager) != null) {
+            startActivity(Intent.createChooser(intent, getString(R.string.open_with)))
+        } else {
+            toast(getString(R.string.no_app_open_with), Type.INFORMATION)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
 fun Context.shareFiles(uris: List<Uri>): Boolean {
     val intent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
         type = "*/*"
@@ -49,7 +69,7 @@ fun Context.shareFiles(uris: List<Uri>): Boolean {
         startActivity(chooser)
         true
     } catch (e: ActivityNotFoundException) {
-        toast(getString(R.string.no_app), Type.INFORMATION)
+        toast(getString(R.string.no_app_share), Type.INFORMATION)
         false
     } catch (e: Exception) {
         if (e.cause is TransactionTooLargeException) {
