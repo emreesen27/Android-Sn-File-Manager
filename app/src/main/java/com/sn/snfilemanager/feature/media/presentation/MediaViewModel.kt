@@ -65,7 +65,7 @@ class MediaViewModel @Inject constructor(
     private val clearListMutableLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
     val clearListLiveData: LiveData<Event<Unit>> = clearListMutableLiveData
 
-    val conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
+    var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
     private fun getFilteredMediaTypes(): MutableSet<String>? =
         when (mediaType) {
@@ -142,7 +142,9 @@ class MediaViewModel @Inject constructor(
                         callback = object : MediaOperationCallback {
                             override suspend fun fileConflict(file: File): Pair<ConflictStrategy, Boolean> {
                                 conflictQuestionMutableLiveData.postValue(Event(file))
-                                return conflictDialogDeferred.await()
+                                val result = conflictDialogDeferred.await()
+                                conflictDialogDeferred = CompletableDeferred()
+                                return result
                             }
 
                             override fun onProgress(progress: Int) {
