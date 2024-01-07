@@ -76,14 +76,14 @@ class MediaViewModel @Inject constructor(
             else -> null
         }?.let { tag -> sharedPreferences.getStringArray(tag) }
 
-    private fun getMimeByMediaType(): List<String>? {
+    private fun getDocumentMime(): List<String>? {
         return when (mediaType) {
-            MediaType.FILES -> getDocumentType()
+            MediaType.FILES -> getDocumentExtensions()
             else -> null
         }
     }
 
-    private fun getDocumentType(): List<String> {
+    private fun getDocumentExtensions(): List<String> {
         return when (documentType) {
             DocumentType.APK.name -> MimeTypes.APK.values
             DocumentType.ARCHIVE.name -> MimeTypes.ARCHIVES.values
@@ -96,7 +96,7 @@ class MediaViewModel @Inject constructor(
     fun getMedia() = viewModelScope.launch {
         val filteredMediaTypes: MutableSet<String>? = getFilteredMediaTypes()
         mediaType?.let {
-            when (val result = mediaStoreProvider.getMedia(it, getMimeByMediaType())) {
+            when (val result = mediaStoreProvider.getMedia(it, getDocumentMime())) {
                 is BaseResult.Success -> {
                     fullMediaList = result.data
 
@@ -167,6 +167,15 @@ class MediaViewModel @Inject constructor(
             }
         }
     }
+
+    fun getMimeByMediaType() =
+        when (mediaType) {
+            MediaType.IMAGES -> MimeTypes.IMAGES
+            MediaType.VIDEOS -> MimeTypes.VIDEOS
+            MediaType.AUDIOS -> MimeTypes.AUDIOS
+            MediaType.FILES -> if (documentType == DocumentType.ARCHIVE.name) MimeTypes.ARCHIVES else MimeTypes.DOCUMENTS
+            else -> null
+        }
 
     fun setArguments(args: MediaFragmentArgs) {
         mediaType = args.mediaType

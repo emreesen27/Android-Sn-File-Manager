@@ -318,7 +318,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun showFilterBottomSheet() {
-        getMimeByMediaType()?.let { type ->
+        viewModel.getMimeByMediaType()?.let { type ->
             FilterBottomSheet.newInstance(type).apply {
                 onFilterApplyClick = { filters ->
                     viewModel.applyFilter(filters)
@@ -327,14 +327,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
     }
 
-    private fun getMimeByMediaType() =
-        when (args.mediaType) {
-            MediaType.IMAGES -> MimeTypes.IMAGES
-            MediaType.VIDEOS -> MimeTypes.VIDEOS
-            MediaType.AUDIOS -> MimeTypes.AUDIOS
-            MediaType.FILES -> if (args.documentType == DocumentType.ARCHIVE.name) MimeTypes.ARCHIVES else MimeTypes.DOCUMENTS
-            else -> null
-        }
 
     private fun getItemModule() =
         when (args.mediaType) {
