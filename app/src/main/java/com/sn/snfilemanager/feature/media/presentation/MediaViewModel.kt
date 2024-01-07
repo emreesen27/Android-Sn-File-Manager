@@ -8,19 +8,25 @@ import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
 import com.sn.mediastorepv.util.MediaOperationCallback
+import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.extensions.getDirectoryNameFromPath
+import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.MimeTypes
+import com.sn.snfilemanager.core.util.StringValue
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
 import com.sn.snfilemanager.providers.mediastore.toMedia
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
+import com.sn.snfilemanager.view.dialog.detail.Detail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -70,11 +76,6 @@ class MediaViewModel @Inject constructor(
             else -> null
         }?.let { tag -> sharedPreferences.getStringArray(tag) }
 
-    fun setArguments(args: MediaFragmentArgs) {
-        mediaType = args.mediaType
-        documentType = args.documentType
-    }
-
     private fun getMimeByMediaType(): List<String>? {
         return when (mediaType) {
             MediaType.FILES -> getDocumentType()
@@ -89,6 +90,8 @@ class MediaViewModel @Inject constructor(
             else -> MimeTypes.DOCUMENTS.values
         }
     }
+
+    private fun generateUUID(): Long = UUID.randomUUID().mostSignificantBits
 
     fun getMedia() = viewModelScope.launch {
         val filteredMediaTypes: MutableSet<String>? = getFilteredMediaTypes()
@@ -165,6 +168,11 @@ class MediaViewModel @Inject constructor(
         }
     }
 
+    fun setArguments(args: MediaFragmentArgs) {
+        mediaType = args.mediaType
+        documentType = args.documentType
+    }
+
     fun addSelectedItem(mediaFile: MediaFile, selected: Boolean) {
         if (selected) {
             if (mediaFile !in selectedItemList) {
@@ -215,6 +223,54 @@ class MediaViewModel @Inject constructor(
 
     fun clearFilteredList() {
         filteredMediaList = null
+    }
+
+    fun isSingleItemSelected(): Boolean = selectedItemList.size == 1
+
+    fun getDetailList(): MutableList<Detail> {
+        val detailItemList: MutableList<Detail> = mutableListOf()
+
+        if (selectedItemList.size > 1) {
+            val itemSize = selectedItemList.size
+            val totalSize: String = selectedItemList.sumOf { it.size }.toHumanReadableByteCount()
+
+            detailItemList.addAll(
+                listOf(
+                    Detail(
+                        generateUUID(),
+                        StringValue.StringResource(R.string.item_count),
+                        itemSize.toString()
+                    ),
+                    Detail(
+                        generateUUID(),
+                        StringValue.StringResource(R.string.total_size),
+                        totalSize
+                    )
+                )
+            )
+        } else if (selectedItemList.size == 1) {
+            val selectedItem = selectedItemList.first()
+            detailItemList.addAll(
+                listOf(
+                    Detail(
+                        generateUUID(),
+                        StringValue.StringResource(R.string.name),
+                        selectedItem.name
+                    ),
+                    Detail(
+                        generateUUID(),
+                        StringValue.StringResource(R.string.path),
+                        selectedItem.data.getDirectoryNameFromPath()
+                    ),
+                    Detail(
+                        generateUUID(),
+                        StringValue.StringResource(R.string.size),
+                        selectedItem.size.toHumanReadableByteCount()
+                    )
+                )
+            )
+        }
+        return detailItemList
     }
 
 }

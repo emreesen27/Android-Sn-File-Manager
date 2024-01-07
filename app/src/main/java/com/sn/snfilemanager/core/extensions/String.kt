@@ -7,3 +7,12 @@ fun String.getFileExtension(): String? {
     }
     return null
 }
+
+fun String.getDirectoryNameFromPath(): String {
+    val lastSeparatorIndex = this.lastIndexOf("/")
+    return if (lastSeparatorIndex != -1) {
+        this.substring(0, lastSeparatorIndex)
+    } else {
+        this
+    }
+}
