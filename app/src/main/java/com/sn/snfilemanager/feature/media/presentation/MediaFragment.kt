@@ -7,7 +7,6 @@ import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
-import com.emreesen.sntoast.Type
 import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.util.MediaScanCallback
@@ -20,7 +19,7 @@ import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.shareFiles
-import com.sn.snfilemanager.core.extensions.toast
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
@@ -156,7 +155,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
         getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
             clearSelection()
-            context?.toast(msg, Type.INFORMATION)
+            context?.infoToast(msg)
         }
     }
 
@@ -242,9 +241,10 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun showDetailDialog() {
-        DetailDialog(requireContext(), viewModel.getDetailList()).apply {
-            //onDismiss = { clearSelection() }
-        }.show()
+        DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
+            childFragmentManager,
+            DetailDialog.TAG
+        )
     }
 
     private fun openWith() {

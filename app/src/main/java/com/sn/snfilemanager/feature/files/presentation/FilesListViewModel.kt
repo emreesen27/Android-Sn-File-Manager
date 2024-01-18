@@ -72,6 +72,8 @@ class FilesListViewModel @Inject constructor(
 
     fun getDirectoryList() = directoryList
 
+    fun getSelectedItem() = selectedItemList
+
     fun getSelectedItemToFiles(): List<File> = selectedItemList.map { File(it.absolutePath) }
 
     fun selectedItemsContainsFolder(): Boolean = selectedItemList.any { it.isDirectory }

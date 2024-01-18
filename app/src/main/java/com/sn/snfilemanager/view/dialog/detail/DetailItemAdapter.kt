@@ -1,5 +1,6 @@
 package com.sn.snfilemanager.view.dialog.detail
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,8 +12,10 @@ class DetailItemAdapter(
 ) : RecyclerView.Adapter<DetailItemAdapter.DetailViewHolder>() {
 
     private var detailItems: List<Detail> = emptyList()
+    @SuppressLint("NotifyDataSetChanged")
     fun setItems(newItems: List<Detail>) {
         detailItems = newItems
+        notifyDataSetChanged()
     }
     override fun onCreateViewHolder(
         parent: ViewGroup,

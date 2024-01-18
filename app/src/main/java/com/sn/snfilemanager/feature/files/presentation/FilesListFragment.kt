@@ -1,8 +1,9 @@
 package com.sn.snfilemanager.feature.files.presentation
 
+import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.navArgs
-import com.emreesen.sntoast.Type
 import com.sn.filetaskpv.FileConflictStrategy
 import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.util.MediaScanCallback
@@ -13,11 +14,12 @@ import com.sn.snfilemanager.core.extensions.getMimeType
 import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.getUrisForFile
 import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
+import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
-import com.sn.snfilemanager.core.extensions.toast
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
@@ -27,7 +29,6 @@ import com.sn.snfilemanager.view.component.breadcrumb.BreadCrumbItemClickListene
 import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
-import com.sn.snfilemanager.view.dialog.detail.Detail
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -189,7 +190,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 }
             }
             tvMore.click {
-                context?.toast("Not implemented yet", Type.INFORMATION)
+                showPopupMenu(it)
             }
         }
     }
@@ -238,14 +239,41 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
     }
 
-    private fun showDetailDialog(detailList: MutableList<Detail>) {
-        DetailDialog(requireContext(), detailList).apply {
-            //onDismiss = { clearSelection() }
-        }.show()
-    }
-
     private fun navigatePathSelection() {
         navigate(FilesListFragmentDirections.actionPathPicker())
+    }
+
+    private fun showPopupMenu(v: View) {
+        val popup = PopupMenu(requireContext(), v)
+        popup.menuInflater.inflate(R.menu.menu_more, popup.menu)
+
+        if (!viewModel.isSingleItemSelected() || viewModel.selectedItemsContainsFolder()) {
+            popup.menu.removeItem(R.id.open_with)
+        }
+
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.detail -> showDetailDialog()
+                R.id.open_with -> openWith()
+            }
+            true
+        }
+        popup.setOnDismissListener {}
+        popup.show()
+    }
+
+    private fun showDetailDialog() {
+        DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
+            childFragmentManager,
+            DetailDialog.TAG
+        )
+    }
+
+    private fun openWith() {
+        viewModel.getSelectedItem().firstOrNull()?.let { selectedItem ->
+            selectedItem.absolutePath.getMimeType()
+                ?.let { context?.openFileWithOtherApp(selectedItem.absolutePath, it) }
+        }
     }
 
     private fun handlePathSelected() {
@@ -255,7 +283,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
         getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
             clearSelection()
-            context?.toast(msg, Type.INFORMATION)
+            context?.infoToast(msg)
             removeKey("no_selected")
         }
     }

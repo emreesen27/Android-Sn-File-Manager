@@ -239,59 +239,6 @@ class MediaViewModel @Inject constructor(
 
     fun isSingleItemSelected(): Boolean = selectedItemList.size == 1
 
-    fun getDetailList(): MutableList<Detail> {
-        val detailItemList: MutableList<Detail> = mutableListOf()
 
-        if (selectedItemList.size > 1) {
-            val itemSize = selectedItemList.size
-            val totalSize: String = selectedItemList.sumOf { it.size }.toHumanReadableByteCount()
-            detailItemList.addAll(getMultiDetailItemList(itemSize, totalSize))
-        } else if (selectedItemList.size == 1) {
-            val selectedItem = selectedItemList.first()
-            detailItemList.addAll(getSingleDetailItemList(selectedItem))
-        }
-        return detailItemList
-    }
-
-    private fun getMultiDetailItemList(itemSize: Int, totalSize: String) = listOf(
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.item_count),
-            itemSize.toString()
-        ),
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.total_size),
-            totalSize
-        )
-    )
-
-    private fun getSingleDetailItemList(selectedItem: MediaFile) = listOf(
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.name),
-            selectedItem.name
-        ),
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.path),
-            selectedItem.data.getDirectoryNameFromPath()
-        ),
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.size),
-            selectedItem.size.toHumanReadableByteCount()
-        ),
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.last_modified),
-            selectedItem.dateModified.toFormattedDateFromUnixTime()
-        ),
-        Detail(
-            generateUUID(),
-            StringValue.StringResource(R.string.added_date),
-            selectedItem.dateAdded.toFormattedDateFromUnixTime()
-        )
-    )
 
 }

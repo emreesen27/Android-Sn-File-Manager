@@ -1,50 +1,59 @@
 package com.sn.snfilemanager.view.dialog.detail
 
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.databinding.DialogDetailBinding
 
-class DetailDialog(
-    context: Context,
-    private val itemList: MutableList<Detail>
-) : Dialog(context) {
+class DetailDialog<T>(
+    private val context: Context,
+    private val itemList: MutableList<T>
+) : DialogFragment() {
 
-    var onDismiss: (() -> Unit)? = null
     private var adapter: DetailItemAdapter? = null
+    private val viewModel: DetailDialogViewModel by viewModels()
     private val binding: DialogDetailBinding by lazy {
         DialogDetailBinding.inflate(layoutInflater)
     }
 
-    init {
-        setOnDismissListener {
-            onDismiss?.invoke()
-        }
+    companion object {
+        const val TAG = "DETAIL_DIALOG"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        setWindowProperty()
-        setCancelable(true)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.vm = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        isCancelable = true
         initAdapter()
+        initObserve()
         binding.tvOk.click { dismiss() }
+        viewModel.createDetailItem(itemList)
+    }
+
+    private fun initObserve() {
+        observe(viewModel.detailLiveData) {
+            adapter?.setItems(it)
+        }
     }
 
     private fun initAdapter() {
         adapter = DetailItemAdapter(context)
-        adapter?.setItems(itemList)
         binding.recyclerDetail.adapter = adapter
-    }
-
-    private fun setWindowProperty() {
-        window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setGravity(Gravity.CENTER)
-        }
     }
 
 }
