@@ -55,12 +55,8 @@
         tools:layout="@layout/fragment_media">
 
         <action
-            android:id="@+id/action_media_picker"
+            android:id="@+id/action_path_picker"
             app:destination="@+id/path_picker_fragment" />
-
-        <action
-            android:id="@+id/action_media_search"
-            app:destination="@+id/search_fragment" />
 
         <argument
             android:name="mediaType"
@@ -69,8 +65,8 @@
         <argument
             android:name="documentType"
             android:defaultValue="@null"
-            app:nullable="true"
-            app:argType="string"/>
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -83,6 +79,10 @@
             android:name="storageArgs"
             app:argType="com.sn.snfilemanager.core.util.RootPath" />
 
+        <action
+            android:id="@+id/action_path_picker"
+            app:destination="@+id/path_picker_fragment" />
+
     </fragment>
 
 
@@ -93,9 +93,5 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/search_fragment"
-        android:name="com.sn.snfilemanager.feature.search.presentation.SearchFragment"
-        tools:layout="@layout/fragment_search"/>
 
 </navigation>

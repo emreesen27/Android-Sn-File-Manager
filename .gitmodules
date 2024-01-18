@@ -1,3 +1,6 @@
 [submodule "mediastorepv"]
 	path = mediastorepv
 	url = https://github.com/emreesen27/media-store
+[submodule "filetaskpv"]
+	path = filetaskpv
+	url = git@github.com:emreesen27/File-Provider.git

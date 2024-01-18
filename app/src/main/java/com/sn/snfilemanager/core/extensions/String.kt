@@ -1,12 +1,6 @@
 package com.sn.snfilemanager.core.extensions
 
-fun String.getFileExtension(): String? {
-    val lastDotIndex = this.lastIndexOf(".")
-    if (lastDotIndex >= 0) {
-        return this.substring(lastDotIndex + 1)
-    }
-    return null
-}
+import android.webkit.MimeTypeMap
 
 fun String.getDirectoryNameFromPath(): String {
     val lastSeparatorIndex = this.lastIndexOf("/")
@@ -15,4 +9,18 @@ fun String.getDirectoryNameFromPath(): String {
     } else {
         this
     }
+}
+
+fun String.getFileExtension(): String? {
+    val lastDotIndex = this.lastIndexOf(".")
+    if (lastDotIndex >= 0) {
+        return this.substring(lastDotIndex + 1)
+    }
+    return null
+}
+
+fun String.getMimeType(): String? {
+    val extension = MimeTypeMap.getFileExtensionFromUrl(this)
+    val ext = if (extension.isNullOrEmpty()) this.getFileExtension() else extension
+    return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
 }

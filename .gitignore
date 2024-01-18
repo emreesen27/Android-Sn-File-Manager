@@ -3,6 +3,7 @@
 /local.properties
 .idea/
 /mediastorepv
+/filestorepv
 .DS_Store
 /build
 /captures

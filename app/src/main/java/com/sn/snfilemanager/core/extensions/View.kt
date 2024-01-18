@@ -5,6 +5,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.sn.snfilemanager.core.util.SafeClickListener
+import render.animations.Bounce
+import render.animations.Render
 
 fun View.visible() {
     this.visibility = View.VISIBLE
@@ -16,6 +18,14 @@ fun View.invisible() {
 
 fun View.gone() {
     this.visibility = View.GONE
+}
+
+fun View.visibleWithAnim(context: Context, duration: Long = 400) {
+    this.visibility = View.VISIBLE
+    val render = Render(context)
+    render.setDuration(duration)
+    render.setAnimation(Bounce().In(this))
+    render.start()
 }
 
 fun View.setMargins(margin: Int) {

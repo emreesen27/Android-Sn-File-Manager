@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
-import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.DialogConflictBinding
 
@@ -19,7 +18,7 @@ class ConflictDialog(
         DialogConflictBinding.inflate(layoutInflater)
     }
 
-    var onSelected: ((ConflictStrategy, Boolean) -> Unit)? = null
+    var onSelected: ((Int, Boolean) -> Unit)? = null
     var onDismiss: (() -> Unit)? = null
 
     init {
@@ -47,15 +46,15 @@ class ConflictDialog(
         with(binding) {
             tvFileName.text = fileName
             btnSkip.click {
-                onSelected?.invoke(ConflictStrategy.SKIP, cbAll.isChecked)
+                onSelected?.invoke(0, cbAll.isChecked)
                 dismiss()
             }
             btnKeepBoth.click {
-                onSelected?.invoke(ConflictStrategy.KEEP_BOTH, cbAll.isChecked)
+                onSelected?.invoke(1, cbAll.isChecked)
                 dismiss()
             }
             btnOverwrite.click {
-                onSelected?.invoke(ConflictStrategy.OVERWRITE, cbAll.isChecked)
+                onSelected?.invoke(2, cbAll.isChecked)
                 dismiss()
             }
         }

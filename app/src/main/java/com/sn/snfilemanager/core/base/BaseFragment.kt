@@ -7,10 +7,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -30,7 +30,7 @@ import com.sn.snfilemanager.core.extensions.visible
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
 
     private var progress: LinearProgressIndicator? = null
-    private var actionMenu: FrameLayout? = null
+    private var actionMenu: ConstraintLayout? = null
     private var toolbar: Toolbar? = null
 
     open var useSharedViewModel: Boolean = false

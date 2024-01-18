@@ -22,6 +22,7 @@
     <string name="storage">Storage</string>
     <string name="short_cut">Shortcut</string>
     <string name="internal_storage">Internal storage</string>
+    <string name="internal">Internal</string>
     <string name="external_storage">External storage</string>
     <string name="available_storage">Available storage %s</string>
     <string name="no_external_storage">External storage not found</string>
@@ -63,10 +64,12 @@
     <string name="name">Name</string>
     <string name="path">Path</string>
     <string name="size">Size</string>
-    <string name="item_count">Item Count</string>
+    <string name="selected_item_count">Selected Item Count</string>
     <string name="total_size">Total Size</string>
+    <string name="number_of_children">Number Of Children</string>
     <string name="open_with">Open With</string>
     <string name="no_app_open_with">No application found to open the file</string>
     <string name="last_modified">Last Modified</string>
     <string name="added_date">Added Date</string>
+    <string name="loading">Loading</string>
 </resources>
