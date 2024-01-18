@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_operations_menu"
+            app:layout_constraintBottom_toTopOf="@+id/layout_menu"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed"
@@ -36,90 +36,15 @@
             android:visibility="@{vm.getMediaLiveData.peekContent().empty == true ? View.VISIBLE : View.GONE}"
             app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 
-        <LinearLayout
-            android:id="@+id/bottom_operations_menu"
-            android:layout_width="match_parent"
+        <include
+            android:id="@+id/layout_menu"
+            layout="@layout/layout_operation_menu"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/bg_color"
-            android:elevation="@dimen/_5sdp"
-            android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_delete"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_delete"
-                android:drawablePadding="@dimen/_2sdp"
-                android:fontFamily="@font/adamina"
-                android:text="@string/delete"
-                android:textAlignment="center"
-                android:textColor="@color/first_text_color"
-                android:textSize="@dimen/_11ssp"
-                app:fontFamily="@font/adamina" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_move"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_move"
-                android:drawablePadding="@dimen/_2sdp"
-                android:fontFamily="@font/adamina"
-                android:text="@string/move"
-                android:textAlignment="center"
-                android:textColor="@color/first_text_color"
-                android:textSize="@dimen/_11ssp"
-                app:fontFamily="@font/adamina" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_copy"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_copy"
-                android:drawablePadding="@dimen/_2sdp"
-                android:fontFamily="@font/adamina"
-                android:text="@string/copy"
-                android:textAlignment="center"
-                android:textColor="@color/first_text_color"
-                android:textSize="@dimen/_11ssp"
-                app:fontFamily="@font/adamina" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_share"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_share"
-                android:drawablePadding="@dimen/_2sdp"
-                android:fontFamily="@font/adamina"
-                android:text="@string/share"
-                android:textAlignment="center"
-                android:textColor="@color/first_text_color"
-                android:textSize="@dimen/_11ssp"
-                app:fontFamily="@font/adamina" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_menu"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_menu"
-                android:drawablePadding="@dimen/_2sdp"
-                android:fontFamily="@font/adamina"
-                android:text="@string/more"
-                android:textAlignment="center"
-                android:textColor="@color/first_text_color"
-                android:textSize="@dimen/_11ssp"
-                app:fontFamily="@font/adamina" />
-
-        </LinearLayout>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

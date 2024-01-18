@@ -13,6 +13,13 @@ import com.sn.snfilemanager.BuildConfig
 import com.sn.snfilemanager.R
 import java.io.File
 
+
+fun Context.getUrisForFile(fileList: List<File>): List<Uri> {
+    return fileList.map { file ->
+        FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
+    }
+}
+
 fun Context.toast(msg: String, type: Type) {
     SnToast.Builder().context(this).type(type).message(msg)
         .backgroundColor(R.color.main_color).textSize(15)

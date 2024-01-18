@@ -1,7 +1,6 @@
 package com.sn.snfilemanager.providers.mediastore
 
 import android.net.Uri
-import com.idanatz.oneadapter.external.interfaces.Diffable
 import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
 
@@ -16,13 +15,8 @@ data class MediaFile(
     val ext: String?,
     val data: String,
     val dateModified: Long,
-    val directoryPath: String
-) : Diffable {
-    override val uniqueIdentifier: Long
-        get() = id
-
-    override fun areContentTheSame(other: Any): Boolean = id == (other as? MediaFile)?.id
-}
+    var isSelected: Boolean
+)
 
 fun MediaFile.toMedia(): Media {
     return Media(
@@ -36,7 +30,6 @@ fun MediaFile.toMedia(): Media {
         ext = ext,
         data = data,
         dateModified = dateModified,
-        directoryPath = directoryPath
     )
 }
 
@@ -52,6 +45,6 @@ fun Media.toMediaFile(): MediaFile {
         ext = ext,
         data = data,
         dateModified = dateModified,
-        directoryPath = directoryPath
+        isSelected = false
     )
 }

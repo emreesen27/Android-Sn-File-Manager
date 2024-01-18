@@ -2,20 +2,19 @@ package com.sn.snfilemanager.feature.pathpicker.presentation
 
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
-import com.idanatz.oneadapter.OneAdapter
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.setNavigationResult
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentPathPickerBinding
 import com.sn.snfilemanager.feature.files.data.toFileModel
-import com.sn.snfilemanager.feature.pathpicker.module.DirectoryItemModule
+import com.sn.snfilemanager.feature.pathpicker.adapter.DirectoryItemAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PathPickerFragment : BaseFragment<FragmentPathPickerBinding, PathPickerViewModel>() {
 
-    private lateinit var oneAdapter: OneAdapter
+    private var adapter: DirectoryItemAdapter? = null
 
     override fun getViewModelClass() = PathPickerViewModel::class.java
 
@@ -54,20 +53,17 @@ class PathPickerFragment : BaseFragment<FragmentPathPickerBinding, PathPickerVie
         with(viewModel) {
             currentPath = directoryPath
             updateDirectoryList(directoryPath)
-            oneAdapter.setItems(getDirectoryList(directoryPath).map { it.toFileModel() })
+            adapter?.setItems(getDirectoryList(directoryPath).map { it.toFileModel() })
         }
     }
 
     private fun initAdapter() {
-        oneAdapter = OneAdapter(binding.recycler) {
-            itemModules += DirectoryItemModule().apply {
-                onClick = { file ->
-                    if (file.isDirectory) {
-                        updateList(file.absolutePath)
-                    }
-                }
+        adapter = DirectoryItemAdapter(onClick = { file ->
+            if (file.isDirectory) {
+                updateList(file.absolutePath)
             }
-        }
+        })
+        binding.recycler.adapter = adapter
     }
 
     private fun handleBackPressed() {

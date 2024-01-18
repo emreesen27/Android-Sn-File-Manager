@@ -1,10 +1,9 @@
 package com.sn.snfilemanager.feature.files.data
 
-import com.idanatz.oneadapter.external.interfaces.Diffable
 import com.sn.snfilemanager.core.extensions.toFormattedDate
 import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
 import java.io.File
-import java.util.*
+import java.util.UUID
 
 data class FileModel(
     val id: Long,
@@ -12,27 +11,28 @@ data class FileModel(
     val isDirectory: Boolean,
     val absolutePath: String,
     val childCount: Int?,
+    val childList: List<File>?,
     val lastModified: String,
-    val size: String,
+    val readableSize: String,
+    val size: Long,
     val extension: String,
     val isHidden: Boolean,
-) : Diffable {
-    override val uniqueIdentifier: Long
-        get() = id
-
-    override fun areContentTheSame(other: Any): Boolean = id == (other as? FileModel)?.id
-}
+    var isSelected: Boolean
+)
 
 fun File.toFileModel(): FileModel {
     return FileModel(
-        name = this.name,
         id = UUID.randomUUID().mostSignificantBits,
+        name = this.name,
         isDirectory = this.isDirectory,
         absolutePath = this.absolutePath,
         childCount = if (this.isDirectory) this.listFiles()?.size ?: 0 else null,
+        childList = if (this.isDirectory) this.listFiles()?.toList() else emptyList(),
         lastModified = this.lastModified().toFormattedDate(),
-        size = this.length().toHumanReadableByteCount(),
+        readableSize = this.length().toHumanReadableByteCount(),
+        size = this.length(),
         extension = this.extension,
-        isHidden = this.isHidden
+        isHidden = this.isHidden,
+        isSelected = false
     )
 }

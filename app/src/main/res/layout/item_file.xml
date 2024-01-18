@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/_5sdp">
+    android:clickable="false"
+    android:focusable="false"
+    android:padding="@dimen/_5sdp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_file_image"
@@ -38,7 +40,7 @@
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBaseline_toBaselineOf="@+id/iv_file_image"
         app:layout_constraintBottom_toTopOf="@+id/tv_file_info"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_selected"
         app:layout_constraintStart_toEndOf="@+id/iv_file_image"
         app:layout_constraintTop_toTopOf="@+id/iv_file_image" />
 
@@ -53,6 +55,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_file_image"
         app:layout_constraintStart_toStartOf="@+id/tv_file_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_file_name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_3sdp"
+        android:visibility="invisible"
+        android:src="@drawable/ic_check_circle"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_file_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_file_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_file_name" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

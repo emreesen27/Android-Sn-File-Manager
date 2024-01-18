@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
-import com.idanatz.oneadapter.OneAdapter
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.DialogDetailBinding
 
@@ -15,7 +14,7 @@ class DetailDialog(
 ) : Dialog(context) {
 
     var onDismiss: (() -> Unit)? = null
-    private var oneAdapter: OneAdapter? = null
+    private var adapter: DetailItemAdapter? = null
     private val binding: DialogDetailBinding by lazy {
         DialogDetailBinding.inflate(layoutInflater)
     }
@@ -35,13 +34,10 @@ class DetailDialog(
         binding.tvOk.click { dismiss() }
     }
 
-
     private fun initAdapter() {
-        oneAdapter = OneAdapter(binding.recyclerDetail) {
-            itemModules += DetailItemModule(context)
-        }.apply {
-            setItems(itemList)
-        }
+        adapter = DetailItemAdapter(context)
+        adapter?.setItems(itemList)
+        binding.recyclerDetail.adapter = adapter
     }
 
     private fun setWindowProperty() {

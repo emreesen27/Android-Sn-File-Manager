@@ -8,10 +8,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
 import com.emreesen.sntoast.Type
-import com.idanatz.oneadapter.OneAdapter
 import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.data.ConflictStrategy
-import com.sn.mediastorepv.data.MediaType
 import com.sn.mediastorepv.util.MediaScanCallback
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
@@ -25,14 +23,9 @@ import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.toast
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
-import com.sn.snfilemanager.core.util.MimeTypes
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
-import com.sn.snfilemanager.feature.media.module.AudioItemModule
-import com.sn.snfilemanager.feature.media.module.DocumentItemModule
-import com.sn.snfilemanager.feature.media.module.ImageItemModule
-import com.sn.snfilemanager.feature.media.module.MediaSelectionModule
-import com.sn.snfilemanager.feature.media.module.VideoItemModule
+import com.sn.snfilemanager.feature.media.adapter.MediaItemAdapter
 import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
@@ -42,9 +35,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
-    MediaSelectionModule.Selection {
+    MediaItemAdapter.SelectionCallback {
 
-    private var oneAdapter: OneAdapter? = null
+    private var adapter: MediaItemAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
 
     override var useSharedViewModel: Boolean = true
@@ -99,27 +92,29 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         viewModel.run {
             observe(getMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { data ->
-                    oneAdapter?.setItems(data)
+                    adapter?.setItems(data)
                 }
             }
             observe(deleteMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { result ->
-                    oneAdapter?.remove(result)
+                    adapter?.removeItems(result)
                     clearSelection()
                 }
             }
             observe(moveMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { mediaList ->
-                    oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
                     buildMediaScanner(mediaList)
                     hideProgressDialog()
+                    clearSelection()
                 }
             }
             observe(conflictQuestionLiveData) { event ->
                 event.getContentIfNotHandled()?.let { file ->
                     ConflictDialog(requireContext(), file.name).apply {
-                        onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
-                            viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
+                        onSelected = { strategy: Int, isAll: Boolean ->
+                            ConflictStrategy.getByValue(strategy)?.let {
+                                viewModel.conflictDialogDeferred.complete(Pair(it, isAll))
+                            }
                         }
                         onDismiss = { clearSelection() }
                     }.show()
@@ -127,7 +122,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             }
             observe(clearListLiveData) { event ->
                 event.getContentIfNotHandled()?.let {
-                    oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+                    adapter?.finishSelectionAndReset()
                 }
             }
             observe(progressLiveData) { event ->
@@ -142,12 +137,12 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         updateMenusOnSelection(true)
     }
 
-    override fun onUpdateSelection(selectedCount: Int) {
-        updateSelection(selectedCount)
-    }
-
     override fun onEndSelection() {
         updateMenusOnSelection(false)
+    }
+
+    override fun onUpdateSelection(selectedSize: Int) {
+        updateSelection(selectedSize)
     }
 
 
@@ -156,7 +151,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             with(viewModel) {
                 selectedPath = path
                 moveMedia()
-                oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+                adapter?.finishSelectionAndReset()
             }
         }
         getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
@@ -168,13 +163,11 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                oneAdapter?.modules?.itemSelectionModule?.actions?.let { action ->
-                    if (action.isSelectionActive()) {
-                        clearSelection()
-                    } else {
-                        isEnabled = false
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
+                if (selectionIsActive()) {
+                    clearSelection()
+                } else {
+                    isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
@@ -193,7 +186,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun initOperationsMenuClicks() {
-        with(binding) {
+        with(binding.layoutMenu) {
             tvDelete.click {
                 ConfirmationDialog(
                     requireContext(),
@@ -223,7 +216,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 updateMenusOnSelection(false)
                 navigatePathSelection()
             }
-            tvMenu.setOnClickListener {
+            tvMore.setOnClickListener {
                 showPopupMenu(it)
             }
         }
@@ -261,11 +254,11 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun navigatePathSelection() {
-        navigate(MediaFragmentDirections.actionMediaPicker())
+        navigate(MediaFragmentDirections.actionPathPicker())
     }
 
     private fun clearSelection() {
-        oneAdapter?.modules?.itemSelectionModule?.actions?.clearSelection()
+        adapter?.finishSelectionAndReset()
         viewModel.clearSelectionList()
     }
 
@@ -274,9 +267,9 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         setToolbarVisibility(!isSelectionActive)
         setActionMenuVisibility(isSelectionActive)
         if (isSelectionActive) {
-            binding.bottomOperationsMenu.visible()
+            binding.layoutMenu.container.visible()
         } else {
-            binding.bottomOperationsMenu.gone()
+            binding.layoutMenu.container.gone()
         }
     }
 
@@ -306,7 +299,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 }
 
                 override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
-                    return if (isSelectionActive()) {
+                    return if (selectionIsActive()) {
                         clearSelection()
                         false
                     } else {
@@ -327,50 +320,21 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
     }
 
-
-    private fun getItemModule() =
-        when (args.mediaType) {
-            MediaType.IMAGES -> ImageItemModule().apply {
-                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
-                onClick = { openFile(it) }
-            }
-
-            MediaType.VIDEOS -> VideoItemModule().apply {
-                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
-                onClick = { openFile(it) }
-            }
-
-            MediaType.AUDIOS -> AudioItemModule().apply {
-                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
-                onClick = { openFile(it) }
-            }
-
-            MediaType.FILES -> DocumentItemModule().apply {
-                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) }
-                onClick = { openFile(it) }
-            }
-
-            else -> null
-        }
-
-
     private fun openFile(model: MediaFile) {
-        if (isSelectionActive().not()) {
+        if (selectionIsActive().not()) {
             context?.openFile(model.data, model.mimeType)
         }
     }
 
-    private fun isSelectionActive(): Boolean =
-        oneAdapter?.modules?.itemSelectionModule?.actions?.isSelectionActive() ?: false
-
+    private fun selectionIsActive(): Boolean = adapter?.selectionIsActive() ?: false
     private fun initAdapter() {
-        if (oneAdapter == null) {
-            oneAdapter = OneAdapter(binding.recyclerView) {
-                itemModules += getItemModule()!! //Todo null case module
-                itemSelectionModule = MediaSelectionModule().apply {
-                    selection = this@MediaFragment
-                }
-            }
+        if (adapter == null) {
+            adapter = MediaItemAdapter(
+                onClick = { model -> openFile(model) },
+                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) },
+                selectionCallback = this@MediaFragment
+            )
         }
+        binding.recyclerView.adapter = adapter
     }
 }

@@ -21,7 +21,7 @@ fun Long.toHumanReadableByteCount(): String {
 }
 
 fun Long.toFormattedDate(): String {
-    val dateFormat = SimpleDateFormat("dd MM yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val date = Date(this)
     return dateFormat.format(date)
 }

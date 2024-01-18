@@ -22,6 +22,7 @@
     <string name="storage">Storage</string>
     <string name="short_cut">Shortcut</string>
     <string name="internal_storage">Internal storage</string>
+    <string name="internal">Internal</string>
     <string name="external_storage">External storage</string>
     <string name="available_storage">Available storage %s</string>
     <string name="no_external_storage">External storage not found</string>
