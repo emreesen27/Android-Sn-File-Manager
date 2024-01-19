@@ -87,9 +87,8 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                     viewModel.getFilesList(path).map { it.toFileModel() }
                 }?.let { adapter?.setItems(it) }
                 hideProgressDialog()
-                clearSelection()
-
                 buildMediaScanner(data)
+                clearSelection()
             }
         }
         observe(viewModel.progressLiveData) { event ->
@@ -99,8 +98,9 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
         observe(viewModel.deleteLiveData) { event ->
             event.getContentIfNotHandled()?.let { items ->
-                adapter?.removeItems(items)
+                adapter?.removeItems(viewModel.getSelectedItem())
                 clearSelection()
+                buildMediaScanner(items)
             }
         }
     }
@@ -288,10 +288,10 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
     }
 
-    private fun buildMediaScanner(mediaList: List<Pair<String, String?>>) {
+    private fun buildMediaScanner(list: List<Pair<String, String?>>) {
         MediaScannerBuilder()
             .addContext(requireContext())
-            .addMediaList(mediaList)
+            .addMediaList(list)
             .addCallback(object : MediaScanCallback {
                 override fun onMediaScanned(filePath: String) {
                     println("media scanned${filePath}")

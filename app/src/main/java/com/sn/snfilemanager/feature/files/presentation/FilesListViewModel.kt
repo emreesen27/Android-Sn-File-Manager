@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.filetaskpv.FileConflictStrategy
 import com.sn.filetaskpv.FileOperationCallback
+import com.sn.snfilemanager.core.extensions.getMimeType
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.feature.files.data.FileModel
@@ -35,12 +36,13 @@ class FilesListViewModel @Inject constructor(
         MutableLiveData()
     val conflictQuestionLiveData: LiveData<Event<File>> = _conflictQuestionLiveData
 
-    private val _moveLiveData: MutableLiveData<Event<MutableList<Pair<String, String>>>> =
+    private val _moveLiveData: MutableLiveData<Event<List<Pair<String, String?>>>> =
         MutableLiveData()
-    val moveLiveData: LiveData<Event<MutableList<Pair<String, String>>>> = _moveLiveData
+    val moveLiveData: LiveData<Event<List<Pair<String, String?>>>> = _moveLiveData
 
-    private val _deleteLiveData: MutableLiveData<Event<MutableList<FileModel>>> = MutableLiveData()
-    val deleteLiveData: LiveData<Event<MutableList<FileModel>>> = _deleteLiveData
+    private val _deleteLiveData: MutableLiveData<Event<List<Pair<String, String?>>>> =
+        MutableLiveData()
+    val deleteLiveData: LiveData<Event<List<Pair<String, String?>>>> = _deleteLiveData
 
     private val _progressLiveData: MutableLiveData<Event<Int>> = MutableLiveData()
     val progressLiveData: LiveData<Event<Int>> = _progressLiveData
@@ -116,7 +118,7 @@ class FilesListViewModel @Inject constructor(
             )
             result.fold(
                 onSuccess = { list ->
-                    _moveLiveData.value = Event(list)
+                    _moveLiveData.value = Event(mapFilePathsToMimeTypes(list))
                 },
                 onFailure = { exception ->
                     println("e:$exception")
@@ -128,13 +130,23 @@ class FilesListViewModel @Inject constructor(
     fun deleteFilesAndDirectories() {
         viewModelScope.launch {
             val result = fileTaskProvider.deleteFilesAndDirectories(getSelectedItemsPaths())
-            if (result.isSuccess) {
-                _deleteLiveData.value = Event(selectedItemList)
-            }
+            result.fold(
+                onSuccess = { deletedList ->
+                    _deleteLiveData.value = Event(mapFilePathsToMimeTypes(deletedList))
+                },
+                onFailure = { exception ->
+                    println("e$exception")
+                }
+            )
         }
     }
 
     private fun getSelectedItemsPaths(): List<Path> =
         selectedItemList.map { Paths.get(it.absolutePath) }
 
+    private fun mapFilePathsToMimeTypes(fileList: List<String>): List<Pair<String, String?>> {
+        return fileList.map {
+            it to File(it).absolutePath.getMimeType()
+        }.toMutableList()
+    }
 }
