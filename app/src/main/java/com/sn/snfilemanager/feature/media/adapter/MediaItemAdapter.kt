@@ -9,6 +9,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.BR
 import com.sn.snfilemanager.R
@@ -20,26 +21,25 @@ import com.sn.snfilemanager.databinding.ItemAudioBinding
 import com.sn.snfilemanager.databinding.ItemDocumentBinding
 import com.sn.snfilemanager.databinding.ItemImagesBinding
 import com.sn.snfilemanager.databinding.ItemVideoBinding
-import com.sn.snfilemanager.providers.mediastore.MediaFile
 
 class MediaItemAdapter(
-    private val onClick: ((MediaFile) -> Unit)? = null,
-    private val onSelected: ((MediaFile, Boolean) -> Unit)? = null,
+    private val onClick: ((Media) -> Unit)? = null,
+    private val onSelected: ((Media, Boolean) -> Unit)? = null,
     private val selectionCallback: SelectionCallback? = null,
 ) : RecyclerView.Adapter<MediaItemAdapter.AutoCompleteViewHolder>() {
 
-    private val selectedItems: MutableList<MediaFile> = mutableListOf()
+    private val selectedItems: MutableList<Media> = mutableListOf()
     private var isSelectionModeActive = false
-    private var mediaItems: List<MediaFile> = emptyList()
+    private var mediaItems: List<Media> = emptyList()
 
 
-    fun setItems(newItems: List<MediaFile>) {
+    fun setItems(newItems: List<Media>) {
         val diffResult = DiffUtil.calculateDiff(MediaDiffCallback(mediaItems, newItems))
         mediaItems = newItems
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun removeItems(mediaToRemove: List<MediaFile>) {
+    fun removeItems(mediaToRemove: List<Media>) {
         for (fileToRemove in mediaToRemove) {
             val position = mediaItems.indexOf(fileToRemove)
             if (position != RecyclerView.NO_POSITION) {
@@ -62,7 +62,7 @@ class MediaItemAdapter(
         selectionCallback?.onEndSelection()
     }
 
-    fun getSelectedItems(): MutableList<MediaFile> = selectedItems
+    fun getSelectedItems(): MutableList<Media> = selectedItems
 
     fun selectionIsActive(): Boolean = isSelectionModeActive
 
@@ -94,14 +94,14 @@ class MediaItemAdapter(
         return mediaItems.size
     }
 
-    private fun startSelection(mediaFile: MediaFile) {
+    private fun startSelection(mediaFile: Media) {
         selectionCallback?.onStartSelection()
         isSelectionModeActive = true
         selectedItems.clear()
         toggleSelection(mediaFile)
     }
 
-    private fun toggleSelection(mediaFile: MediaFile) {
+    private fun toggleSelection(mediaFile: Media) {
         val position = mediaItems.indexOf(mediaFile)
         if (selectedItems.contains(mediaFile)) {
             if (selectedItems.size == 1) {
@@ -125,7 +125,7 @@ class MediaItemAdapter(
         val context: Context,
         private val adapter: MediaItemAdapter
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bindItem(data: MediaFile) {
+        fun bindItem(data: Media) {
             binding.setVariable(BR.item, data)
             binding.executePendingBindings()
 
@@ -162,23 +162,23 @@ class MediaItemAdapter(
             }
         }
 
-        private fun bindImages(data: MediaFile) {
+        private fun bindImages(data: Media) {
             Glide.with(binding.root).load(data.uri).into((binding as ItemImagesBinding).ivImage)
             setSelectedVisibility(binding.ivSelected, binding.ivImage, data)
         }
 
-        private fun bindAudio(data: MediaFile) {
+        private fun bindAudio(data: Media) {
             Glide.with(binding.root).load(data.ext?.let { FileExtension.getIconResourceId(it) })
                 .into((binding as ItemAudioBinding).ivImage)
             setSelectedVisibility(binding.ivSelected, binding.ivImage, data)
         }
 
-        private fun bindVideo(data: MediaFile) {
+        private fun bindVideo(data: Media) {
             Glide.with(binding.root).load(data.uri).into((binding as ItemVideoBinding).ivImage)
             setSelectedVisibility(binding.ivSelected, binding.ivImage, data)
         }
 
-        private fun bindDocument(data: MediaFile) {
+        private fun bindDocument(data: Media) {
             Glide.with(binding.root)
                 .load(data.ext?.let { FileExtension.getIconResourceId(it) })
                 .into((binding as ItemDocumentBinding).ivImage)
@@ -188,7 +188,7 @@ class MediaItemAdapter(
         private fun setSelectedVisibility(
             ivSelected: AppCompatImageView,
             ivImage: AppCompatImageView,
-            data: MediaFile
+            data: Media
         ) {
             if (data.isSelected) {
                 ivSelected.visible()

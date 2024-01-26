@@ -26,7 +26,7 @@ fun Context.errorToast(msg: String) {
     Toasty.custom(this, msg, R.drawable.ic_error, R.color.soft_red, 0, true, true).show();
 }
 
-fun Context.openFile(filePath: String, fileType: String) {
+fun Context.openFile(filePath: String, fileType: String?) {
     val file = File(filePath)
     val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
 
@@ -42,7 +42,7 @@ fun Context.openFile(filePath: String, fileType: String) {
     }
 }
 
-fun Context.openFileWithOtherApp(filePath: String, fileType: String) {
+fun Context.openFileWithOtherApp(filePath: String, fileType: String?) {
     val file = File(filePath)
     val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
 

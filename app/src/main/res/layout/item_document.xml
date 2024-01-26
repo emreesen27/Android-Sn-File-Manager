@@ -9,7 +9,7 @@
 
         <variable
             name="item"
-            type="com.sn.snfilemanager.providers.mediastore.MediaFile" />
+            type="com.sn.mediastorepv.data.Media" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

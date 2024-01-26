@@ -1,34 +1,41 @@
 package com.sn.snfilemanager.feature.files.presentation
 
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sn.filetaskpv.FileConflictStrategy
-import com.sn.filetaskpv.FileOperationCallback
-import com.sn.snfilemanager.core.extensions.getMimeType
+import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.RootPath
+import com.sn.snfilemanager.feature.files.FileSearchTask
 import com.sn.snfilemanager.feature.files.data.FileModel
+import com.sn.snfilemanager.feature.files.data.toFileModel
 import com.sn.snfilemanager.providers.filepath.FilePathProvider
-import com.sn.snfilemanager.providers.fileprovider.FileTaskProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.streams.toList
 
 @HiltViewModel
 class FilesListViewModel @Inject constructor(
-    private val filePathProvider: FilePathProvider,
-    private val fileTaskProvider: FileTaskProvider
+    private val filePathProvider: FilePathProvider
 ) : ViewModel() {
 
-    var currentPath: String? = null
+    private val searchTask = FileSearchTask()
     private var selectedItemList: MutableList<FileModel> = mutableListOf()
     private val directoryList: MutableList<String> = mutableListOf()
+    private val handler = Handler(Looper.getMainLooper())
+
+    private var searchRunnable: Runnable? = null
+    var currentPath: String? = null
     var isCopy: Boolean = false
     var firstInit = false
 
@@ -36,18 +43,18 @@ class FilesListViewModel @Inject constructor(
         MutableLiveData()
     val conflictQuestionLiveData: LiveData<Event<File>> = _conflictQuestionLiveData
 
-    private val _moveLiveData: MutableLiveData<Event<List<Pair<String, String?>>>> =
+    private val _startMoveJobLiveData: MutableLiveData<Event<Pair<List<FileModel>, Path>>> =
         MutableLiveData()
-    val moveLiveData: LiveData<Event<List<Pair<String, String?>>>> = _moveLiveData
+    val startMoveJobLiveData: LiveData<Event<Pair<List<FileModel>, Path>>> = _startMoveJobLiveData
 
-    private val _deleteLiveData: MutableLiveData<Event<List<Pair<String, String?>>>> =
-        MutableLiveData()
-    val deleteLiveData: LiveData<Event<List<Pair<String, String?>>>> = _deleteLiveData
+    private val _updateListLiveData: MutableLiveData<Event<List<FileModel>>> = MutableLiveData()
+    val searchResultLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
 
-    private val _progressLiveData: MutableLiveData<Event<Int>> = MutableLiveData()
-    val progressLiveData: LiveData<Event<Int>> = _progressLiveData
+    var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
-    var conflictDialogDeferred = CompletableDeferred<Pair<FileConflictStrategy, Boolean>>()
+    companion object {
+        const val SEARCH_DELAY = 500L
+    }
 
     fun getStoragePath(rootPath: RootPath): String = when (rootPath) {
         RootPath.INTERNAL -> filePathProvider.internalStorageRootPath
@@ -67,15 +74,14 @@ class FilesListViewModel @Inject constructor(
         }
     }
 
-    fun getFilesList(path: String): List<File> {
-        val directory = File(path)
-        return directory.listFiles()?.toList() ?: emptyList()
+    fun getFilesList(path: String): List<Path> {
+        val directory = Paths.get(path)
+        return Files.list(directory).toList()
     }
 
     fun getDirectoryList() = directoryList
 
     fun getSelectedItem() = selectedItemList
-
     fun getSelectedItemToFiles(): List<File> = selectedItemList.map { File(it.absolutePath) }
 
     fun selectedItemsContainsFolder(): Boolean = selectedItemList.any { it.isDirectory }
@@ -98,55 +104,68 @@ class FilesListViewModel @Inject constructor(
     }
 
     fun moveFilesAndDirectories(destinationPath: Path) {
+        val operationItemList: MutableList<FileModel> = mutableListOf()
         viewModelScope.launch {
-            val result = fileTaskProvider.moveFilesAndDirectories(
-                sourcePaths = getSelectedItemsPaths(),
-                destinationPath = destinationPath,
-                isCopy = isCopy,
-                callback = object : FileOperationCallback {
-                    override fun onProgress(progress: Int) {
-                        _progressLiveData.postValue(Event(progress))
-                    }
-
-                    override suspend fun fileConflict(file: File): Pair<FileConflictStrategy, Boolean> {
-                        _conflictQuestionLiveData.postValue(Event(file))
+            val job = async {
+                for (i in selectedItemList.indices) {
+                    val file = selectedItemList[i]
+                    val targetPath = destinationPath.resolve(file.name)
+                    if (Files.exists(targetPath)) {
+                        _conflictQuestionLiveData.postValue(Event(targetPath.toFile()))
                         val result = conflictDialogDeferred.await()
                         conflictDialogDeferred = CompletableDeferred()
-                        return result
+
+                        if (!result.second) {
+                            file.conflictStrategy = result.first
+                            operationItemList.add(file)
+                        } else {
+                            if (i < selectedItemList.size - 1) {
+                                for (remainingFile in selectedItemList.subList(
+                                    i + 1,
+                                    selectedItemList.size
+                                )) {
+                                    remainingFile.conflictStrategy = result.first
+                                    operationItemList.add(remainingFile)
+                                }
+                            }
+                            break
+                        }
+                    } else {
+                        operationItemList.add(file)
                     }
                 }
-            )
-            result.fold(
-                onSuccess = { list ->
-                    _moveLiveData.value = Event(mapFilePathsToMimeTypes(list))
-                },
-                onFailure = { exception ->
-                    println("e:$exception")
-                }
-            )
+            }
+            job.await()
+            _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
         }
     }
 
-    fun deleteFilesAndDirectories() {
-        viewModelScope.launch {
-            val result = fileTaskProvider.deleteFilesAndDirectories(getSelectedItemsPaths())
-            result.fold(
-                onSuccess = { deletedList ->
-                    _deleteLiveData.value = Event(mapFilePathsToMimeTypes(deletedList))
-                },
-                onFailure = { exception ->
-                    println("e$exception")
-                }
-            )
+    private fun updateListWithCurrentPath() {
+        currentPath?.let { current ->
+            val list = getFilesList(current)
+            _updateListLiveData.postValue(Event(list.map { it.toFileModel() }))
         }
     }
 
-    private fun getSelectedItemsPaths(): List<Path> =
-        selectedItemList.map { Paths.get(it.absolutePath) }
+    private fun removeSearchCallback() {
+        searchRunnable?.let { handler.removeCallbacks(it) }
+        searchTask.cancelSearch()
+    }
 
-    private fun mapFilePathsToMimeTypes(fileList: List<String>): List<Pair<String, String?>> {
-        return fileList.map {
-            it to File(it).absolutePath.getMimeType()
-        }.toMutableList()
+    fun searchFiles(query: String?) {
+        removeSearchCallback()
+        if (query.isNullOrEmpty()) {
+            updateListWithCurrentPath()
+        } else {
+            if (query.length > 3) {
+                searchRunnable = Runnable {
+                    searchTask.search(Paths.get(currentPath), query) { result ->
+                        _updateListLiveData.postValue(Event(result.map { it.toFileModel() }))
+                    }
+                }
+                searchRunnable?.let { handler.postDelayed(it, SEARCH_DELAY) }
+            }
+        }
+
     }
 }

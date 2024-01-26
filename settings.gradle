@@ -17,4 +17,3 @@ dependencyResolutionManagement {
 rootProject.name = "Sn File Manager"
 include ':app'
 include ':mediastorepv'
-include ':filetaskpv'

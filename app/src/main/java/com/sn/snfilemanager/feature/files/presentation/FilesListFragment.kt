@@ -1,12 +1,12 @@
 package com.sn.snfilemanager.feature.files.presentation
 
+import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
-import com.sn.filetaskpv.FileConflictStrategy
-import com.sn.mediastorepv.MediaScannerBuilder
-import com.sn.mediastorepv.util.MediaScanCallback
+import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
@@ -25,6 +25,9 @@ import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.feature.files.data.toFileModel
+import com.sn.snfilemanager.job.JobCompletedCallback
+import com.sn.snfilemanager.job.JobService
+import com.sn.snfilemanager.job.JobType
 import com.sn.snfilemanager.view.component.breadcrumb.BreadCrumbItemClickListener
 import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
@@ -32,11 +35,12 @@ import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 
 @AndroidEntryPoint
 class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewModel>(),
-    FileItemAdapter.SelectionCallback {
+    FileItemAdapter.SelectionCallback, JobCompletedCallback {
 
     private val args: FilesListFragmentArgs by navArgs()
     private var adapter: FileItemAdapter? = null
@@ -46,6 +50,21 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     override fun getViewBinding() = FragmentFilesListBinding.inflate(layoutInflater)
 
     override fun getActionBarStatus() = true
+
+    override fun getMenuResId(): Int = R.menu.menu_base
+
+    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
+        R.id.action_search -> {
+            initSearch()
+            true
+        }
+
+        else -> super.onMenuItemSelected(menuItemId)
+    }
+
+    override var actionCancelCLick: (() -> Unit)? = {
+        clearSelection()
+    }
 
     override fun setupViews() {
         initAdapter()
@@ -68,39 +87,52 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         updateActionMenu(getString(R.string.selected_count, selectedSize))
     }
 
+
+    override fun scannedOnCompleted() {
+        // scanned completed
+    }
+
+    override fun jobOnCompleted(jobType: JobType) {
+        when (jobType) {
+            JobType.COPY -> {
+                viewModel.currentPath?.let { path ->
+                    val files = viewModel.getFilesList(path).map { it.toFileModel() }
+                    activity?.runOnUiThread {
+                        adapter?.setItems(files)
+                        clearSelection()
+                    }
+                }
+            }
+
+            JobType.DELETE -> {
+                activity?.runOnUiThread {
+                    adapter?.removeItems(viewModel.getSelectedItem())
+                    clearSelection()
+                }
+            }
+        }
+    }
+
     override fun observeData() {
         observe(viewModel.conflictQuestionLiveData) { event ->
             event.getContentIfNotHandled()?.let { data ->
                 ConflictDialog(requireContext(), data.name).apply {
-                    onSelected = { strategy: Int, isAll: Boolean ->
-                        FileConflictStrategy.getByValue(strategy)?.let {
-                            viewModel.conflictDialogDeferred.complete(Pair(it, isAll))
-                        }
+                    onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
+                        viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                     }
                     onDismiss = { clearSelection() }
                 }.show()
             }
         }
-        observe(viewModel.moveLiveData) { event ->
+        observe(viewModel.startMoveJobLiveData) { event ->
             event.getContentIfNotHandled()?.let { data ->
-                viewModel.currentPath?.let { path ->
-                    viewModel.getFilesList(path).map { it.toFileModel() }
-                }?.let { adapter?.setItems(it) }
+                startCopyService(data.second, data.first)
+            }
+        }
+        observe(viewModel.searchResultLiveData) { event ->
+            event.getContentIfNotHandled()?.let { list ->
+                adapter?.setItems(list)
                 hideProgressDialog()
-                buildMediaScanner(data)
-                clearSelection()
-            }
-        }
-        observe(viewModel.progressLiveData) { event ->
-            event.getContentIfNotHandled()?.let { progress ->
-                updateProgressDialog(progress)
-            }
-        }
-        observe(viewModel.deleteLiveData) { event ->
-            event.getContentIfNotHandled()?.let { items ->
-                adapter?.removeItems(viewModel.getSelectedItem())
-                clearSelection()
-                buildMediaScanner(items)
             }
         }
     }
@@ -175,7 +207,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 ).apply {
                     onSelected = { selected ->
                         if (selected) {
-                            viewModel.deleteFilesAndDirectories()
+                            startDeleteService()
                         } else {
                             clearSelection()
                         }
@@ -279,6 +311,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     private fun handlePathSelected() {
         getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
             viewModel.moveFilesAndDirectories(Paths.get(path))
+            adapter?.finishSelectionAndReset()
             removeKey("path")
         }
         getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
@@ -288,15 +321,61 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
     }
 
-    private fun buildMediaScanner(list: List<Pair<String, String?>>) {
-        MediaScannerBuilder()
-            .addContext(requireContext())
-            .addMediaList(list)
-            .addCallback(object : MediaScanCallback {
-                override fun onMediaScanned(filePath: String) {
-                    println("media scanned${filePath}")
+    private fun startCopyService(destinationPath: Path, operationItemList: List<FileModel>) {
+        JobService.copy(
+            operationItemList,
+            destinationPath,
+            viewModel.isCopy,
+            this@FilesListFragment,
+            requireContext(),
+        )
+    }
+
+    private fun startDeleteService() {
+        JobService.delete(
+            viewModel.getSelectedItem(),
+            this@FilesListFragment,
+            requireContext()
+        )
+    }
+
+    private fun initSearch() {
+        getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
+            val searchView = item.actionView as? SearchView
+            searchView?.setOnQueryTextListener(object :
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if (query != null && query.length > 3) {
+                        showProgressDialog()
+                    }
+                    viewModel.searchFiles(query)
+                    return true
                 }
-            }).build().scanMediaFiles()
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText != null && newText.length > 3) {
+                        showProgressDialog()
+                    }
+                    viewModel.searchFiles(newText)
+                    return true
+                }
+            })
+
+            item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
+                    return if (selectionIsActive()) {
+                        clearSelection()
+                        false
+                    } else {
+                        true
+                    }
+                }
+            })
+        }
     }
 
     private fun selectionIsActive(): Boolean = adapter?.selectionIsActive() ?: false
