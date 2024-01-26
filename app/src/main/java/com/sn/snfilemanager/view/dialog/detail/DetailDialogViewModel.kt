@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sn.mediastorepv.data.Media
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.getDirectoryNameFromPath
 import com.sn.snfilemanager.core.extensions.toFormattedDateFromUnixTime
@@ -12,7 +13,6 @@ import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
 import com.sn.snfilemanager.core.util.StringValue
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.feature.files.data.toFileModel
-import com.sn.snfilemanager.providers.mediastore.MediaFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,7 +27,7 @@ class DetailDialogViewModel : ViewModel() {
     fun <T> createDetailItem(itemList: MutableList<T>) {
         when (itemList.firstOrNull()) {
             is FileModel -> getFileDetailList(itemList.filterIsInstance<FileModel>())
-            is MediaFile -> getMediaDetailList(itemList.filterIsInstance<MediaFile>())
+            is Media -> getMediaDetailList(itemList.filterIsInstance<Media>())
         }
     }
 
@@ -82,7 +82,7 @@ class DetailDialogViewModel : ViewModel() {
         }
     }
 
-    private fun getMediaDetailList(itemList: List<MediaFile>) {
+    private fun getMediaDetailList(itemList: List<Media>) {
         val detailItemList: MutableList<Detail> = mutableListOf()
 
         if (itemList.size > 1) {

@@ -6,22 +6,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
+import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
-import com.sn.mediastorepv.util.MediaOperationCallback
 import com.sn.snfilemanager.core.base.BaseResult
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.MimeTypes
-import com.sn.snfilemanager.providers.mediastore.MediaFile
 import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
-import com.sn.snfilemanager.providers.mediastore.toMedia
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.UUID
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,35 +30,23 @@ class MediaViewModel @Inject constructor(
     private val sharedPreferences: MySharedPreferences
 ) : ViewModel() {
 
-    private var fullMediaList: List<MediaFile>? = null
-    private var selectedItemList: MutableList<MediaFile> = mutableListOf()
-    private var filteredMediaList: List<MediaFile>? = null
+    private var fullMediaList: List<Media>? = null
+    private var selectedItemList: MutableList<Media> = mutableListOf()
+    private var filteredMediaList: List<Media>? = null
 
     private var mediaType: MediaType? = null
     private var documentType: String? = null
-    var selectedPath: String? = null
     var isCopy: Boolean = false
 
-    private val getMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>>> = MutableLiveData()
-    val getMediaLiveData: LiveData<Event<List<MediaFile>>> = getMediaMutableLiveData
+    private val getMediaMutableLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
+    val getMediaLiveData: LiveData<Event<List<Media>>> = getMediaMutableLiveData
 
-    private val deleteMediaMutableLiveData: MutableLiveData<Event<List<MediaFile>?>> =
+    private val _conflictQuestionLiveData: MutableLiveData<Event<File>> = MutableLiveData()
+    val conflictQuestionLiveData: LiveData<Event<File>> = _conflictQuestionLiveData
+
+    private val _startMoveJobLiveData: MutableLiveData<Event<Pair<List<Media>, Path>>> =
         MutableLiveData()
-    val deleteMediaLiveData: LiveData<Event<List<MediaFile>?>> = deleteMediaMutableLiveData
-
-    private val moveMediaMutableLiveData: MutableLiveData<Event<MutableList<Pair<String, String>>?>> =
-        MutableLiveData()
-    val moveMediaLiveData: LiveData<Event<MutableList<Pair<String, String>>?>> =
-        moveMediaMutableLiveData
-
-    private val conflictQuestionMutableLiveData: MutableLiveData<Event<File>> = MutableLiveData()
-    val conflictQuestionLiveData: LiveData<Event<File>> = conflictQuestionMutableLiveData
-
-    private val progressMutableLiveData: MutableLiveData<Event<Int>> = MutableLiveData()
-    val progressLiveData: LiveData<Event<Int>> = progressMutableLiveData
-
-    private val clearListMutableLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val clearListLiveData: LiveData<Event<Unit>> = clearListMutableLiveData
+    val startMoveJobLiveData: LiveData<Event<Pair<List<Media>, Path>>> = _startMoveJobLiveData
 
     var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
@@ -86,15 +74,12 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    private fun generateUUID(): Long = UUID.randomUUID().mostSignificantBits
-
     fun getMedia() = viewModelScope.launch {
         val filteredMediaTypes: MutableSet<String>? = getFilteredMediaTypes()
         mediaType?.let {
             when (val result = mediaStoreProvider.getMedia(it, getDocumentMime())) {
                 is BaseResult.Success -> {
                     fullMediaList = result.data
-
                     fullMediaList?.let { mediaList ->
                         if (filteredMediaTypes != null) {
                             applyFilter(filteredMediaTypes)
@@ -112,56 +97,41 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    fun deleteMedia() = viewModelScope.launch {
-        when (val result = mediaStoreProvider.deleteMedia(selectedItemList.map { it.toMedia() })) {
-            is BaseResult.Success -> {
-                if (result.data) {
-                    deleteMediaMutableLiveData.value = Event(selectedItemList)
-                    clearSelectionList()
-                }
-            }
+    fun moveMedia(destinationPath: Path) {
+        val operationItemList: MutableList<Media> = mutableListOf()
+        if (!isCopy) checkPathConflicts(destinationPath.toFile().absolutePath)
+        viewModelScope.launch {
+            val job = async {
+                for (i in selectedItemList.indices) {
+                    val file = selectedItemList[i]
+                    val targetPath = destinationPath.resolve(file.name)
+                    if (Files.exists(targetPath)) {
+                        _conflictQuestionLiveData.postValue(Event(targetPath.toFile()))
+                        val result = conflictDialogDeferred.await()
+                        conflictDialogDeferred = CompletableDeferred()
 
-            is BaseResult.Failure -> {}
-        }
-    }
-
-    fun moveMedia() {
-        selectedPath?.let { path ->
-            if (!isCopy) checkPathConflicts(path)
-            if (selectedItemList.isNotEmpty()) {
-                viewModelScope.launch {
-                    when (val result = mediaStoreProvider.moveMedia(
-                        isCopy = isCopy,
-                        sourceMedias = selectedItemList.map { it.toMedia() },
-                        destinationPath = path,
-                        callback = object : MediaOperationCallback {
-                            override suspend fun fileConflict(file: File): Pair<ConflictStrategy, Boolean> {
-                                conflictQuestionMutableLiveData.postValue(Event(file))
-                                val result = conflictDialogDeferred.await()
-                                conflictDialogDeferred = CompletableDeferred()
-                                return result
-                            }
-
-                            override fun onProgress(progress: Int) {
-                                progressMutableLiveData.postValue(Event(progress))
-                            }
-                        }
-                    )) {
-                        is BaseResult.Success -> {
-                            result.data.let { value ->
-                                if (value.isNullOrEmpty().not()) {
-                                    moveMediaMutableLiveData.value = Event(value)
-                                    clearSelectionList()
+                        if (!result.second) {
+                            file.conflictStrategy = result.first
+                            operationItemList.add(file)
+                        } else {
+                            if (i < selectedItemList.size - 1) {
+                                for (remainingFile in selectedItemList.subList(
+                                    i + 1,
+                                    selectedItemList.size
+                                )) {
+                                    remainingFile.conflictStrategy = result.first
+                                    operationItemList.add(remainingFile)
                                 }
                             }
+                            break
                         }
-
-                        is BaseResult.Failure -> {}
+                    } else {
+                        operationItemList.add(file)
                     }
                 }
-            } else {
-                clearListMutableLiveData.value = Event(Unit)
             }
+            job.await()
+            _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
         }
     }
 
@@ -179,7 +149,7 @@ class MediaViewModel @Inject constructor(
         documentType = args.documentType
     }
 
-    fun addSelectedItem(mediaFile: MediaFile, selected: Boolean) {
+    fun addSelectedItem(mediaFile: Media, selected: Boolean) {
         if (selected) {
             if (mediaFile !in selectedItemList) {
                 selectedItemList.add(mediaFile)
@@ -232,7 +202,5 @@ class MediaViewModel @Inject constructor(
     }
 
     fun isSingleItemSelected(): Boolean = selectedItemList.size == 1
-
-
 
 }

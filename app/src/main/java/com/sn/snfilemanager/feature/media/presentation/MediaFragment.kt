@@ -7,34 +7,38 @@ import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
-import com.sn.mediastorepv.MediaScannerBuilder
 import com.sn.mediastorepv.data.ConflictStrategy
-import com.sn.mediastorepv.util.MediaScanCallback
+import com.sn.mediastorepv.data.Media
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
+import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
-import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
 import com.sn.snfilemanager.feature.media.adapter.MediaItemAdapter
-import com.sn.snfilemanager.providers.mediastore.MediaFile
+import com.sn.snfilemanager.job.JobService
+import com.sn.snfilemanager.job.JobCompletedCallback
+import com.sn.snfilemanager.job.JobType
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
+import java.nio.file.Path
+import java.nio.file.Paths
 
 
 @AndroidEntryPoint
 class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
-    MediaItemAdapter.SelectionCallback {
+    MediaItemAdapter.SelectionCallback, JobCompletedCallback {
 
     private var adapter: MediaItemAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
@@ -94,39 +98,19 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                     adapter?.setItems(data)
                 }
             }
-            observe(deleteMediaLiveData) { event ->
-                event.getContentIfNotHandled()?.let { result ->
-                    adapter?.removeItems(result)
-                    clearSelection()
-                }
-            }
-            observe(moveMediaLiveData) { event ->
-                event.getContentIfNotHandled()?.let { mediaList ->
-                    buildMediaScanner(mediaList)
-                    hideProgressDialog()
-                    clearSelection()
-                }
-            }
             observe(conflictQuestionLiveData) { event ->
                 event.getContentIfNotHandled()?.let { file ->
                     ConflictDialog(requireContext(), file.name).apply {
-                        onSelected = { strategy: Int, isAll: Boolean ->
-                            ConflictStrategy.getByValue(strategy)?.let {
-                                viewModel.conflictDialogDeferred.complete(Pair(it, isAll))
-                            }
+                        onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
+                            viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                         }
                         onDismiss = { clearSelection() }
                     }.show()
                 }
             }
-            observe(clearListLiveData) { event ->
-                event.getContentIfNotHandled()?.let {
-                    adapter?.finishSelectionAndReset()
-                }
-            }
-            observe(progressLiveData) { event ->
-                event.getContentIfNotHandled()?.let {
-                    updateProgressDialog(it)
+            observe(viewModel.startMoveJobLiveData) { event ->
+                event.getContentIfNotHandled()?.let { data ->
+                    startCopyService(data.first, data.second)
                 }
             }
         }
@@ -144,18 +128,38 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         updateSelection(selectedSize)
     }
 
+    override fun scannedOnCompleted() {
+        viewModel.getMedia()
+
+    }
+
+    override fun jobOnCompleted(jobType: JobType) {
+        when (jobType) {
+            JobType.COPY -> {
+                activity?.runOnUiThread {
+                    clearSelection()
+                }
+            }
+
+            JobType.DELETE -> {
+                activity?.runOnUiThread {
+                    adapter?.removeItems(viewModel.getSelectedItem())
+                    clearSelection()
+                }
+            }
+        }
+    }
 
     private fun handlePathSelected() {
         getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
-            with(viewModel) {
-                selectedPath = path
-                moveMedia()
-                adapter?.finishSelectionAndReset()
-            }
+            viewModel.moveMedia(Paths.get(path))
+            adapter?.finishSelectionAndReset()
+            removeKey("path")
         }
         getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
             clearSelection()
             context?.infoToast(msg)
+            removeKey("no_selected")
         }
     }
 
@@ -173,17 +177,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
-    private fun buildMediaScanner(mediaList: List<Pair<String, String>>) {
-        MediaScannerBuilder()
-            .addContext(requireContext())
-            .addMediaList(mediaList)
-            .addCallback(object : MediaScanCallback {
-                override fun onMediaScanned(filePath: String) {
-                    viewModel.getMedia()
-                }
-            }).build().scanMediaFiles()
-    }
-
     private fun initOperationsMenuClicks() {
         with(binding.layoutMenu) {
             tvDelete.click {
@@ -194,7 +187,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 ).apply {
                     onSelected = { selected ->
                         if (selected) {
-                            viewModel.deleteMedia()
+                            startDeleteService()
                         } else {
                             clearSelection()
                         }
@@ -219,6 +212,24 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 showPopupMenu(it)
             }
         }
+    }
+
+    private fun startCopyService(operationItemList: List<Media>, destinationPath: Path) {
+        JobService.copyMedia(
+            operationItemList,
+            destinationPath,
+            viewModel.isCopy,
+            this@MediaFragment,
+            requireContext(),
+        )
+    }
+
+    private fun startDeleteService() {
+        JobService.deleteMedia(
+            viewModel.getSelectedItem(),
+            this@MediaFragment,
+            requireContext()
+        )
     }
 
     private fun showPopupMenu(v: View) {
@@ -320,7 +331,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
     }
 
-    private fun openFile(model: MediaFile) {
+    private fun openFile(model: Media) {
         if (selectionIsActive().not()) {
             context?.openFile(model.data, model.mimeType)
         }

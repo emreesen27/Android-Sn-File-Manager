@@ -1,9 +1,13 @@
 package com.sn.snfilemanager.feature.files.data
 
+import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.core.extensions.toFormattedDate
 import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.UUID
+import kotlin.io.path.extension
+import kotlin.streams.toList
 
 data class FileModel(
     val id: Long,
@@ -11,28 +15,30 @@ data class FileModel(
     val isDirectory: Boolean,
     val absolutePath: String,
     val childCount: Int?,
-    val childList: List<File>?,
+    val childList: List<Path>?,
     val lastModified: String,
     val readableSize: String,
     val size: Long,
     val extension: String,
     val isHidden: Boolean,
-    var isSelected: Boolean
+    var isSelected: Boolean,
+    var conflictStrategy: ConflictStrategy
 )
 
-fun File.toFileModel(): FileModel {
+fun Path.toFileModel(): FileModel {
     return FileModel(
         id = UUID.randomUUID().mostSignificantBits,
-        name = this.name,
-        isDirectory = this.isDirectory,
-        absolutePath = this.absolutePath,
-        childCount = if (this.isDirectory) this.listFiles()?.size ?: 0 else null,
-        childList = if (this.isDirectory) this.listFiles()?.toList() else emptyList(),
-        lastModified = this.lastModified().toFormattedDate(),
-        readableSize = this.length().toHumanReadableByteCount(),
-        size = this.length(),
-        extension = this.extension,
-        isHidden = this.isHidden,
-        isSelected = false
+        name = this.fileName.toString(),
+        isDirectory = Files.isDirectory(this),
+        absolutePath = this.toAbsolutePath().toString(),
+        childCount = if (Files.isDirectory(this)) Files.list(this).count().toInt() else null,
+        childList = if (Files.isDirectory(this)) Files.list(this).toList() else emptyList(),
+        lastModified = Files.getLastModifiedTime(this).toMillis().toFormattedDate(),
+        readableSize = Files.size(this).toHumanReadableByteCount(),
+        size = Files.size(this),
+        extension = if (!Files.isDirectory(this)) this.extension else "",
+        isHidden = Files.isHidden(this),
+        isSelected = false,
+        conflictStrategy = ConflictStrategy.OVERWRITE
     )
 }

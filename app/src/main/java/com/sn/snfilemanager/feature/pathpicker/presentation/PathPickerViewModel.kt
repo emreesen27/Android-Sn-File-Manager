@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.providers.filepath.FilePathProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.io.path.isDirectory
+import kotlin.streams.toList
 
 @HiltViewModel
 class PathPickerViewModel @Inject constructor(
@@ -28,9 +32,9 @@ class PathPickerViewModel @Inject constructor(
         else -> filePathProvider.downloadDirectoryPath
     }
 
-    fun getDirectoryList(directoryPath: String): List<File> {
-        val directory = File(directoryPath)
-        return directory.listFiles()?.filter { it.isDirectory }?.toList() ?: emptyList()
+    fun getDirectoryList(directoryPath: String): List<Path> {
+        val directory = Paths.get(directoryPath)
+        return Files.list(directory).filter { it.isDirectory() }.toList()
     }
 
 }

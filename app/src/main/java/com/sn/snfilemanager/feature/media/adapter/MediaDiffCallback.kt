@@ -1,11 +1,11 @@
 package com.sn.snfilemanager.feature.media.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.sn.snfilemanager.providers.mediastore.MediaFile
+import com.sn.mediastorepv.data.Media
 
 class MediaDiffCallback(
-    private val oldList: List<MediaFile>,
-    private val newList: List<MediaFile>
+    private val oldList: List<Media>,
+    private val newList: List<Media>
 ) : DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldList.size
     override fun getNewListSize(): Int = newList.size
