@@ -104,11 +104,8 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
 
     fun getToolbar(): Toolbar? = toolbar
 
-    fun updateProgressDialog(value: Int) {
-        progress?.apply {
-            visible()
-            progress = value
-        }
+    fun showProgressDialog() {
+        progress?.visible()
     }
 
     fun hideProgressDialog() {

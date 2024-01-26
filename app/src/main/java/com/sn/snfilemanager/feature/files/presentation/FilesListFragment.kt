@@ -1,8 +1,10 @@
 package com.sn.snfilemanager.feature.files.presentation
 
+import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.R
@@ -23,8 +25,8 @@ import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.feature.files.data.toFileModel
-import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobCompletedCallback
+import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
 import com.sn.snfilemanager.view.component.breadcrumb.BreadCrumbItemClickListener
 import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
@@ -48,6 +50,21 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     override fun getViewBinding() = FragmentFilesListBinding.inflate(layoutInflater)
 
     override fun getActionBarStatus() = true
+
+    override fun getMenuResId(): Int = R.menu.menu_base
+
+    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
+        R.id.action_search -> {
+            initSearch()
+            true
+        }
+
+        else -> super.onMenuItemSelected(menuItemId)
+    }
+
+    override var actionCancelCLick: (() -> Unit)? = {
+        clearSelection()
+    }
 
     override fun setupViews() {
         initAdapter()
@@ -107,14 +124,15 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 }.show()
             }
         }
-        observe(viewModel.progressLiveData) { event ->
-            event.getContentIfNotHandled()?.let { progress ->
-                updateProgressDialog(progress)
-            }
-        }
         observe(viewModel.startMoveJobLiveData) { event ->
             event.getContentIfNotHandled()?.let { data ->
                 startCopyService(data.second, data.first)
+            }
+        }
+        observe(viewModel.searchResultLiveData) { event ->
+            event.getContentIfNotHandled()?.let { list ->
+                adapter?.setItems(list)
+                hideProgressDialog()
             }
         }
     }
@@ -319,6 +337,45 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
             this@FilesListFragment,
             requireContext()
         )
+    }
+
+    private fun initSearch() {
+        getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
+            val searchView = item.actionView as? SearchView
+            searchView?.setOnQueryTextListener(object :
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if (query != null && query.length > 3) {
+                        showProgressDialog()
+                    }
+                    viewModel.searchFiles(query)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText != null && newText.length > 3) {
+                        showProgressDialog()
+                    }
+                    viewModel.searchFiles(newText)
+                    return true
+                }
+            })
+
+            item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
+                    return if (selectionIsActive()) {
+                        clearSelection()
+                        false
+                    } else {
+                        true
+                    }
+                }
+            })
+        }
     }
 
     private fun selectionIsActive(): Boolean = adapter?.selectionIsActive() ?: false

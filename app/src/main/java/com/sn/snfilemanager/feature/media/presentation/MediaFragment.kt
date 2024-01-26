@@ -200,7 +200,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 navigatePathSelection()
             }
             tvShare.click {
-                val uris = viewModel.getSelectedItem().mapNotNull { it.uri }
+                val uris = viewModel.getSelectedItem().map { it.uri }
                 context?.shareFiles(uris)
             }
             tvMove.click {
