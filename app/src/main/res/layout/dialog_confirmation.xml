@@ -5,6 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/bg_color"
     android:padding="@dimen/_5sdp">
 
     <com.google.android.material.textview.MaterialTextView

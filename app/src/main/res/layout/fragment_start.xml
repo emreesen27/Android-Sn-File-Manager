@@ -39,11 +39,12 @@
             android:id="@+id/mtv_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="More Fonts..."
-            android:text="1.0.0"
+            android:fontFamily="@font/adamina"
             android:textAlignment="center"
+            android:textColor="@color/second_text_color"
             android:textSize="@dimen/_14ssp"
-            app:layout_constraintTop_toBottomOf="@+id/mtv_app_name" />
+            app:layout_constraintTop_toBottomOf="@+id/mtv_app_name"
+            tools:text="1.0.0" />
 
 
         <com.google.android.material.textview.MaterialTextView
@@ -95,6 +96,7 @@
             android:fontFamily="@font/adamina"
             android:padding="10dp"
             android:text="@string/continue_key"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

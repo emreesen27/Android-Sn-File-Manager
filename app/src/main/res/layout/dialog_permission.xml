@@ -46,6 +46,7 @@
         android:fontFamily="@font/adamina"
         android:padding="10dp"
         android:text="@string/click_to_allow"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/container"
         app:layout_constraintEnd_toEndOf="@+id/container"
         app:layout_constraintStart_toStartOf="@+id/container" />
