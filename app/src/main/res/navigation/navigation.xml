@@ -47,6 +47,10 @@
             android:id="@+id/action_home_file"
             app:destination="@+id/file_list_fragment" />
 
+        <action
+            android:id="@+id/action_settings"
+            app:destination="@+id/settings_fragment" />
+
     </fragment>
 
     <fragment
@@ -89,9 +93,11 @@
     <fragment
         android:id="@+id/path_picker_fragment"
         android:name="com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment"
-        tools:layout="@layout/fragment_path_picker">
+        tools:layout="@layout/fragment_path_picker" />
 
-    </fragment>
 
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.sn.snfilemanager.feature.settings.SettingsFragment" />
 
 </navigation>

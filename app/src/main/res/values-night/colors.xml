@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_color">#FF121212</color>
+    <color name="widget_color">#FF212121</color>
+    <color name="first_text_color">#FFEEEEEE</color>
+    <color name="second_text_color">#FFCCCCCC</color>
+    <color name="divider_color">#FF333333</color>
+</resources>

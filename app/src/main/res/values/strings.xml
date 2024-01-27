@@ -73,4 +73,12 @@
     <string name="added_date">Added Date</string>
     <string name="loading">Loading</string>
     <string name="error_root_path">Obb and data directories are off-limits for manipulation</string>
+    <string name="about_desc">See application details</string>
+    <string name="theme">Theme</string>
+    <string name="theme_desc">Change app theme</string>
+    <string name="title_interface">Interface</string>
+    <string name="behavior">Behavior</string>
+    <string name="hidden_file">Hidden files</string>
+    <string name="hidden_file_on">Showing</string>
+    <string name="hidden_file_off">Hiding</string>
 </resources>

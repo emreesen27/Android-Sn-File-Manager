@@ -23,13 +23,14 @@ class DeleteMediaJob(
 
     private fun deleteMedia() {
         for (media in sourcesMedia) {
-            val deleteResult = media.uri?.let { service.contentResolver.delete(it, null, null) }
+            val deleteResult = media.uri.let { service.contentResolver.delete(it, null, null) }
             if (deleteResult != 0) {
                 deletedCount++
                 updateProgress()
             }
         }
     }
+
     private fun updateProgress() {
         val progress = ((deletedCount.toDouble() / totalItemCount.toDouble()) * 100).toInt()
         postNotification(R.string.delete, progress)

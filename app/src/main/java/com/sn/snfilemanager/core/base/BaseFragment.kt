@@ -88,14 +88,7 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     }
 
     private fun setActionBarStatus() {
-        if (getActionBarStatus()) {
-            setToolbarVisibility(true)
-            (requireActivity() as? AppCompatActivity)?.let { activity ->
-                activity.setSupportActionBar(activity.findViewById(R.id.toolbar))
-            }
-        } else {
-            setToolbarVisibility(false)
-        }
+        setToolbarVisibility(getActionBarStatus())
     }
 
     fun invalidateOptionsMenu() {

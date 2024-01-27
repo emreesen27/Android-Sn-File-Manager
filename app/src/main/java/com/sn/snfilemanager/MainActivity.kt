@@ -1,20 +1,17 @@
 package com.sn.snfilemanager
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.databinding.ActivityMainBinding
-import com.sn.snfilemanager.providers.preferences.MySharedPreferences
-import com.sn.snfilemanager.providers.preferences.PrefsTag
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var mySharedPreferences: MySharedPreferences
-
+    private val vm: MainViewModel by viewModels()
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -22,14 +19,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setFirsScreen()
+        setSupportActionBar(binding.toolbar)
+
+        observe(vm.firstRunLiveData) { event ->
+            event.getContentIfNotHandled()?.let { firstRun ->
+                setFirsScreen(firstRun)
+            }
+        }
+
     }
 
-    private fun checkFirsRun(): Boolean = mySharedPreferences.getBoolean(PrefsTag.FIRST_RUN)
-
-    private fun setFirsScreen() {
+    private fun setFirsScreen(firstRun: Boolean) {
         val destId =
-            if (checkFirsRun()) R.id.action_loading_to_home else R.id.action_loading_to_start
+            if (firstRun) R.id.action_loading_to_home else R.id.action_loading_to_start
         findNavController(R.id.base_nav_host).navigate(destId)
     }
 

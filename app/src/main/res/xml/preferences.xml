@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:layout="@layout/item_preference_title"
+        app:title="@string/title_interface">
+
+        <ListPreference
+            android:defaultValue="System"
+            android:entries="@array/theme_mode"
+            android:entryValues="@array/theme_mode"
+            android:layout="@layout/item_preference"
+            android:title="@string/theme"
+            app:key="sn.theme.mode"
+            app:summary="@string/theme_desc"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/item_preference_title"
+        app:title="@string/behavior">
+
+        <SwitchPreferenceCompat
+            android:layout="@layout/item_switch_preference"
+            android:summaryOff="@string/hidden_file_off"
+            android:title="@string/hidden_file"
+            app:defaultValue="true"
+            app:key="sn.hidden.file"
+            app:summaryOn="@string/hidden_file_on" />
+
+    </PreferenceCategory>
+
+    <Preference
+        android:layout="@layout/item_preference"
+        app:allowDividerAbove="true"
+        app:key="sn.about"
+        app:summary="@string/about_desc"
+        app:title="@string/about" />
+
+</PreferenceScreen>

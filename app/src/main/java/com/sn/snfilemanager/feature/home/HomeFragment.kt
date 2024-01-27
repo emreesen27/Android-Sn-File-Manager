@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(){
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun getViewModelClass() = HomeViewModel::class.java
 
@@ -42,6 +42,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(){
     override fun onResume() {
         super.onResume()
         initPermission()
+    }
+
+    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
+        R.id.settings -> {
+            navigate(HomeFragmentDirections.actionSettings())
+            true
+        }
+
+        R.id.about -> {
+            true
+        }
+
+        else -> super.onMenuItemSelected(menuItemId)
     }
 
     override fun observeData() {
