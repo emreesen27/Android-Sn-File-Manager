@@ -4,6 +4,7 @@ import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseJob
 import com.sn.snfilemanager.core.extensions.getUniqueFileNameWithCounter
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.postNotification
 import com.sn.snfilemanager.core.extensions.scanFile
 import com.sn.snfilemanager.feature.files.data.FileModel
@@ -27,10 +28,12 @@ class CopyFileJob(
 ) : BaseJob() {
 
     private var movedItemCount: Int = 0
+    private var title = if (isCopy) R.string.copying else R.string.moving
     private val totalItemCount: Long = calculateItemCount(sourceFiles)
     private val movedItemPathList: MutableList<String> = mutableListOf()
 
     override fun run() {
+        handler.post { service.infoToast(service.getString(title)) }
         moveFilesAndDirectories()
     }
 
@@ -132,7 +135,6 @@ class CopyFileJob(
 
     private fun updateProgress() {
         val progress = ((movedItemCount.toDouble() / totalItemCount.toDouble()) * 100).toInt()
-        val title = if (isCopy) R.string.copy else R.string.move
         postNotification(title, progress)
     }
 }

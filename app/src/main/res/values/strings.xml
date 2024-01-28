@@ -81,4 +81,8 @@
     <string name="hidden_file">Hidden files</string>
     <string name="hidden_file_on">Showing</string>
     <string name="hidden_file_off">Hiding</string>
+    <string name="copying">Copying</string>
+    <string name="moving">Moving</string>
+    <string name="deleting">Deleting</string>
+    <string name="completed">Completed</string>
 </resources>

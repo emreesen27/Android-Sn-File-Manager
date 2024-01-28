@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.TransactionTooLargeException
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.sn.snfilemanager.BuildConfig
 import com.sn.snfilemanager.R
@@ -19,11 +20,13 @@ fun Context.getUrisForFile(fileList: List<File>): List<Uri> {
 }
 
 fun Context.infoToast(msg: String) {
-    Toasty.custom(this, msg, R.drawable.ic_info, R.color.main_color, 0, true, true).show();
+    Toasty.custom(this, msg, R.drawable.ic_info, R.color.main_color, Toast.LENGTH_SHORT, true, true)
+        .show()
 }
 
 fun Context.errorToast(msg: String) {
-    Toasty.custom(this, msg, R.drawable.ic_error, R.color.soft_red, 0, true, true).show();
+    Toasty.custom(this, msg, R.drawable.ic_error, R.color.soft_red, Toast.LENGTH_SHORT, true, true)
+        .show()
 }
 
 fun Context.openFile(filePath: String, fileType: String?) {

@@ -6,6 +6,7 @@ import com.sn.mediastorepv.data.Media
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseJob
 import com.sn.snfilemanager.core.extensions.getUniqueFileNameWithCounter
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.postNotification
 import com.sn.snfilemanager.core.extensions.scanFile
 import com.sn.snfilemanager.job.JobCompletedCallback
@@ -22,10 +23,12 @@ class MoveMediaJob(
 ) : BaseJob() {
 
     private var movedItemCount: Int = 0
+    private var title = if (isCopy) R.string.copying else R.string.moving
     private val totalItemCount: Int = sourcesMedia.size
     private val movedItemPathList: MutableList<String> = mutableListOf()
 
     override fun run() {
+        handler.post { service.infoToast(service.getString(title)) }
         moveMedia()
     }
 

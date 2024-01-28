@@ -2,6 +2,7 @@ package com.sn.snfilemanager.job.file
 
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseJob
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.postNotification
 import com.sn.snfilemanager.core.extensions.scanFile
 import com.sn.snfilemanager.feature.files.data.FileModel
@@ -23,6 +24,7 @@ class DeleteFileJob(
     private val totalItemCount = calculateItemCount(sourceFiles)
     private val deletedItemPathList: MutableList<String> = mutableListOf()
     override fun run() {
+        handler.post { service.infoToast(service.getString(R.string.deleting)) }
         delete()
     }
 

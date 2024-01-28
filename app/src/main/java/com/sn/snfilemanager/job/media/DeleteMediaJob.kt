@@ -3,6 +3,7 @@ package com.sn.snfilemanager.job.media
 import com.sn.mediastorepv.data.Media
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseJob
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.postNotification
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobType
@@ -14,6 +15,7 @@ class DeleteMediaJob(
     private var deletedCount: Int = 0
     private val totalItemCount = sourcesMedia.size
     override fun run() {
+        handler.post { service.infoToast(service.getString(R.string.deleting)) }
         deleteMedia()
     }
 
