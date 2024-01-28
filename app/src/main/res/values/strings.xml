@@ -85,4 +85,6 @@
     <string name="moving">Moving</string>
     <string name="deleting">Deleting</string>
     <string name="completed">Completed</string>
+    <string name="permission_warning_title">Permission warning</string>
+    <string name="notification_permission_info">You need to allow notifications to see the progress of operations such as copying, deleting, etc.</string>
 </resources>

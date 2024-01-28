@@ -25,7 +25,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val themeListPreference: ListPreference? = findPreference(SettingsUtils.SN_THEME_MODE)
         mListenerOptions =
-            OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
+            OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String? ->
                 when (key) {
                     SettingsUtils.SN_THEME_MODE -> {
                         SettingsUtils.changeTheme(

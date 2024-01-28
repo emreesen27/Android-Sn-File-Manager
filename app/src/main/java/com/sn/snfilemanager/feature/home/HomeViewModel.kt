@@ -22,6 +22,7 @@ class HomeViewModel @Inject constructor(
     private val preferences: MySharedPreferences
 ) : ViewModel() {
 
+    var notificationRuntimeRequested: Boolean = false
     private val availableStorageMutableLiveData: MutableLiveData<String> = MutableLiveData()
     val availableStorageLiveData: LiveData<String> = availableStorageMutableLiveData
 
@@ -35,9 +36,14 @@ class HomeViewModel @Inject constructor(
         getFreeExternalMemory()
     }
 
-    fun hasRequestedPermissionBefore() = preferences.getBoolean(PrefsTag.PERMISSION_STORAGE)
+    fun hasStorageRequestedPermissionBefore() = preferences.getBoolean(PrefsTag.PERMISSION_STORAGE)
+    fun setStoragePermissionRequested() = preferences.putBoolean(PrefsTag.PERMISSION_STORAGE, true)
+    fun hasNotificationRequestedPermissionBefore() =
+        preferences.getBoolean(PrefsTag.PERMISSION_NOTIFICATION)
 
-    fun setPermissionRequested() = preferences.putBoolean(PrefsTag.PERMISSION_STORAGE, true)
+    fun setNotificationPermissionRequested() =
+        preferences.putBoolean(PrefsTag.PERMISSION_NOTIFICATION, true)
+
 
     private fun getFreeInternalMemory() {
         viewModelScope.launch {
