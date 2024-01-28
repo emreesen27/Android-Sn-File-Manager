@@ -1,9 +1,10 @@
 package com.sn.snfilemanager.core.util
 
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.app.Service
+import android.content.Context
 
 class FrNotificationManager(
     private val service: Service
@@ -13,6 +14,17 @@ class FrNotificationManager(
         service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     private var foregroundId = 0
+
+    init {
+        val channel = NotificationChannel(
+            "FileOperationChannel",
+            "File Operation Channel",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Notification channel for file operation service"
+        }
+        notificationManager.createNotificationChannel(channel)
+    }
 
     fun notify(id: Int, notification: Notification) {
         synchronized(notifications) {

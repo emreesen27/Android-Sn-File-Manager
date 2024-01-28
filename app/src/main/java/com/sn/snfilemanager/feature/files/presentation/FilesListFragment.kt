@@ -207,6 +207,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 ).apply {
                     onSelected = { selected ->
                         if (selected) {
+                            adapter?.finishSelectionAndReset()
                             startDeleteService()
                         } else {
                             clearSelection()
