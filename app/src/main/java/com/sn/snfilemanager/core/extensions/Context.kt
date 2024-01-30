@@ -24,6 +24,13 @@ fun Context.infoToast(msg: String) {
         .show()
 }
 
+fun Context.warningToast(msg: String) {
+    Toasty.custom(
+        this, msg, R.drawable.ic_info,
+        R.color.orange_folder_secondary, Toast.LENGTH_SHORT, true, true
+    ).show()
+}
+
 fun Context.errorToast(msg: String) {
     Toasty.custom(this, msg, R.drawable.ic_error, R.color.soft_red, Toast.LENGTH_SHORT, true, true)
         .show()

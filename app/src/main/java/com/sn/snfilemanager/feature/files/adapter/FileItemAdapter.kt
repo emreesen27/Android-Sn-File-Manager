@@ -114,11 +114,14 @@ class FileItemAdapter(
 
             binding.tvFileName.text = fileModel.name
             binding.tvFileInfo.text = if (fileModel.isDirectory) context.getString(
-                R.string.child_count,
+                R.string.child_modified,
                 fileModel.lastModified,
-                fileModel.childCount
             ) else {
-                context.getString(R.string.file_size, fileModel.lastModified, fileModel.readableSize)
+                context.getString(
+                    R.string.file_size,
+                    fileModel.lastModified,
+                    fileModel.readableSize
+                )
             }
             updateUIForModel(fileModel, binding)
         }

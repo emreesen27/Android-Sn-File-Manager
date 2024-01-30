@@ -21,10 +21,10 @@ import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.core.extensions.warningToast
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
-import com.sn.snfilemanager.feature.files.data.toFileModel
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
@@ -35,6 +35,7 @@ import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -67,6 +68,8 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     }
 
     override fun setupViews() {
+        binding.vm = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         initAdapter()
         handleBackPressed()
         handlePathSelected()
@@ -96,9 +99,8 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         when (jobType) {
             JobType.COPY -> {
                 viewModel.currentPath?.let { path ->
-                    val files = viewModel.getFilesList(path).map { it.toFileModel() }
+                    viewModel.getFilesList(path)
                     activity?.runOnUiThread {
-                        adapter?.setItems(files)
                         clearSelection()
                     }
                 }
@@ -129,7 +131,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 startCopyService(data.second, data.first)
             }
         }
-        observe(viewModel.searchResultLiveData) { event ->
+        observe(viewModel.updateListLiveData) { event ->
             event.getContentIfNotHandled()?.let { list ->
                 adapter?.setItems(list)
                 hideProgressDialog()
@@ -152,8 +154,9 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     private fun updateFileList(path: String) {
         with(viewModel) {
             firstInit = true
+            viewModel.cancel()
             updateDirectoryList(path)
-            adapter?.setItems(getFilesList(path).map { it.toFileModel() })
+            getFilesList(path)
         }
     }
 
@@ -248,8 +251,12 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 },
                 onClick = { model ->
                     if (model.isDirectory) {
-                        updateFileList(model.absolutePath)
-                        addPathItem(BreadItem(model.name, model.absolutePath))
+                        if (Files.isReadable(Paths.get(model.absolutePath))) {
+                            updateFileList(model.absolutePath)
+                            addPathItem(BreadItem(model.name, model.absolutePath))
+                        } else {
+                            context?.warningToast(getString(R.string.folder_permission_info))
+                        }
                     } else {
                         openFile(model)
                     }

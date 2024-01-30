@@ -16,6 +16,9 @@ import com.sn.snfilemanager.feature.files.data.toFileModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.stream.Collectors
 
 class DetailDialogViewModel : ViewModel() {
 
@@ -108,10 +111,11 @@ class DetailDialogViewModel : ViewModel() {
 
     private fun getTotalSizeAndFileCount(itemList: List<FileModel>): Pair<Long, Int> =
         itemList.fold(Pair(0L, 0)) { acc, item ->
-            if (item.isDirectory) {
+            if (item.isDirectory && Files.isReadable(Paths.get(item.absolutePath))) {
                 val childResult =
-                    getTotalSizeAndFileCount(item.childList?.map { it.toFileModel() }
-                        ?: emptyList())
+                    getTotalSizeAndFileCount(
+                        Files.list(Paths.get(item.absolutePath)).collect(Collectors.toList())
+                            .map { it.toFileModel() })
                 Pair(acc.first + childResult.first, acc.second + childResult.second)
             } else {
                 Pair(acc.first + item.size, acc.second + 1)

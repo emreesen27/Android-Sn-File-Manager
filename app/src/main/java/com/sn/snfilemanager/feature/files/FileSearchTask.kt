@@ -25,8 +25,8 @@ class FileSearchTask {
     }
 
     private fun searchFiles(path: Path, fileName: String, results: MutableList<Path>) {
-        if (!Files.isDirectory(path)) {
-            if (path.fileName.toString().startsWith(fileName)) {
+        if (!Files.isDirectory(path) && Files.isReadable(path)) {
+            if (path.fileName.toString().contains(fileName)) {
                 results.add(path)
             }
             return
@@ -34,7 +34,8 @@ class FileSearchTask {
 
         Files.list(path).use { stream ->
             stream.forEach { subPath ->
-                searchFiles(subPath, fileName, results)
+                if (Files.isReadable(subPath))
+                    searchFiles(subPath, fileName, results)
             }
         }
     }

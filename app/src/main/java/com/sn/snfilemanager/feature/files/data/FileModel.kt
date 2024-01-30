@@ -7,15 +7,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
 import kotlin.io.path.extension
-import kotlin.streams.toList
 
 data class FileModel(
     val id: Long,
     val name: String,
     val isDirectory: Boolean,
     val absolutePath: String,
-    val childCount: Int?,
-    val childList: List<Path>?,
     val lastModified: String,
     val readableSize: String,
     val size: Long,
@@ -31,8 +28,6 @@ fun Path.toFileModel(): FileModel {
         name = this.fileName.toString(),
         isDirectory = Files.isDirectory(this),
         absolutePath = this.toAbsolutePath().toString(),
-        childCount = if (Files.isDirectory(this)) Files.list(this).count().toInt() else null,
-        childList = if (Files.isDirectory(this)) Files.list(this).toList() else emptyList(),
         lastModified = Files.getLastModifiedTime(this).toMillis().toFormattedDate(),
         readableSize = Files.size(this).toHumanReadableByteCount(),
         size = Files.size(this),

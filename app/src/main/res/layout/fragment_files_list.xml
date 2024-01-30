@@ -2,6 +2,16 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.sn.snfilemanager.feature.files.presentation.FilesListViewModel" />
+
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -28,13 +38,13 @@
             app:layout_constraintVertical_bias="0"
             tools:listitem="@layout/item_file" />
 
-        <!--
+
             <include
             android:id="@+id/layout_empty"
             layout="@layout/layout_empty"
-            android:visibility="@{vm.getMediaLiveData.peekContent().empty == true ? View.VISIBLE : View.GONE}"
+            android:visibility="@{vm.updateListLiveData.peekContent().empty == true ? View.VISIBLE : View.GONE}"
             app:layout_constraintTop_toBottomOf="@+id/rcv_files" />
-        -->
+
 
         <include
             android:id="@+id/layout_menu"

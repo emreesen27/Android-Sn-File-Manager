@@ -32,7 +32,7 @@
     <string name="search_image_hint">Enter the name of the image</string>
     <string name="nothing_found">Nothing found</string>
     <string name="type_search_image_info">"Type the name of the image you want to search"</string>
-    <string name="child_count">%s - ( %d )</string>
+    <string name="child_modified">%s</string>
     <string name="file_size">%s - %s </string>
     <string name="permission_message">Access permissions must be granted before the application can perform file operations</string>
     <string name="permission_warning_message">The application cannot work properly without the necessary permissions. Please go to settings and provide necessary permissions</string>
@@ -87,4 +87,5 @@
     <string name="completed">Completed</string>
     <string name="permission_warning_title">Permission warning</string>
     <string name="notification_permission_info">You need to allow notifications to see the progress of operations such as copying, deleting, etc.</string>
+    <string name="folder_permission_info">You do not have permission to view this folder</string>
 </resources>

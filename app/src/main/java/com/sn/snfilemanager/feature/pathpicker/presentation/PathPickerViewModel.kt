@@ -7,9 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 import javax.inject.Inject
 import kotlin.io.path.isDirectory
-import kotlin.streams.toList
 
 @HiltViewModel
 class PathPickerViewModel @Inject constructor(
@@ -34,7 +34,8 @@ class PathPickerViewModel @Inject constructor(
 
     fun getDirectoryList(directoryPath: String): List<Path> {
         val directory = Paths.get(directoryPath)
-        return Files.list(directory).filter { it.isDirectory() }.toList()
+        return Files.list(directory).filter { it.isDirectory() && Files.isReadable(it) }
+            .collect(Collectors.toList())
     }
 
 }

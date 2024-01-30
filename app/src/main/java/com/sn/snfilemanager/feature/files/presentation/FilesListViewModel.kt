@@ -15,20 +15,24 @@ import com.sn.snfilemanager.feature.files.data.toFileModel
 import com.sn.snfilemanager.providers.filepath.FilePathProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.Long.min
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.inject.Inject
-import kotlin.streams.toList
 
 @HiltViewModel
 class FilesListViewModel @Inject constructor(
     private val filePathProvider: FilePathProvider
 ) : ViewModel() {
 
+    private var fileListJob: Job? = null
     private val searchTask = FileSearchTask()
     private var selectedItemList: MutableList<FileModel> = mutableListOf()
     private val directoryList: MutableList<String> = mutableListOf()
@@ -48,12 +52,13 @@ class FilesListViewModel @Inject constructor(
     val startMoveJobLiveData: LiveData<Event<Pair<List<FileModel>, Path>>> = _startMoveJobLiveData
 
     private val _updateListLiveData: MutableLiveData<Event<List<FileModel>>> = MutableLiveData()
-    val searchResultLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
+    val updateListLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
 
     var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
     companion object {
-        const val SEARCH_DELAY = 500L
+        private const val SEARCH_DELAY = 500L
+        private const val BATCH_SIZE = 100L
     }
 
     fun getStoragePath(rootPath: RootPath): String = when (rootPath) {
@@ -74,10 +79,6 @@ class FilesListViewModel @Inject constructor(
         }
     }
 
-    fun getFilesList(path: String): List<Path> {
-        val directory = Paths.get(path)
-        return Files.list(directory).toList()
-    }
 
     fun getDirectoryList() = directoryList
 
@@ -101,6 +102,44 @@ class FilesListViewModel @Inject constructor(
     fun clearSelectionList() {
         if (selectedItemList.isNotEmpty())
             selectedItemList.clear()
+    }
+
+    fun getFilesList(path: String) {
+        fileListJob = viewModelScope.launch {
+            val directory = Paths.get(path)
+            val totalFiles = Files.list(directory).count()
+            var processedFiles: Long = 0
+            val fileList: MutableList<FileModel> = mutableListOf()
+
+            if (totalFiles == 0L) {
+                _updateListLiveData.postValue(Event(emptyList()))
+                return@launch
+            }
+
+            while (processedFiles < totalFiles) {
+                val remainingFiles = totalFiles - processedFiles
+                val currentBatchSize = min(remainingFiles, BATCH_SIZE)
+                withContext(Dispatchers.IO) {
+                    Files.list(directory)
+                        .skip(processedFiles)
+                        .limit(currentBatchSize)
+                        .forEach { file ->
+                            if (Files.isReadable(file))
+                                fileList.add(file.toFileModel())
+                        }
+                }
+                withContext(Dispatchers.Main) {
+                    _updateListLiveData.postValue(Event(fileList.toList()))
+                }
+                processedFiles += currentBatchSize
+            }
+        }
+    }
+
+    fun cancel() {
+        if (fileListJob != null && fileListJob?.isActive == true) {
+            fileListJob?.cancel()
+        }
     }
 
     fun moveFilesAndDirectories(destinationPath: Path) {
@@ -140,13 +179,6 @@ class FilesListViewModel @Inject constructor(
         }
     }
 
-    private fun updateListWithCurrentPath() {
-        currentPath?.let { current ->
-            val list = getFilesList(current)
-            _updateListLiveData.postValue(Event(list.map { it.toFileModel() }))
-        }
-    }
-
     private fun removeSearchCallback() {
         searchRunnable?.let { handler.removeCallbacks(it) }
         searchTask.cancelSearch()
@@ -155,7 +187,7 @@ class FilesListViewModel @Inject constructor(
     fun searchFiles(query: String?) {
         removeSearchCallback()
         if (query.isNullOrEmpty()) {
-            updateListWithCurrentPath()
+            currentPath?.let { getFilesList(it) }
         } else {
             if (query.length > 3) {
                 searchRunnable = Runnable {
