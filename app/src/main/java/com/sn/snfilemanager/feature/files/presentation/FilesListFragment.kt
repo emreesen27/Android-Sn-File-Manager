@@ -137,6 +137,11 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 hideProgressDialog()
             }
         }
+        observe(viewModel.showProgressLiveData) { event ->
+            event.getContentIfNotHandled()?.let { show ->
+                if (show) showProgressDialog() else hideProgressDialog()
+            }
+        }
     }
 
     private fun initFirstList() {
@@ -350,20 +355,15 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     private fun initSearch() {
         getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
             val searchView = item.actionView as? SearchView
+            searchView?.queryHint = getString(R.string.search_hint)
             searchView?.setOnQueryTextListener(object :
                 SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    if (query != null && query.length > 3) {
-                        showProgressDialog()
-                    }
                     viewModel.searchFiles(query)
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText != null && newText.length > 3) {
-                        showProgressDialog()
-                    }
                     viewModel.searchFiles(newText)
                     return true
                 }

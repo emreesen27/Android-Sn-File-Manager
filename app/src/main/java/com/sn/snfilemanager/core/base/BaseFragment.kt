@@ -133,7 +133,7 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return onMenuItemSelected(menuItem.itemId)
             }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        }, viewLifecycleOwner, Lifecycle.State.CREATED)
     }
 
     private fun init() {

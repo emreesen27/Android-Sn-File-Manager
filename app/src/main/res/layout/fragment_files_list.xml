@@ -32,6 +32,7 @@
             android:id="@+id/rcv_files"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="@{vm.searchIsRunning == true ? View.GONE : View.VISIBLE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/layout_menu"
             app:layout_constraintTop_toBottomOf="@+id/breadcrumb_bar"
@@ -39,7 +40,7 @@
             tools:listitem="@layout/item_file" />
 
 
-            <include
+        <include
             android:id="@+id/layout_empty"
             layout="@layout/layout_empty"
             android:visibility="@{vm.updateListLiveData.peekContent().empty == true ? View.VISIBLE : View.GONE}"

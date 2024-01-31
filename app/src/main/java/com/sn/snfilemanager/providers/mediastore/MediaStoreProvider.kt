@@ -22,4 +22,20 @@ class MediaStoreProvider @Inject constructor(private val mediaStoreBuilder: Medi
             BaseResult.Failure(e)
         }
     }
+
+    suspend fun searchInPath(
+        fileName: String,
+        path: String,
+        vararg mediaType: MediaType
+    ): BaseResult<MutableList<String>> {
+        return try {
+            withContext(Dispatchers.IO) {
+                val result = mediaStoreBuilder.build().searchInPath(fileName, path, *mediaType)
+                BaseResult.Success(result)
+            }
+        } catch (e: Exception) {
+            BaseResult.Failure(e)
+        }
+    }
+
 }

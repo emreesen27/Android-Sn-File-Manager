@@ -2,17 +2,20 @@ package com.sn.snfilemanager.feature.files.presentation
 
 import android.os.Handler
 import android.os.Looper
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
+import com.sn.mediastorepv.data.MediaType
+import com.sn.snfilemanager.core.base.BaseResult
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.RootPath
-import com.sn.snfilemanager.feature.files.FileSearchTask
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.feature.files.data.toFileModel
 import com.sn.snfilemanager.providers.filepath.FilePathProvider
+import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +32,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilesListViewModel @Inject constructor(
-    private val filePathProvider: FilePathProvider
+    private val filePathProvider: FilePathProvider,
+    private val mediaStoreProvider: MediaStoreProvider
 ) : ViewModel() {
 
     private var fileListJob: Job? = null
-    private val searchTask = FileSearchTask()
     private var selectedItemList: MutableList<FileModel> = mutableListOf()
     private val directoryList: MutableList<String> = mutableListOf()
     private val handler = Handler(Looper.getMainLooper())
@@ -54,7 +57,12 @@ class FilesListViewModel @Inject constructor(
     private val _updateListLiveData: MutableLiveData<Event<List<FileModel>>> = MutableLiveData()
     val updateListLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
 
+    private val _showProgressLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    val showProgressLiveData: LiveData<Event<Boolean>> = _showProgressLiveData
+
     var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
+
+    val searchIsRunning: ObservableBoolean = ObservableBoolean(false)
 
     companion object {
         private const val SEARCH_DELAY = 500L
@@ -181,23 +189,51 @@ class FilesListViewModel @Inject constructor(
 
     private fun removeSearchCallback() {
         searchRunnable?.let { handler.removeCallbacks(it) }
-        searchTask.cancelSearch()
     }
 
     fun searchFiles(query: String?) {
         removeSearchCallback()
+
         if (query.isNullOrEmpty()) {
             currentPath?.let { getFilesList(it) }
-        } else {
-            if (query.length > 3) {
-                searchRunnable = Runnable {
-                    searchTask.search(Paths.get(currentPath), query) { result ->
-                        _updateListLiveData.postValue(Event(result.map { it.toFileModel() }))
-                    }
-                }
-                searchRunnable?.let { handler.postDelayed(it, SEARCH_DELAY) }
-            }
+            _showProgressLiveData.postValue(Event(false))
+            searchIsRunning.set(false)
+            return
         }
 
+        if (query.length < 3) {
+            _showProgressLiveData.postValue(Event(false))
+            searchIsRunning.set(false)
+            return
+        }
+
+        _showProgressLiveData.postValue(Event(true))
+
+        searchRunnable = Runnable {
+            currentPath?.let { path ->
+                viewModelScope.launch {
+                    when (val result = mediaStoreProvider.searchInPath(
+                        query,
+                        path,
+                        MediaType.FILES,
+                        MediaType.VIDEOS,
+                        MediaType.IMAGES,
+                        MediaType.AUDIOS
+                    )) {
+                        is BaseResult.Success -> {
+                            val list = result.data.map { Paths.get(it).toFileModel() }
+                            searchIsRunning.set(false)
+                            _showProgressLiveData.postValue(Event(false))
+                            _updateListLiveData.postValue(Event(list))
+                        }
+                        is BaseResult.Failure -> {
+                            // Handle failure
+                        }
+                    }
+                }
+            }
+        }
+        searchRunnable?.let { handler.postDelayed(it, SEARCH_DELAY) }
     }
+
 }
