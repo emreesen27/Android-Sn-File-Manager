@@ -6,7 +6,10 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.Config
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -24,6 +27,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
         val themeListPreference: ListPreference? = findPreference(SettingsUtils.SN_THEME_MODE)
+        val hiddenFilePreference: SwitchPreferenceCompat? =
+            findPreference(SettingsUtils.SN_HIDDEN_FILE)
+
         mListenerOptions =
             OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String? ->
                 when (key) {
@@ -31,6 +37,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         SettingsUtils.changeTheme(
                             themeListPreference?.value ?: SettingsUtils.SYSTEM
                         )
+                    }
+
+                    SettingsUtils.SN_HIDDEN_FILE -> {
+                        Config.hiddenFile = hiddenFilePreference?.isChecked ?: false
                     }
                 }
             }

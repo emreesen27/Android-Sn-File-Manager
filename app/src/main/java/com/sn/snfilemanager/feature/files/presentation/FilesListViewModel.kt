@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
+import com.sn.snfilemanager.core.Config
 import com.sn.snfilemanager.core.base.BaseResult
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.RootPath
@@ -132,8 +133,9 @@ class FilesListViewModel @Inject constructor(
                         .skip(processedFiles)
                         .limit(currentBatchSize)
                         .forEach { file ->
-                            if (Files.isReadable(file))
+                            if (Files.isReadable(file) && (Config.hiddenFile || !Files.isHidden(file))) {
                                 fileList.add(file.toFileModel())
+                            }
                         }
                 }
                 withContext(Dispatchers.Main) {
@@ -226,6 +228,7 @@ class FilesListViewModel @Inject constructor(
                             _showProgressLiveData.postValue(Event(false))
                             _updateListLiveData.postValue(Event(list))
                         }
+
                         is BaseResult.Failure -> {
                             // Handle failure
                         }
