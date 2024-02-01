@@ -208,7 +208,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 updateMenusOnSelection(false)
                 navigatePathSelection()
             }
-            tvMore.setOnClickListener {
+            tvMore.click {
                 showPopupMenu(it)
             }
         }

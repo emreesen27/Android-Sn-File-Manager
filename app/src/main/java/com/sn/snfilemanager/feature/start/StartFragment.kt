@@ -2,6 +2,7 @@ package com.sn.snfilemanager.feature.start
 
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.BuildConfig
+import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.FragmentStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,7 +26,7 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
     }
 
     private fun clickContinue() {
-        binding.btnContinue.setOnClickListener {
+        binding.btnContinue.click {
             viewModel.saveFirsRun()
             navigate(StartFragmentDirections.actionStartToHome())
         }
@@ -33,8 +34,8 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
 
     // Todo click implementation
     private fun clicksPolicy() {
-        binding.mtvPrivacyPolicy.setOnClickListener { }
-        binding.mtvOpenSourcePolicy.setOnClickListener { }
+        binding.mtvPrivacyPolicy.click { }
+        binding.mtvOpenSourcePolicy.click { }
     }
 
 }

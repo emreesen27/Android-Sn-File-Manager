@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.loadWithGlide
@@ -82,7 +83,7 @@ class FileItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.root.setOnClickListener {
+            binding.root.click {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     if (isSelectionModeActive) {

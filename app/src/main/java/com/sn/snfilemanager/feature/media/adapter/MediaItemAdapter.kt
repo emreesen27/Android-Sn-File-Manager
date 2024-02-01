@@ -13,6 +13,7 @@ import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.BR
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.setMargins
 import com.sn.snfilemanager.core.extensions.visible
@@ -136,7 +137,7 @@ class MediaItemAdapter(
                 is ItemDocumentBinding -> bindDocument(data)
             }
 
-            binding.root.setOnClickListener {
+            binding.root.click {
                 with(adapter) {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
