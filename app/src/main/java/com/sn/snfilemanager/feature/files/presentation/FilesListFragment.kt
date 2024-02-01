@@ -134,12 +134,21 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         observe(viewModel.updateListLiveData) { event ->
             event.getContentIfNotHandled()?.let { list ->
                 adapter?.setItems(list)
-                hideProgressDialog()
             }
         }
-        observe(viewModel.showProgressLiveData) { event ->
-            event.getContentIfNotHandled()?.let { show ->
-                if (show) showProgressDialog() else hideProgressDialog()
+        observe(viewModel.searchStateLiveData) { event ->
+            event.getContentIfNotHandled()?.let { stateAndProgress ->
+                if (stateAndProgress.first) {
+                    binding.rcvFiles.gone()
+                    if (stateAndProgress.second) {
+                        showProgressDialog()
+                    } else {
+                        hideProgressDialog()
+                    }
+                } else {
+                    binding.rcvFiles.visible()
+                    hideProgressDialog()
+                }
             }
         }
     }

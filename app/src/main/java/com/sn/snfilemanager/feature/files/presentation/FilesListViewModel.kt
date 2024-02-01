@@ -2,7 +2,6 @@ package com.sn.snfilemanager.feature.files.presentation
 
 import android.os.Handler
 import android.os.Looper
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -58,12 +57,11 @@ class FilesListViewModel @Inject constructor(
     private val _updateListLiveData: MutableLiveData<Event<List<FileModel>>> = MutableLiveData()
     val updateListLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
 
-    private val _showProgressLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    val showProgressLiveData: LiveData<Event<Boolean>> = _showProgressLiveData
+    private val _searchStateLiveData: MutableLiveData<Event<Pair<Boolean, Boolean>>> =
+        MutableLiveData()
+    val searchStateLiveData: LiveData<Event<Pair<Boolean, Boolean>>> = _searchStateLiveData
 
     var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
-
-    val searchIsRunning: ObservableBoolean = ObservableBoolean(false)
 
     companion object {
         private const val SEARCH_DELAY = 500L
@@ -195,21 +193,20 @@ class FilesListViewModel @Inject constructor(
 
     fun searchFiles(query: String?) {
         removeSearchCallback()
+        _searchStateLiveData.postValue(Event(Pair(true, false)))
 
         if (query.isNullOrEmpty()) {
             currentPath?.let { getFilesList(it) }
-            _showProgressLiveData.postValue(Event(false))
-            searchIsRunning.set(false)
+            _searchStateLiveData.postValue(Event(Pair(false, false)))
             return
         }
 
         if (query.length < 3) {
-            _showProgressLiveData.postValue(Event(false))
-            searchIsRunning.set(false)
+            _searchStateLiveData.postValue(Event(Pair(true, false)))
             return
         }
 
-        _showProgressLiveData.postValue(Event(true))
+        _searchStateLiveData.postValue(Event(Pair(true, true)))
 
         searchRunnable = Runnable {
             currentPath?.let { path ->
@@ -224,8 +221,7 @@ class FilesListViewModel @Inject constructor(
                     )) {
                         is BaseResult.Success -> {
                             val list = result.data.map { Paths.get(it).toFileModel() }
-                            searchIsRunning.set(false)
-                            _showProgressLiveData.postValue(Event(false))
+                            _searchStateLiveData.postValue(Event(Pair(false, false)))
                             _updateListLiveData.postValue(Event(list))
                         }
 

@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginTop="@dimen/_3sdp"
+            android:visibility="@{vm.searchStateLiveData.peekContent().first == true ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +33,7 @@
             android:id="@+id/rcv_files"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="@{vm.searchIsRunning == true ? View.GONE : View.VISIBLE}"
+            android:visibility="@{vm.updateListLiveData.peekContent().empty == true ? View.GONE : View.VISIBLE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/layout_menu"
             app:layout_constraintTop_toBottomOf="@+id/breadcrumb_bar"
@@ -43,6 +44,8 @@
         <include
             android:id="@+id/layout_empty"
             layout="@layout/layout_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="@{vm.updateListLiveData.peekContent().empty == true ? View.VISIBLE : View.GONE}"
             app:layout_constraintTop_toBottomOf="@+id/rcv_files" />
 
