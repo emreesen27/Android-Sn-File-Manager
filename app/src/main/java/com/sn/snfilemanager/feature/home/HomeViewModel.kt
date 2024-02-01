@@ -23,13 +23,12 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     var notificationRuntimeRequested: Boolean = false
-    private val availableStorageMutableLiveData: MutableLiveData<String> = MutableLiveData()
-    val availableStorageLiveData: LiveData<String> = availableStorageMutableLiveData
+    private val _availableStorageLiveData: MutableLiveData<String> = MutableLiveData()
+    val availableStorageLiveData: LiveData<String> = _availableStorageLiveData
 
-    private val availableExternalStorageMutableLiveData: MutableLiveData<String?> =
-        MutableLiveData()
+    private val _availableExternalStorageLiveData: MutableLiveData<String?> = MutableLiveData()
     val availableExternalStorageLiveData: LiveData<String?> =
-        availableExternalStorageMutableLiveData
+        _availableExternalStorageLiveData
 
     init {
         getFreeInternalMemory()
@@ -50,7 +49,7 @@ class HomeViewModel @Inject constructor(
             val memory = withContext(Dispatchers.IO) {
                 getFreeMemory(filePathProvider.internalStorageDirectory).toHumanReadableByteCount()
             }
-            availableStorageMutableLiveData.value = memory
+            _availableStorageLiveData.value = memory
         }
     }
 
@@ -61,7 +60,7 @@ class HomeViewModel @Inject constructor(
                     getFreeMemory(it).toHumanReadableByteCount()
                 }
             }
-            availableExternalStorageMutableLiveData.value = memory
+            _availableExternalStorageLiveData.value = memory
         }
     }
 

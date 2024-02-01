@@ -38,8 +38,8 @@ class MediaViewModel @Inject constructor(
     private var documentType: String? = null
     var isCopy: Boolean = false
 
-    private val getMediaMutableLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
-    val getMediaLiveData: LiveData<Event<List<Media>>> = getMediaMutableLiveData
+    private val _getMediaLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
+    val getMediaLiveData: LiveData<Event<List<Media>>> = _getMediaLiveData
 
     private val _conflictQuestionLiveData: MutableLiveData<Event<File>> = MutableLiveData()
     val conflictQuestionLiveData: LiveData<Event<File>> = _conflictQuestionLiveData
@@ -84,7 +84,7 @@ class MediaViewModel @Inject constructor(
                         if (filteredMediaTypes != null) {
                             applyFilter(filteredMediaTypes)
                         } else {
-                            getMediaMutableLiveData.value = Event(mediaList)
+                            _getMediaLiveData.value = Event(mediaList)
                             filteredMediaList = mediaList
                         }
                     }
@@ -169,12 +169,12 @@ class MediaViewModel @Inject constructor(
         if (filter.isEmpty()) {
             fullMediaList?.let {
                 filteredMediaList = it
-                getMediaMutableLiveData.value = Event(it)
+                _getMediaLiveData.value = Event(it)
             }
         } else {
             fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredList ->
                 filteredMediaList = filteredList
-                getMediaMutableLiveData.value = Event(filteredList)
+                _getMediaLiveData.value = Event(filteredList)
             }
         }
     }
@@ -182,11 +182,11 @@ class MediaViewModel @Inject constructor(
     fun searchMedia(query: String?) {
         if (query.isNullOrEmpty()) {
             filteredMediaList?.let { result ->
-                getMediaMutableLiveData.value = Event(result)
+                _getMediaLiveData.value = Event(result)
             }
         } else {
             filteredMediaList?.filter { it.name.contains(query) }?.let { result ->
-                getMediaMutableLiveData.value = Event(result)
+                _getMediaLiveData.value = Event(result)
             }
         }
     }
