@@ -165,11 +165,12 @@ class FilesListFragment :
     private fun initFirstList() {
         if (!viewModel.firstInit) {
             updateFileList(viewModel.getStoragePath(args.storageArgs))
-            val rootBread = when (args.storageArgs) {
-                RootPath.DOWNLOAD -> getString(R.string.downloads)
-                RootPath.EXTERNAL -> getString(R.string.external_storage)
-                RootPath.INTERNAL -> getString(R.string.internal)
-            }
+            val rootBread =
+                when (args.storageArgs) {
+                    RootPath.DOWNLOAD -> getString(R.string.downloads)
+                    RootPath.EXTERNAL -> getString(R.string.external_storage)
+                    RootPath.INTERNAL -> getString(R.string.internal)
+                }
             binding.breadcrumbBar.addBreadCrumbItem(BreadItem(rootBread, null))
         }
     }
