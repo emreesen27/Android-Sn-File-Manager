@@ -21,6 +21,7 @@ import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.visible
+import com.sn.snfilemanager.core.extensions.warningToast
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
@@ -99,8 +100,8 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 }
             }
             observe(conflictQuestionLiveData) { event ->
-                event.getContentIfNotHandled()?.let { file ->
-                    ConflictDialog(requireContext(), file.name).apply {
+                event.getContentIfNotHandled()?.let { mediaName ->
+                    ConflictDialog(requireContext(), mediaName).apply {
                         onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                             viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                         }
@@ -110,7 +111,14 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
             }
             observe(viewModel.startMoveJobLiveData) { event ->
                 event.getContentIfNotHandled()?.let { data ->
-                    startCopyService(data.first, data.second)
+                    if (data.first.isNotEmpty()) {
+                        startCopyService(data.first, data.second)
+                    }
+                }
+            }
+            observe(viewModel.pathConflictLiveData) { event ->
+                event.getContentIfNotHandled()?.let {
+                    context?.warningToast(getString(R.string.path_conflict_warning))
                 }
             }
         }

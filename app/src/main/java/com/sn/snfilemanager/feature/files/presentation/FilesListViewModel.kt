@@ -46,9 +46,12 @@ class FilesListViewModel @Inject constructor(
     var isCopy: Boolean = false
     var firstInit = false
 
-    private val _conflictQuestionLiveData: MutableLiveData<Event<File>> =
+    private val _conflictQuestionLiveData: MutableLiveData<Event<String>> =
         MutableLiveData()
-    val conflictQuestionLiveData: LiveData<Event<File>> = _conflictQuestionLiveData
+    val conflictQuestionLiveData: LiveData<Event<String>> = _conflictQuestionLiveData
+
+    private val _pathConflictLiveData: MutableLiveData<Event<String>> = MutableLiveData()
+    val pathConflictLiveData: LiveData<Event<String>> = _pathConflictLiveData
 
     private val _startMoveJobLiveData: MutableLiveData<Event<Pair<List<FileModel>, Path>>> =
         MutableLiveData()
@@ -157,8 +160,14 @@ class FilesListViewModel @Inject constructor(
                 for (i in selectedItemList.indices) {
                     val file = selectedItemList[i]
                     val targetPath = destinationPath.resolve(file.name)
+
+                    if (targetPath.parent.startsWith(Paths.get(file.absolutePath))) {
+                        _pathConflictLiveData.postValue(Event(file.name))
+                        continue
+                    }
+
                     if (Files.exists(targetPath)) {
-                        _conflictQuestionLiveData.postValue(Event(targetPath.toFile()))
+                        _conflictQuestionLiveData.postValue(Event(file.name))
                         val result = conflictDialogDeferred.await()
                         conflictDialogDeferred = CompletableDeferred()
 

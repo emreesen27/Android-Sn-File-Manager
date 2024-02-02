@@ -117,8 +117,8 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
 
     override fun observeData() {
         observe(viewModel.conflictQuestionLiveData) { event ->
-            event.getContentIfNotHandled()?.let { data ->
-                ConflictDialog(requireContext(), data.name).apply {
+            event.getContentIfNotHandled()?.let { fileName ->
+                ConflictDialog(requireContext(), fileName).apply {
                     onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                         viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                     }
@@ -128,12 +128,19 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
         observe(viewModel.startMoveJobLiveData) { event ->
             event.getContentIfNotHandled()?.let { data ->
-                startCopyService(data.second, data.first)
+                if (data.first.isNotEmpty()) {
+                    startCopyService(data.first, data.second)
+                }
             }
         }
         observe(viewModel.updateListLiveData) { event ->
             event.getContentIfNotHandled()?.let { list ->
                 adapter?.setItems(list)
+            }
+        }
+        observe(viewModel.pathConflictLiveData) { event ->
+            event.getContentIfNotHandled()?.let {
+                context?.warningToast(getString(R.string.path_conflict_warning))
             }
         }
         observe(viewModel.searchStateLiveData) { event ->
@@ -343,7 +350,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
     }
 
-    private fun startCopyService(destinationPath: Path, operationItemList: List<FileModel>) {
+    private fun startCopyService(operationItemList: List<FileModel>, destinationPath: Path) {
         JobService.copy(
             operationItemList,
             destinationPath,
