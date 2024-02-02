@@ -22,6 +22,7 @@ import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.extensions.warningToast
+import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
@@ -164,19 +165,19 @@ class FilesListFragment :
     private fun initFirstList() {
         if (!viewModel.firstInit) {
             updateFileList(viewModel.getStoragePath(args.storageArgs))
-            binding.breadcrumbBar.addBreadCrumbItem(
-                BreadItem(
-                    getString(R.string.internal),
-                    null,
-                ),
-            )
+            val rootBread = when (args.storageArgs) {
+                RootPath.DOWNLOAD -> getString(R.string.downloads)
+                RootPath.EXTERNAL -> getString(R.string.external_storage)
+                RootPath.INTERNAL -> getString(R.string.internal)
+            }
+            binding.breadcrumbBar.addBreadCrumbItem(BreadItem(rootBread, null))
         }
     }
 
     private fun updateFileList(path: String) {
         with(viewModel) {
             firstInit = true
-            viewModel.cancel()
+            viewModel.cancelFileListJob()
             updateDirectoryList(path)
             getFilesList(path)
         }

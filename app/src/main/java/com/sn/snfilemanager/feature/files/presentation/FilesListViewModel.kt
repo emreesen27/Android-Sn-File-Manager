@@ -155,7 +155,7 @@ class FilesListViewModel
                 }
         }
 
-        fun cancel() {
+        fun cancelFileListJob() {
             if (fileListJob != null && fileListJob?.isActive == true) {
                 fileListJob?.cancel()
             }
