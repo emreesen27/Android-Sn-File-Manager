@@ -9,12 +9,10 @@ import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.DialogConflictBinding
 
-
 class ConflictDialog(
     context: Context,
-    private val fileName: String
+    private val fileName: String,
 ) : Dialog(context) {
-
     private val binding: DialogConflictBinding by lazy {
         DialogConflictBinding.inflate(layoutInflater)
     }
@@ -60,5 +58,4 @@ class ConflictDialog(
             }
         }
     }
-
 }

@@ -27,7 +27,6 @@ import com.sn.snfilemanager.core.extensions.invisible
 import com.sn.snfilemanager.core.extensions.visible
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
-
     private var progress: LinearProgressIndicator? = null
     private var actionMenu: ConstraintLayout? = null
     private var toolbar: Toolbar? = null
@@ -36,9 +35,11 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     open var actionCancelCLick: (() -> Unit)? = null
 
     protected lateinit var viewModel: VModel
+
     protected abstract fun getViewModelClass(): Class<VModel>
 
     protected lateinit var binding: VBinding
+
     protected abstract fun getViewBinding(): VBinding
 
     protected abstract fun getActionBarStatus(): Boolean
@@ -51,7 +52,7 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         setActionBarStatus()
         getMenuResId()?.let { menuId ->
@@ -60,7 +61,10 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         toolbar = activity?.findViewById(R.id.toolbar)
         actionMenu = activity?.findViewById(R.id.action_menu)
@@ -125,23 +129,31 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
     }
 
     private fun initMenu(menuId: Int) {
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(menuId, menu)
-            }
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(
+                    menu: Menu,
+                    menuInflater: MenuInflater,
+                ) {
+                    menuInflater.inflate(menuId, menu)
+                }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return onMenuItemSelected(menuItem.itemId)
-            }
-        }, viewLifecycleOwner, Lifecycle.State.CREATED)
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return onMenuItemSelected(menuItem.itemId)
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.CREATED,
+        )
     }
 
     private fun init() {
         binding = getViewBinding()
-        viewModel = if (useSharedViewModel) {
-            ViewModelProvider(requireActivity())[getViewModelClass()]
-        } else {
-            ViewModelProvider(this)[getViewModelClass()]
-        }
+        viewModel =
+            if (useSharedViewModel) {
+                ViewModelProvider(requireActivity())[getViewModelClass()]
+            } else {
+                ViewModelProvider(this)[getViewModelClass()]
+            }
     }
 }

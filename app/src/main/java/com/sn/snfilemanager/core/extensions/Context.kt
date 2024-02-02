@@ -12,7 +12,6 @@ import com.sn.snfilemanager.R
 import es.dmoral.toasty.Toasty
 import java.io.File
 
-
 fun Context.getUrisForFile(fileList: List<File>): List<Uri> {
     return fileList.map { file ->
         FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
@@ -26,8 +25,13 @@ fun Context.infoToast(msg: String) {
 
 fun Context.warningToast(msg: String) {
     Toasty.custom(
-        this, msg, R.drawable.ic_info,
-        R.color.orange_folder_secondary, Toast.LENGTH_SHORT, true, true
+        this,
+        msg,
+        R.drawable.ic_info,
+        R.color.orange_folder_secondary,
+        Toast.LENGTH_SHORT,
+        true,
+        true,
     ).show()
 }
 
@@ -36,7 +40,10 @@ fun Context.errorToast(msg: String) {
         .show()
 }
 
-fun Context.openFile(filePath: String, fileType: String?) {
+fun Context.openFile(
+    filePath: String,
+    fileType: String?,
+) {
     val file = File(filePath)
     val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
 
@@ -52,7 +59,10 @@ fun Context.openFile(filePath: String, fileType: String?) {
     }
 }
 
-fun Context.openFileWithOtherApp(filePath: String, fileType: String?) {
+fun Context.openFileWithOtherApp(
+    filePath: String,
+    fileType: String?,
+) {
     val file = File(filePath)
     val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", file)
 
@@ -71,13 +81,13 @@ fun Context.openFileWithOtherApp(filePath: String, fileType: String?) {
     }
 }
 
-
 fun Context.shareFiles(uris: List<Uri>): Boolean {
-    val intent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-        type = "*/*"
-        putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
+    val intent =
+        Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+            type = "*/*"
+            putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
 
     val chooser = Intent.createChooser(intent, getString(R.string.share))
     chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

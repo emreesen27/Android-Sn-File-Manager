@@ -12,7 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
     private val vm: MainViewModel by viewModels()
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -28,7 +27,6 @@ class MainActivity : AppCompatActivity() {
                 setFirsScreen(firstRun)
             }
         }
-
     }
 
     private fun initConfig() {
@@ -40,5 +38,4 @@ class MainActivity : AppCompatActivity() {
             if (firstRun) R.id.action_loading_to_home else R.id.action_loading_to_start
         findNavController(R.id.base_nav_host).navigate(destId)
     }
-
 }

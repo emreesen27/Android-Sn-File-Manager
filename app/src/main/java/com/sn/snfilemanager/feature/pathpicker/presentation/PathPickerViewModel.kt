@@ -12,30 +12,32 @@ import javax.inject.Inject
 import kotlin.io.path.isDirectory
 
 @HiltViewModel
-class PathPickerViewModel @Inject constructor(
-    private val filePathProvider: FilePathProvider
-) : ViewModel() {
+class PathPickerViewModel
+    @Inject
+    constructor(
+        private val filePathProvider: FilePathProvider,
+    ) : ViewModel() {
+        private val directoryList: MutableList<String> = mutableListOf()
+        var currentPath: String? = null
 
-    private val directoryList: MutableList<String> = mutableListOf()
-    var currentPath: String? = null
+        fun updateDirectoryList(path: String) {
+            if (!directoryList.contains(path)) {
+                directoryList.add(path)
+            }
+        }
 
-    fun updateDirectoryList(path: String) {
-        if (!directoryList.contains(path))
-            directoryList.add(path)
+        fun getDirectoryList() = directoryList
+
+        fun getStoragePath(rootPath: RootPath): String =
+            when (rootPath) {
+                RootPath.INTERNAL -> filePathProvider.internalStorageRootPath
+                RootPath.EXTERNAL -> filePathProvider.externalStorageRootPath
+                else -> filePathProvider.downloadDirectoryPath
+            }
+
+        fun getDirectoryList(directoryPath: String): List<Path> {
+            val directory = Paths.get(directoryPath)
+            return Files.list(directory).filter { it.isDirectory() && Files.isReadable(it) }
+                .collect(Collectors.toList())
+        }
     }
-
-    fun getDirectoryList() = directoryList
-
-    fun getStoragePath(rootPath: RootPath): String = when (rootPath) {
-        RootPath.INTERNAL -> filePathProvider.internalStorageRootPath
-        RootPath.EXTERNAL -> filePathProvider.externalStorageRootPath
-        else -> filePathProvider.downloadDirectoryPath
-    }
-
-    fun getDirectoryList(directoryPath: String): List<Path> {
-        val directory = Paths.get(directoryPath)
-        return Files.list(directory).filter { it.isDirectory() && Files.isReadable(it) }
-            .collect(Collectors.toList())
-    }
-
-}

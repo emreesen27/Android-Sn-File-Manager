@@ -1,14 +1,13 @@
 package com.sn.snfilemanager.feature.start
 
-import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.BuildConfig
+import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.FragmentStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
-
     override fun getViewModelClass() = StartViewModel::class.java
 
     override fun getViewBinding() = FragmentStartBinding.inflate(layoutInflater)
@@ -37,5 +36,4 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
         binding.mtvPrivacyPolicy.click { }
         binding.mtvOpenSourcePolicy.click { }
     }
-
 }

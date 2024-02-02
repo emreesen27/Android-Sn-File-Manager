@@ -9,15 +9,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.click
-import com.sn.snfilemanager.providers.preferences.MySharedPreferences
-import com.sn.snfilemanager.providers.preferences.PrefsTag
-
 
 class PermissionDialog(
     context: Context,
-    private val type: PermissionDialogType
+    private val type: PermissionDialogType,
 ) : Dialog(context) {
-
     var onAllow: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,13 +40,12 @@ class PermissionDialog(
         if (type == PermissionDialogType.DEFAULT) {
             Pair(
                 context.getString(R.string.permission_message),
-                context.getString(R.string.click_to_allow)
+                context.getString(R.string.click_to_allow),
             )
         } else {
             Pair(
                 context.getString(R.string.permission_warning_message),
-                context.getString(R.string.go_to_settings)
+                context.getString(R.string.go_to_settings),
             )
         }
-
 }

@@ -10,10 +10,11 @@ import com.sn.snfilemanager.job.JobType
 
 class DeleteMediaJob(
     private val sourcesMedia: List<Media>,
-    private val callback: JobCompletedCallback
+    private val callback: JobCompletedCallback,
 ) : BaseJob() {
     private var deletedCount: Int = 0
     private val totalItemCount = sourcesMedia.size
+
     override fun run() {
         handler.post { service.infoToast(service.getString(R.string.deleting)) }
         deleteMedia()
@@ -37,5 +38,4 @@ class DeleteMediaJob(
         val progress = ((deletedCount.toDouble() / totalItemCount.toDouble()) * 100).toInt()
         postNotification(R.string.delete, progress)
     }
-
 }

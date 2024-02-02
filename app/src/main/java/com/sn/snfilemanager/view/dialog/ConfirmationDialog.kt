@@ -11,9 +11,8 @@ import com.sn.snfilemanager.databinding.DialogConfirmationBinding
 class ConfirmationDialog(
     context: Context,
     private val title: String,
-    private val question: String
+    private val question: String,
 ) : Dialog(context) {
-
     var onSelected: ((Boolean) -> Unit)? = null
 
     private val binding: DialogConfirmationBinding by lazy {
@@ -38,7 +37,6 @@ class ConfirmationDialog(
             dismiss()
         }
     }
-
 
     private fun setWindowProperty() {
         window?.apply {

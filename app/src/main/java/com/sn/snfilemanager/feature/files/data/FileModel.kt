@@ -19,7 +19,7 @@ data class FileModel(
     val extension: String,
     val isHidden: Boolean,
     var isSelected: Boolean,
-    var conflictStrategy: ConflictStrategy
+    var conflictStrategy: ConflictStrategy,
 )
 
 fun Path.toFileModel(): FileModel {
@@ -34,6 +34,6 @@ fun Path.toFileModel(): FileModel {
         extension = if (!Files.isDirectory(this)) this.extension else "",
         isHidden = Files.isHidden(this),
         isSelected = false,
-        conflictStrategy = ConflictStrategy.OVERWRITE
+        conflictStrategy = ConflictStrategy.OVERWRITE,
     )
 }

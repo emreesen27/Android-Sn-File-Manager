@@ -51,8 +51,8 @@ enum class FileExtension(val extension: String, val iconResId: Int) {
     HTML("html", R.drawable.ic_html),
     MIDI("midi", R.drawable.ic_midi),
     DMG("dmg", R.drawable.ic_dmg_file),
-    XML("xml", R.drawable.ic_xml);
-
+    XML("xml", R.drawable.ic_xml),
+    ;
 
     companion object {
         fun getIconResourceId(extension: String): Int {

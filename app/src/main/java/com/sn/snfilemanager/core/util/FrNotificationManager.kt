@@ -7,7 +7,7 @@ import android.app.Service
 import android.content.Context
 
 class FrNotificationManager(
-    private val service: Service
+    private val service: Service,
 ) {
     private val notifications = mutableMapOf<Int, Notification>()
     private val notificationManager =
@@ -16,17 +16,21 @@ class FrNotificationManager(
     private var foregroundId = 0
 
     init {
-        val channel = NotificationChannel(
-            "FileOperationChannel",
-            "File Operation Channel",
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "Notification channel for file operation service"
-        }
+        val channel =
+            NotificationChannel(
+                "FileOperationChannel",
+                "File Operation Channel",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                description = "Notification channel for file operation service"
+            }
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun notify(id: Int, notification: Notification) {
+    fun notify(
+        id: Int,
+        notification: Notification,
+    ) {
         synchronized(notifications) {
             if (notifications.isEmpty()) {
                 service.startForeground(id, notification)

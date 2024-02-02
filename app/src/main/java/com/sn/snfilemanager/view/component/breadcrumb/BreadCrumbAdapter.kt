@@ -1,6 +1,5 @@
 package com.sn.snfilemanager.view.component.breadcrumb
 
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,17 +11,23 @@ import com.sn.snfilemanager.core.extensions.click
 
 class BreadCrumbAdapter(var breadCrumbItemClickListener: BreadCrumbItemClickListener) :
     RecyclerView.Adapter<BreadCrumbAdapter.ViewHolder>() {
-
     private var breadCrumbItemsData: MutableList<BreadItem> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_bread_crumb, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_bread_crumb, parent, false),
         )
     }
 
     override fun getItemCount(): Int = breadCrumbItemsData.size
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+    ) {
         val item = breadCrumbItemsData[position]
 
         if (position == 0) {
@@ -65,7 +70,7 @@ class BreadCrumbAdapter(var breadCrumbItemClickListener: BreadCrumbItemClickList
             breadCrumbTitle.click {
                 breadCrumbItemClickListener.onItemClick(
                     breadCrumbItemsData[adapterPosition],
-                    adapterPosition
+                    adapterPosition,
                 )
             }
         }

@@ -40,9 +40,10 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @AndroidEntryPoint
-class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewModel>(),
-    FileItemAdapter.SelectionCallback, JobCompletedCallback {
-
+class FilesListFragment :
+    BaseFragment<FragmentFilesListBinding, FilesListViewModel>(),
+    FileItemAdapter.SelectionCallback,
+    JobCompletedCallback {
     private val args: FilesListFragmentArgs by navArgs()
     private var adapter: FileItemAdapter? = null
 
@@ -54,14 +55,15 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
 
     override fun getMenuResId(): Int = R.menu.menu_base
 
-    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
-        R.id.action_search -> {
-            initSearch()
-            true
-        }
+    override fun onMenuItemSelected(menuItemId: Int) =
+        when (menuItemId) {
+            R.id.action_search -> {
+                initSearch()
+                true
+            }
 
-        else -> super.onMenuItemSelected(menuItemId)
-    }
+            else -> super.onMenuItemSelected(menuItemId)
+        }
 
     override var actionCancelCLick: (() -> Unit)? = {
         clearSelection()
@@ -89,7 +91,6 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     override fun onUpdateSelection(selectedSize: Int) {
         updateActionMenu(getString(R.string.selected_count, selectedSize))
     }
-
 
     override fun scannedOnCompleted() {
         // scanned completed
@@ -166,8 +167,8 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
             binding.breadcrumbBar.addBreadCrumbItem(
                 BreadItem(
                     getString(R.string.internal),
-                    null
-                )
+                    null,
+                ),
             )
         }
     }
@@ -190,15 +191,24 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     }
 
     private fun initBreadListener() {
-        binding.breadcrumbBar.setListener(object : BreadCrumbItemClickListener {
-            override fun onItemClick(item: BreadItem, position: Int) {
-                val path =
-                    if (position == 0 || item.path == null) viewModel.getStoragePath(args.storageArgs) else item.path
-                updateFileList(path)
-                binding.breadcrumbBar.removeItemsWithRange(position)
-                viewModel.updateDirectoryListWithPos(position)
-            }
-        })
+        binding.breadcrumbBar.setListener(
+            object : BreadCrumbItemClickListener {
+                override fun onItemClick(
+                    item: BreadItem,
+                    position: Int,
+                ) {
+                    val path =
+                        if (position == 0 || item.path == null) {
+                            viewModel.getStoragePath(args.storageArgs)
+                        } else {
+                            item.path
+                        }
+                    updateFileList(path)
+                    binding.breadcrumbBar.removeItemsWithRange(position)
+                    viewModel.updateDirectoryListWithPos(position)
+                }
+            },
+        )
     }
 
     private fun updateMenusOnSelection(isSelectionActive: Boolean) {
@@ -227,7 +237,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
                 ConfirmationDialog(
                     requireContext(),
                     getString(R.string.are_you_sure),
-                    getString(R.string.delete_warning)
+                    getString(R.string.delete_warning),
                 ).apply {
                     onSelected = { selected ->
                         if (selected) {
@@ -264,26 +274,27 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
 
     private fun initAdapter() {
         if (adapter == null) {
-            adapter = FileItemAdapter(
-                requireContext(),
-                onSelected = { model, selected ->
-                    viewModel.addSelectedItem(model, selected)
-                    setShareStatus()
-                },
-                onClick = { model ->
-                    if (model.isDirectory) {
-                        if (Files.isReadable(Paths.get(model.absolutePath))) {
-                            updateFileList(model.absolutePath)
-                            addPathItem(BreadItem(model.name, model.absolutePath))
+            adapter =
+                FileItemAdapter(
+                    requireContext(),
+                    onSelected = { model, selected ->
+                        viewModel.addSelectedItem(model, selected)
+                        setShareStatus()
+                    },
+                    onClick = { model ->
+                        if (model.isDirectory) {
+                            if (Files.isReadable(Paths.get(model.absolutePath))) {
+                                updateFileList(model.absolutePath)
+                                addPathItem(BreadItem(model.name, model.absolutePath))
+                            } else {
+                                context?.warningToast(getString(R.string.folder_permission_info))
+                            }
                         } else {
-                            context?.warningToast(getString(R.string.folder_permission_info))
+                            openFile(model)
                         }
-                    } else {
-                        openFile(model)
-                    }
-                },
-                selectionCallback = this@FilesListFragment
-            )
+                    },
+                    selectionCallback = this@FilesListFragment,
+                )
         }
         binding.rcvFiles.adapter = adapter
         binding.rcvFiles.itemAnimator = null
@@ -326,7 +337,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
     private fun showDetailDialog() {
         DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
             childFragmentManager,
-            DetailDialog.TAG
+            DetailDialog.TAG,
         )
     }
 
@@ -350,7 +361,10 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         }
     }
 
-    private fun startCopyService(operationItemList: List<FileModel>, destinationPath: Path) {
+    private fun startCopyService(
+        operationItemList: List<FileModel>,
+        destinationPath: Path,
+    ) {
         JobService.copy(
             operationItemList,
             destinationPath,
@@ -364,7 +378,7 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         JobService.delete(
             viewModel.getSelectedItem(),
             this@FilesListFragment,
-            requireContext()
+            requireContext(),
         )
     }
 
@@ -372,33 +386,37 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
         getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
             val searchView = item.actionView as? SearchView
             searchView?.queryHint = getString(R.string.search_hint)
-            searchView?.setOnQueryTextListener(object :
-                SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    viewModel.searchFiles(query)
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.searchFiles(newText)
-                    return true
-                }
-            })
-
-            item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
-                    return true
-                }
-
-                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
-                    return if (selectionIsActive()) {
-                        clearSelection()
-                        false
-                    } else {
-                        true
+            searchView?.setOnQueryTextListener(
+                object :
+                    SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        viewModel.searchFiles(query)
+                        return true
                     }
-                }
-            })
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        viewModel.searchFiles(newText)
+                        return true
+                    }
+                },
+            )
+
+            item.setOnActionExpandListener(
+                object : MenuItem.OnActionExpandListener {
+                    override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                        return true
+                    }
+
+                    override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
+                        return if (selectionIsActive()) {
+                            clearSelection()
+                            false
+                        } else {
+                            true
+                        }
+                    }
+                },
+            )
         }
     }
 
@@ -406,25 +424,25 @@ class FilesListFragment : BaseFragment<FragmentFilesListBinding, FilesListViewMo
 
     private fun handleBackPressed() {
         val directoryList = viewModel.getDirectoryList()
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                adapter?.selectionIsActive()?.let { isActive ->
-                    if (isActive) {
-                        clearSelection()
-                    } else {
-                        if (directoryList.size > 1) {
-                            directoryList.removeAt(directoryList.lastIndex)
-                            updateFileList(directoryList.last())
-                            binding.breadcrumbBar.removeLastBreadCrumbItem()
+        val callback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    adapter?.selectionIsActive()?.let { isActive ->
+                        if (isActive) {
+                            clearSelection()
                         } else {
-                            isEnabled = false
-                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                            if (directoryList.size > 1) {
+                                directoryList.removeAt(directoryList.lastIndex)
+                                updateFileList(directoryList.last())
+                                binding.breadcrumbBar.removeLastBreadCrumbItem()
+                            } else {
+                                isEnabled = false
+                                requireActivity().onBackPressedDispatcher.onBackPressed()
+                            }
                         }
                     }
                 }
             }
-        }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
-
 }

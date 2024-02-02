@@ -14,7 +14,9 @@ import javax.inject.Singleton
 object MediaStoreModule {
     @Provides
     @Singleton
-    fun provideMediaStoreBuilder(@ApplicationContext context: Context): MediaStoreBuilder {
+    fun provideMediaStoreBuilder(
+        @ApplicationContext context: Context,
+    ): MediaStoreBuilder {
         return MediaStoreBuilder(context)
     }
 }

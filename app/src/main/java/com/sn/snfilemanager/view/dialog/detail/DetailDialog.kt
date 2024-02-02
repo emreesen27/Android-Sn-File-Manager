@@ -13,9 +13,8 @@ import com.sn.snfilemanager.databinding.DialogDetailBinding
 
 class DetailDialog<T>(
     private val context: Context,
-    private val itemList: MutableList<T>
+    private val itemList: MutableList<T>,
 ) : DialogFragment() {
-
     private var adapter: DetailItemAdapter? = null
     private val viewModel: DetailDialogViewModel by viewModels()
     private val binding: DialogDetailBinding by lazy {
@@ -29,12 +28,15 @@ class DetailDialog<T>(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         binding.vm = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -46,7 +48,7 @@ class DetailDialog<T>(
     }
 
     private fun initObserve() {
-        observe(viewModel.detailLiveData) {
+        observe(viewModel.detailItemLiveData) {
             adapter?.setItems(it)
         }
     }
@@ -55,5 +57,4 @@ class DetailDialog<T>(
         adapter = DetailItemAdapter(context)
         binding.recyclerDetail.adapter = adapter
     }
-
 }

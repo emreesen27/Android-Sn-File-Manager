@@ -43,22 +43,26 @@ class JobService : Service() {
 
     override fun onBind(intent: Intent): IBinder? = null
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int = START_STICKY
 
     private val jobCount: Int
         get() = synchronized(runningJobs) { runningJobs.size }
 
-
     private fun startJob(job: BaseJob) {
         synchronized(runningJobs) {
-            val newJob = jobScope.launch {
-                job.runOn(this@JobService)
-                synchronized(runningJobs) {
-                    runningJobs.remove(job)
-                    updateWakeWifiLockLocked()
-                    job.onCompleted()
+            val newJob =
+                jobScope.launch {
+                    job.runOn(this@JobService)
+                    synchronized(runningJobs) {
+                        runningJobs.remove(job)
+                        updateWakeWifiLockLocked()
+                        job.onCompleted()
+                    }
                 }
-            }
             runningJobs[job] = newJob
             updateWakeWifiLockLocked()
         }
@@ -98,7 +102,10 @@ class JobService : Service() {
             get() = instance?.jobCount ?: 0
 
         @MainThread
-        private fun startJob(job: BaseJob, context: Context) {
+        private fun startJob(
+            job: BaseJob,
+            context: Context,
+        ) {
             val instance = instance
             if (instance != null) {
                 instance.startJob(job)
@@ -121,7 +128,7 @@ class JobService : Service() {
         fun delete(
             sources: List<FileModel>,
             completed: JobCompletedCallback,
-            context: Context
+            context: Context,
         ) {
             startJob(DeleteFileJob(sources, completed), context)
         }
@@ -129,7 +136,7 @@ class JobService : Service() {
         fun deleteMedia(
             sources: List<Media>,
             completed: JobCompletedCallback,
-            context: Context
+            context: Context,
         ) {
             startJob(DeleteMediaJob(sources, completed), context)
         }
@@ -139,7 +146,7 @@ class JobService : Service() {
             targetPath: Path,
             isCopy: Boolean,
             completed: JobCompletedCallback,
-            context: Context
+            context: Context,
         ) {
             startJob(MoveMediaJob(sources, targetPath, isCopy, completed), context)
         }

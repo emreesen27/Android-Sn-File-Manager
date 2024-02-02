@@ -1,7 +1,6 @@
 package com.sn.snfilemanager.core.util
 
 open class Event<out T>(private val content: T) {
-
     var hasBeenHandled = false
         private set
 

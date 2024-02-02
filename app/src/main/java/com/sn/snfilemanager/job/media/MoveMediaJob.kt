@@ -19,9 +19,8 @@ class MoveMediaJob(
     private val sourcesMedia: List<Media>,
     private val targetPath: Path,
     private val isCopy: Boolean,
-    private val callback: JobCompletedCallback
+    private val callback: JobCompletedCallback,
 ) : BaseJob() {
-
     private var movedItemCount: Int = 0
     private var title = if (isCopy) R.string.copying else R.string.moving
     private val totalItemCount: Int = sourcesMedia.size
@@ -78,5 +77,4 @@ class MoveMediaJob(
         val title = if (isCopy) R.string.copy else R.string.move
         postNotification(title, progress)
     }
-
 }

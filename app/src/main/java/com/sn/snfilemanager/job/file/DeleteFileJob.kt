@@ -17,12 +17,12 @@ import java.nio.file.attribute.BasicFileAttributes
 
 class DeleteFileJob(
     private val sourceFiles: List<FileModel>,
-    private val completed: JobCompletedCallback
+    private val completed: JobCompletedCallback,
 ) : BaseJob() {
-
     private var deletedCount: Long = 0
     private val totalItemCount = calculateItemCount(sourceFiles)
     private val deletedItemPathList: MutableList<String> = mutableListOf()
+
     override fun run() {
         handler.post { service.infoToast(service.getString(R.string.deleting)) }
         delete()
@@ -43,37 +43,53 @@ class DeleteFileJob(
     }
 
     private fun deleteFilesAndDirectories(path: Path) {
-        Files.walkFileTree(path, object : SimpleFileVisitor<Path>() {
-            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                if (Files.deleteIfExists(file)) {
-                    deletedCount++
-                    updateProgress()
-                    deletedItemPathList.add(file.toFile().absolutePath)
+        Files.walkFileTree(
+            path,
+            object : SimpleFileVisitor<Path>() {
+                override fun visitFile(
+                    file: Path,
+                    attrs: BasicFileAttributes,
+                ): FileVisitResult {
+                    if (Files.deleteIfExists(file)) {
+                        deletedCount++
+                        updateProgress()
+                        deletedItemPathList.add(file.toFile().absolutePath)
+                    }
+                    return FileVisitResult.CONTINUE
                 }
-                return FileVisitResult.CONTINUE
-            }
 
-            override fun visitFileFailed(file: Path, exc: java.io.IOException): FileVisitResult {
-                return FileVisitResult.CONTINUE
-            }
-
-            override fun postVisitDirectory(dir: Path, exc: java.io.IOException?): FileVisitResult {
-                if (Files.deleteIfExists(dir)) {
-                    updateProgress()
-                    deletedCount++
+                override fun visitFileFailed(
+                    file: Path,
+                    exc: java.io.IOException,
+                ): FileVisitResult {
+                    return FileVisitResult.CONTINUE
                 }
-                return FileVisitResult.CONTINUE
-            }
-        })
+
+                override fun postVisitDirectory(
+                    dir: Path,
+                    exc: java.io.IOException?,
+                ): FileVisitResult {
+                    if (Files.deleteIfExists(dir)) {
+                        updateProgress()
+                        deletedCount++
+                    }
+                    return FileVisitResult.CONTINUE
+                }
+            },
+        )
     }
 
     private fun calculateItemCount(items: List<FileModel>): Long {
         return items.sumOf {
-            if (Files.isDirectory(Paths.get(it.absolutePath))) Files.walk(
-                Paths.get(
-                    it.absolutePath
-                )
-            ).count() else 1
+            if (Files.isDirectory(Paths.get(it.absolutePath))) {
+                Files.walk(
+                    Paths.get(
+                        it.absolutePath,
+                    ),
+                ).count()
+            } else {
+                1
+            }
         }
     }
 

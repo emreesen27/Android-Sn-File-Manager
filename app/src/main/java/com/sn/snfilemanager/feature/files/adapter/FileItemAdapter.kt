@@ -22,11 +22,9 @@ class FileItemAdapter(
     private val onClick: ((FileModel) -> Unit)? = null,
     private val selectionCallback: SelectionCallback? = null,
 ) : RecyclerView.Adapter<FileItemAdapter.FileViewHolder>() {
-
     private val selectedItems: MutableList<FileModel> = mutableListOf()
     private var isSelectionModeActive = false
     private var fileItems: List<FileModel> = emptyList()
-
 
     fun setItems(newItems: List<FileModel>) {
         val diffResult = DiffUtil.calculateDiff(FileDiffCallback(fileItems, newItems))
@@ -61,17 +59,18 @@ class FileItemAdapter(
 
     fun selectionIsActive(): Boolean = isSelectionModeActive
 
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): FileItemAdapter.FileViewHolder {
         val binding = ItemFileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FileViewHolder(binding)
     }
 
-
-    override fun onBindViewHolder(holder: FileItemAdapter.FileViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: FileItemAdapter.FileViewHolder,
+        position: Int,
+    ) {
         holder.bind(fileItems[position])
     }
 
@@ -81,7 +80,6 @@ class FileItemAdapter(
 
     inner class FileViewHolder(private val binding: ItemFileBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         init {
             binding.root.click {
                 val position = adapterPosition
@@ -105,7 +103,6 @@ class FileItemAdapter(
             }
         }
 
-
         fun bind(fileModel: FileModel) {
             if (fileModel.isSelected) {
                 binding.ivSelected.visible()
@@ -114,22 +111,27 @@ class FileItemAdapter(
             }
 
             binding.tvFileName.text = fileModel.name
-            binding.tvFileInfo.text = if (fileModel.isDirectory) context.getString(
-                R.string.child_modified,
-                fileModel.lastModified,
-            ) else {
-                context.getString(
-                    R.string.file_size,
-                    fileModel.lastModified,
-                    fileModel.readableSize
-                )
-            }
+            binding.tvFileInfo.text =
+                if (fileModel.isDirectory) {
+                    context.getString(
+                        R.string.child_modified,
+                        fileModel.lastModified,
+                    )
+                } else {
+                    context.getString(
+                        R.string.file_size,
+                        fileModel.lastModified,
+                        fileModel.readableSize,
+                    )
+                }
             updateUIForModel(fileModel, binding)
         }
-
     }
 
-    private fun updateUIForModel(model: FileModel, binding: ItemFileBinding) {
+    private fun updateUIForModel(
+        model: FileModel,
+        binding: ItemFileBinding,
+    ) {
         with(binding) {
             ivPlay.gone()
             if (model.isDirectory) {
@@ -148,16 +150,17 @@ class FileItemAdapter(
         }
     }
 
-    private fun getDirectoryIcon(name: String) = when (name) {
-        DirectoryType.MUSIC.type -> R.drawable.ic_directory_music
-        DirectoryType.MOVIES.type -> R.drawable.ic_directory_movies
-        DirectoryType.DOWNLOAD.type -> R.drawable.ic_directory_download
-        DirectoryType.DOCUMENTS.type -> R.drawable.ic_directory_document
-        DirectoryType.ANDROID.type -> R.drawable.ic_directory_android
-        DirectoryType.PICTURES.type -> R.drawable.ic_directory_pictures
-        DirectoryType.DCIM.type -> R.drawable.ic_directory_dcim
-        else -> R.drawable.ic_directory
-    }
+    private fun getDirectoryIcon(name: String) =
+        when (name) {
+            DirectoryType.MUSIC.type -> R.drawable.ic_directory_music
+            DirectoryType.MOVIES.type -> R.drawable.ic_directory_movies
+            DirectoryType.DOWNLOAD.type -> R.drawable.ic_directory_download
+            DirectoryType.DOCUMENTS.type -> R.drawable.ic_directory_document
+            DirectoryType.ANDROID.type -> R.drawable.ic_directory_android
+            DirectoryType.PICTURES.type -> R.drawable.ic_directory_pictures
+            DirectoryType.DCIM.type -> R.drawable.ic_directory_dcim
+            else -> R.drawable.ic_directory
+        }
 
     private fun startSelection(fileModel: FileModel) {
         selectionCallback?.onStartSelection()
@@ -185,11 +188,11 @@ class FileItemAdapter(
         notifyItemChanged(position)
     }
 
-
     interface SelectionCallback {
         fun onStartSelection()
+
         fun onUpdateSelection(selectedSize: Int)
+
         fun onEndSelection()
     }
-
 }

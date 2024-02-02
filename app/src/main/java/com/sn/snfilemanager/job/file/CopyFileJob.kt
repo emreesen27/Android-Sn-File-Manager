@@ -24,9 +24,8 @@ class CopyFileJob(
     private val sourceFiles: List<FileModel>,
     private val targetPath: Path,
     private val isCopy: Boolean,
-    private val completed: JobCompletedCallback
+    private val completed: JobCompletedCallback,
 ) : BaseJob() {
-
     private var movedItemCount: Int = 0
     private var title = if (isCopy) R.string.copying else R.string.moving
     private val totalItemCount: Long = calculateItemCount(sourceFiles)
@@ -60,7 +59,6 @@ class CopyFileJob(
                 } else {
                     copyOrMoveFile(sourcePath, targetPath, isCopy)
                 }
-
             } else {
                 if (Files.isDirectory(sourcePath)) {
                     moveDirectoryContents(sourcePath, targetPath, isCopy)
@@ -74,14 +72,17 @@ class CopyFileJob(
     private fun moveDirectoryContents(
         sourcePath: Path,
         targetPath: Path,
-        isCopy: Boolean
+        isCopy: Boolean,
     ) {
         Files.walkFileTree(
             sourcePath,
             EnumSet.noneOf(FileVisitOption::class.java),
             Int.MAX_VALUE,
             object : SimpleFileVisitor<Path>() {
-                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                override fun visitFile(
+                    file: Path,
+                    attrs: BasicFileAttributes,
+                ): FileVisitResult {
                     val targetFile = targetPath.resolve(sourcePath.relativize(file))
                     copyOrMoveFile(file, targetFile, isCopy)
                     return FileVisitResult.CONTINUE
@@ -89,17 +90,21 @@ class CopyFileJob(
 
                 override fun preVisitDirectory(
                     dir: Path,
-                    attrs: BasicFileAttributes
+                    attrs: BasicFileAttributes,
                 ): FileVisitResult {
                     val targetDir = targetPath.resolve(sourcePath.relativize(dir))
                     Files.createDirectories(targetDir)
                     return FileVisitResult.CONTINUE
                 }
 
-                override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
+                override fun visitFileFailed(
+                    file: Path,
+                    exc: IOException,
+                ): FileVisitResult {
                     return FileVisitResult.CONTINUE
                 }
-            })
+            },
+        )
     }
 
     private fun copyOrMoveFile(
@@ -125,11 +130,15 @@ class CopyFileJob(
 
     private fun calculateItemCount(items: List<FileModel>): Long {
         return items.sumOf {
-            if (Files.isDirectory(Paths.get(it.absolutePath))) Files.walk(
-                Paths.get(
-                    it.absolutePath
-                )
-            ).count() else 1
+            if (Files.isDirectory(Paths.get(it.absolutePath))) {
+                Files.walk(
+                    Paths.get(
+                        it.absolutePath,
+                    ),
+                ).count()
+            } else {
+                1
+            }
         }
     }
 

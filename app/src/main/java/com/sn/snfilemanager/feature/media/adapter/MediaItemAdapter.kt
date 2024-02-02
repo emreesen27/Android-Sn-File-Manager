@@ -28,11 +28,9 @@ class MediaItemAdapter(
     private val onSelected: ((Media, Boolean) -> Unit)? = null,
     private val selectionCallback: SelectionCallback? = null,
 ) : RecyclerView.Adapter<MediaItemAdapter.AutoCompleteViewHolder>() {
-
     private val selectedItems: MutableList<Media> = mutableListOf()
     private var isSelectionModeActive = false
     private var mediaItems: List<Media> = emptyList()
-
 
     fun setItems(newItems: List<Media>) {
         val diffResult = DiffUtil.calculateDiff(MediaDiffCallback(mediaItems, newItems))
@@ -78,7 +76,10 @@ class MediaItemAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AutoCompleteViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): AutoCompleteViewHolder {
         return AutoCompleteViewHolder.create(
             LayoutInflater.from(parent.context),
             parent,
@@ -87,7 +88,10 @@ class MediaItemAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: AutoCompleteViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: AutoCompleteViewHolder,
+        position: Int,
+    ) {
         holder.bindItem(mediaItems[position])
     }
 
@@ -124,7 +128,7 @@ class MediaItemAdapter(
     class AutoCompleteViewHolder(
         private val binding: ViewDataBinding,
         val context: Context,
-        private val adapter: MediaItemAdapter
+        private val adapter: MediaItemAdapter,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bindItem(data: Media) {
             binding.setVariable(BR.item, data)
@@ -189,7 +193,7 @@ class MediaItemAdapter(
         private fun setSelectedVisibility(
             ivSelected: AppCompatImageView,
             ivImage: AppCompatImageView,
-            data: Media
+            data: Media,
         ) {
             if (data.isSelected) {
                 ivSelected.visible()
@@ -205,14 +209,14 @@ class MediaItemAdapter(
                 inflater: LayoutInflater?,
                 parent: ViewGroup?,
                 viewType: Int,
-                adapter: MediaItemAdapter
+                adapter: MediaItemAdapter,
             ): AutoCompleteViewHolder {
                 val binding =
                     DataBindingUtil.inflate<ViewDataBinding>(inflater!!, viewType, parent, false)
                 return AutoCompleteViewHolder(
                     binding,
                     parent?.context!!,
-                    adapter
+                    adapter,
                 )
             }
         }
@@ -220,7 +224,9 @@ class MediaItemAdapter(
 
     interface SelectionCallback {
         fun onStartSelection()
+
         fun onUpdateSelection(selectedSize: Int)
+
         fun onEndSelection()
     }
 }

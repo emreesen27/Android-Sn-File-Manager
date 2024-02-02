@@ -6,25 +6,25 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.Config
 
 class SettingsFragment : PreferenceFragmentCompat() {
-
     private lateinit var mListenerOptions: OnSharedPreferenceChangeListener
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         val aboutButton: Preference? = findPreference(SettingsUtils.SN_ABOUT)
         aboutButton?.setOnPreferenceClickListener {
-            //todo
-            //findNavController().navigate(SettingsFragmentDirections.actionSettingsToAbout())
+            // todo
+            // findNavController().navigate(SettingsFragmentDirections.actionSettingsToAbout())
             true
         }
-
 
         val themeListPreference: ListPreference? = findPreference(SettingsUtils.SN_THEME_MODE)
         val hiddenFilePreference: SwitchPreferenceCompat? =
@@ -35,7 +35,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 when (key) {
                     SettingsUtils.SN_THEME_MODE -> {
                         SettingsUtils.changeTheme(
-                            themeListPreference?.value ?: SettingsUtils.SYSTEM
+                            themeListPreference?.value ?: SettingsUtils.SYSTEM,
                         )
                     }
 
@@ -49,14 +49,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onPause() {
         super.onPause()
         preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(
-            mListenerOptions
+            mListenerOptions,
         )
     }
 
     override fun onResume() {
         super.onResume()
         preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(
-            mListenerOptions
+            mListenerOptions,
         )
     }
 }

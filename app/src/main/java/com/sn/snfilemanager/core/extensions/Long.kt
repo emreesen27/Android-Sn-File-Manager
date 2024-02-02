@@ -2,7 +2,8 @@ package com.sn.snfilemanager.core.extensions
 
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 fun Long.toHumanReadableByteCount(): String {
     if (this < 1000) {

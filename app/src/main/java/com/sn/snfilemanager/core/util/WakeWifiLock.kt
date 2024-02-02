@@ -1,16 +1,17 @@
 package com.sn.snfilemanager.core.util
 
+import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.PowerManager
-import android.content.Context
 
 class WakeWifiLock(context: Context, tag: String) {
     private val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
     private val wifiManager =
         context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-    private val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, tag)
-        .apply { setReferenceCounted(false) }
+    private val wakeLock =
+        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, tag)
+            .apply { setReferenceCounted(false) }
 
     private val wifiLock =
         wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, tag)

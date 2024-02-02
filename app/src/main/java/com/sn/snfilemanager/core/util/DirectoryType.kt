@@ -7,5 +7,5 @@ enum class DirectoryType(val type: String) {
     DCIM("DCIM"),
     MOVIES("Movies"),
     DOCUMENTS("Documents"),
-    PICTURES("Pictures")
+    PICTURES("Pictures"),
 }

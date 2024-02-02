@@ -20,7 +20,10 @@ fun View.gone() {
     this.visibility = View.GONE
 }
 
-fun View.visibleWithAnim(context: Context, duration: Long = 400) {
+fun View.visibleWithAnim(
+    context: Context,
+    duration: Long = 400,
+) {
     this.visibility = View.VISIBLE
     val render = Render(context)
     render.setDuration(duration)
@@ -40,8 +43,9 @@ fun View.hideKeyboard() {
 }
 
 fun View.click(onClick: (View) -> Unit) {
-    val safeClickListener = SafeClickListener {
-        onClick(it)
-    }
+    val safeClickListener =
+        SafeClickListener {
+            onClick(it)
+        }
     setOnClickListener(safeClickListener)
 }

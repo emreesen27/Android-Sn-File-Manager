@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 
 object SettingsUtils {
-
     const val SECRETIVE_REPOSITORY_LINK = "https://github.com/emreesen27/Secretive"
 
     const val SN_THEME_MODE = "sn.theme.mode"
@@ -40,6 +39,5 @@ object SettingsUtils {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
-
     }
 }

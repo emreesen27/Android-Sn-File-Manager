@@ -19,7 +19,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class FilterBottomSheet : BottomSheetDialogFragment() {
-
     @Inject
     lateinit var sharedPreferences: MySharedPreferences
 
@@ -36,13 +35,12 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_MIME_TYPE = "ARG_CHIP"
         const val TAG = "FilterBottomSheet"
 
-        fun newInstance(
-            mimeTypes: MimeTypes
-        ): FilterBottomSheet {
+        fun newInstance(mimeTypes: MimeTypes): FilterBottomSheet {
             return FilterBottomSheet().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_MIME_TYPE, mimeTypes)
-                }
+                arguments =
+                    Bundle().apply {
+                        putParcelable(ARG_MIME_TYPE, mimeTypes)
+                    }
             }
         }
     }
@@ -50,14 +48,17 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         setArguments()
         setPrefsTag()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         mimeTypes?.let {
@@ -69,7 +70,6 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         binding.btnCancel.click {
             dismiss()
         }
-
     }
 
     private fun setArguments() {
@@ -77,22 +77,22 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setPrefsTag() {
-        prefsTag = when (mimeTypes) {
-            MimeTypes.IMAGES -> PrefsTag.FILTER_IMAGES
-            MimeTypes.VIDEOS -> PrefsTag.FILTER_VIDEOS
-            MimeTypes.AUDIOS -> PrefsTag.FILTER_AUDIOS
-            MimeTypes.DOCUMENTS -> PrefsTag.FILTER_DOCUMENTS
-            MimeTypes.ARCHIVES -> PrefsTag.FILTER_ARCHIVES
-            else -> null
-        }
+        prefsTag =
+            when (mimeTypes) {
+                MimeTypes.IMAGES -> PrefsTag.FILTER_IMAGES
+                MimeTypes.VIDEOS -> PrefsTag.FILTER_VIDEOS
+                MimeTypes.AUDIOS -> PrefsTag.FILTER_AUDIOS
+                MimeTypes.DOCUMENTS -> PrefsTag.FILTER_DOCUMENTS
+                MimeTypes.ARCHIVES -> PrefsTag.FILTER_ARCHIVES
+                else -> null
+            }
     }
 
     private fun saveChipsChoice(chips: MutableSet<String>) {
         prefsTag?.let { sharedPreferences.putStringArray(it, chips) }
     }
 
-    private fun getChipsChoice(): MutableSet<String>? =
-        prefsTag?.let { sharedPreferences.getStringArray(it) }
+    private fun getChipsChoice(): MutableSet<String>? = prefsTag?.let { sharedPreferences.getStringArray(it) }
 
     private fun clickApply() {
         binding.btnApply.click {
@@ -104,8 +104,9 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 chips.add(chip.text.toString())
             }
 
-            if (chips.contains(getString(R.string.all)))
+            if (chips.contains(getString(R.string.all))) {
                 chips.clear()
+            }
 
             saveChipsChoice(chips)
             onFilterApplyClick?.invoke(chips)
@@ -129,9 +130,8 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             chipLayout.text = value
             chipLayout.isChecked =
                 (chipsChoice.isNullOrEmpty() && value == getString(R.string.all)) || chipsChoice?.contains(
-                    chipLayout.text
+                    chipLayout.text,
                 ) == true
-
 
             if (chipLayout.text == getString(R.string.all)) {
                 isAllSelected = chipLayout.isChecked

@@ -5,23 +5,23 @@ import android.os.Environment
 import java.io.File
 import javax.inject.Inject
 
-class FilePathProvider @Inject constructor(application: Application) {
+class FilePathProvider
+    @Inject
+    constructor(application: Application) {
+        private val filesDirs: Array<File> = application.getExternalFilesDirs(null)
 
-    private val filesDirs: Array<File> = application.getExternalFilesDirs(null)
+        val internalStorageDirectory: File
+            get() = filesDirs.first()
 
-    val internalStorageDirectory: File
-        get() = filesDirs.first()
+        val externalSdCardDirectories: List<File>
+            get() = filesDirs.drop(1)
 
-    val externalSdCardDirectories: List<File>
-        get() = filesDirs.drop(1)
+        val internalStorageRootPath
+            get() = filesDirs.first().absolutePath.substringBefore("/Android/data")
 
-    val internalStorageRootPath
-        get() = filesDirs.first().absolutePath.substringBefore("/Android/data")
+        val externalStorageRootPath
+            get() = filesDirs.drop(1).first().absolutePath.substringBefore("/Android/data")
 
-    val externalStorageRootPath
-        get() = filesDirs.drop(1).first().absolutePath.substringBefore("/Android/data")
-
-    val downloadDirectoryPath: String =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-
-}
+        val downloadDirectoryPath: String =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+    }

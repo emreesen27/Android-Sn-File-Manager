@@ -7,9 +7,7 @@ fun Path.getUniqueFileNameWithCounter(): Path {
     var index = 1
     var uniquePath = this
 
-
     if (Files.isDirectory(this)) {
-
         val folderName = this.fileName.toString()
         uniquePath = uniquePath.resolveSibling(folderName)
 

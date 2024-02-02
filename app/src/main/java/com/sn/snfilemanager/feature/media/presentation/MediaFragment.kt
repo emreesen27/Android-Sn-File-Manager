@@ -26,8 +26,8 @@ import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
 import com.sn.snfilemanager.feature.media.adapter.MediaItemAdapter
-import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobCompletedCallback
+import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
@@ -36,37 +36,38 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
 @AndroidEntryPoint
-class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
-    MediaItemAdapter.SelectionCallback, JobCompletedCallback {
-
+class MediaFragment :
+    BaseFragment<FragmentMediaBinding, MediaViewModel>(),
+    MediaItemAdapter.SelectionCallback,
+    JobCompletedCallback {
     private var adapter: MediaItemAdapter? = null
     private val args: MediaFragmentArgs by navArgs()
 
     override var useSharedViewModel: Boolean = true
+
     override fun getViewModelClass() = MediaViewModel::class.java
 
     override fun getViewBinding() = FragmentMediaBinding.inflate(layoutInflater)
 
     override fun getActionBarStatus(): Boolean = true
 
-    override fun getMenuResId() =
-        if (args.documentType == DocumentType.APK.name) R.menu.menu_base else R.menu.menu_media
+    override fun getMenuResId() = if (args.documentType == DocumentType.APK.name) R.menu.menu_base else R.menu.menu_media
 
-    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
-        R.id.action_filter -> {
-            showFilterBottomSheet()
-            true
+    override fun onMenuItemSelected(menuItemId: Int) =
+        when (menuItemId) {
+            R.id.action_filter -> {
+                showFilterBottomSheet()
+                true
+            }
+
+            R.id.action_search -> {
+                initSearch()
+                true
+            }
+
+            else -> super.onMenuItemSelected(menuItemId)
         }
-
-        R.id.action_search -> {
-            initSearch()
-            true
-        }
-
-        else -> super.onMenuItemSelected(menuItemId)
-    }
 
     override var actionCancelCLick: (() -> Unit)? = {
         clearSelection()
@@ -138,7 +139,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
 
     override fun scannedOnCompleted() {
         viewModel.getMedia()
-
     }
 
     override fun jobOnCompleted(jobType: JobType) {
@@ -172,16 +172,17 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun handleBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (selectionIsActive()) {
-                    clearSelection()
-                } else {
-                    isEnabled = false
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+        val callback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (selectionIsActive()) {
+                        clearSelection()
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
                 }
             }
-        }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
@@ -191,7 +192,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
                 ConfirmationDialog(
                     requireContext(),
                     getString(R.string.are_you_sure),
-                    getString(R.string.delete_warning)
+                    getString(R.string.delete_warning),
                 ).apply {
                     onSelected = { selected ->
                         if (selected) {
@@ -222,7 +223,10 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         }
     }
 
-    private fun startCopyService(operationItemList: List<Media>, destinationPath: Path) {
+    private fun startCopyService(
+        operationItemList: List<Media>,
+        destinationPath: Path,
+    ) {
         JobService.copyMedia(
             operationItemList,
             destinationPath,
@@ -236,7 +240,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         JobService.deleteMedia(
             viewModel.getSelectedItem(),
             this@MediaFragment,
-            requireContext()
+            requireContext(),
         )
     }
 
@@ -262,7 +266,7 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun showDetailDialog() {
         DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
             childFragmentManager,
-            DetailDialog.TAG
+            DetailDialog.TAG,
         )
     }
 
@@ -281,7 +285,6 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
         viewModel.clearSelectionList()
     }
 
-
     private fun updateMenusOnSelection(isSelectionActive: Boolean) {
         setToolbarVisibility(!isSelectionActive)
         setActionMenuVisibility(isSelectionActive)
@@ -299,33 +302,37 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     private fun initSearch() {
         getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
             val searchView = item.actionView as? SearchView
-            searchView?.setOnQueryTextListener(object :
-                SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    query?.let { viewModel.searchMedia(it) }
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.searchMedia(newText)
-                    return true
-                }
-            })
-
-            item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
-                    return true
-                }
-
-                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
-                    return if (selectionIsActive()) {
-                        clearSelection()
-                        false
-                    } else {
-                        true
+            searchView?.setOnQueryTextListener(
+                object :
+                    SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        query?.let { viewModel.searchMedia(it) }
+                        return true
                     }
-                }
-            })
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        viewModel.searchMedia(newText)
+                        return true
+                    }
+                },
+            )
+
+            item.setOnActionExpandListener(
+                object : MenuItem.OnActionExpandListener {
+                    override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                        return true
+                    }
+
+                    override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
+                        return if (selectionIsActive()) {
+                            clearSelection()
+                            false
+                        } else {
+                            true
+                        }
+                    }
+                },
+            )
         }
     }
 
@@ -346,13 +353,15 @@ class MediaFragment : BaseFragment<FragmentMediaBinding, MediaViewModel>(),
     }
 
     private fun selectionIsActive(): Boolean = adapter?.selectionIsActive() ?: false
+
     private fun initAdapter() {
         if (adapter == null) {
-            adapter = MediaItemAdapter(
-                onClick = { model -> openFile(model) },
-                onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) },
-                selectionCallback = this@MediaFragment
-            )
+            adapter =
+                MediaItemAdapter(
+                    onClick = { model -> openFile(model) },
+                    onSelected = { model, selected -> viewModel.addSelectedItem(model, selected) },
+                    selectionCallback = this@MediaFragment,
+                )
         }
         binding.recyclerView.adapter = adapter
     }

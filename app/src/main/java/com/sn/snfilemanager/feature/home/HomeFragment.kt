@@ -25,12 +25,11 @@ import com.sn.snfilemanager.view.dialog.permission.PermissionDialog
 import com.sn.snfilemanager.view.dialog.permission.PermissionDialogType
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
-
     private var permissionDialog: PermissionDialog? = null
     private var confirmationDialog: ConfirmationDialog? = null
+
     override fun getViewModelClass() = HomeViewModel::class.java
 
     override fun getViewBinding() = FragmentHomeBinding.inflate(layoutInflater)
@@ -48,18 +47,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initPermission()
     }
 
-    override fun onMenuItemSelected(menuItemId: Int) = when (menuItemId) {
-        R.id.settings -> {
-            navigate(HomeFragmentDirections.actionSettings())
-            true
-        }
+    override fun onMenuItemSelected(menuItemId: Int) =
+        when (menuItemId) {
+            R.id.settings -> {
+                navigate(HomeFragmentDirections.actionSettings())
+                true
+            }
 
-        R.id.about -> {
-            true
-        }
+            R.id.about -> {
+                true
+            }
 
-        else -> super.onMenuItemSelected(menuItemId)
-    }
+            else -> super.onMenuItemSelected(menuItemId)
+        }
 
     override fun observeData() {
         observe(viewModel.availableStorageLiveData) { memory ->
@@ -76,10 +76,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             routeFileAccessSettings()
         } else {
-            if (viewModel.hasStorageRequestedPermissionBefore())
+            if (viewModel.hasStorageRequestedPermissionBefore()) {
                 routeAppSettings()
-            else
+            } else {
                 storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         }
         viewModel.setStoragePermissionRequested()
     }
@@ -95,15 +96,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.setNotificationPermissionRequested()
     }
 
-
     private fun initPermission() {
         val type =
             if (viewModel.hasStorageRequestedPermissionBefore()) PermissionDialogType.WARNING else PermissionDialogType.DEFAULT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager())
+            if (!Environment.isExternalStorageManager()) {
                 showPermissionDialog(type)
-            else
+            } else {
                 initNotificationPermission()
+            }
         } else if (!checkStoragePermission(requireContext())) {
             showPermissionDialog(type)
         } else {
@@ -127,66 +128,69 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun routeFileAccessSettings() {
-        val intent = Intent(
-            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-            Uri.parse("package:${requireActivity().packageName}")
-        )
+        val intent =
+            Intent(
+                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                Uri.parse("package:${requireActivity().packageName}"),
+            )
         startActivity(intent)
     }
 
     private fun routeAppSettings() {
-        val intent = Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.parse("package:${requireActivity().packageName}")
-        )
+        val intent =
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:${requireActivity().packageName}"),
+            )
         startActivity(intent)
     }
 
     private fun routeNotificationSettings() {
         val notificationManager = NotificationManagerCompat.from(requireContext())
         if (!notificationManager.areNotificationsEnabled()) {
-            val settingsIntent = Intent().apply {
-                action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-                putExtra(Settings.EXTRA_APP_PACKAGE, context?.packageName)
-            }
+            val settingsIntent =
+                Intent().apply {
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context?.packageName)
+                }
             context?.startActivity(settingsIntent)
         }
     }
 
     private fun showPermissionDialog(type: PermissionDialogType = PermissionDialogType.DEFAULT) {
         if (permissionDialog == null || permissionDialog?.isShowing == false) {
-            permissionDialog = PermissionDialog(requireContext(), type).apply {
-                onAllow = { allowStoragePermission() }
-            }
+            permissionDialog =
+                PermissionDialog(requireContext(), type).apply {
+                    onAllow = { allowStoragePermission() }
+                }
             permissionDialog?.show()
         }
     }
 
     private fun showNotificationDialog() {
         if (confirmationDialog == null || confirmationDialog?.isShowing == false) {
-            confirmationDialog = ConfirmationDialog(
-                requireContext(),
-                getString(R.string.permission_warning_title),
-                getString(R.string.notification_permission_info)
-            ).apply {
-                onSelected = { ok ->
-                    if (ok) {
-                        allowNotificationPermission()
+            confirmationDialog =
+                ConfirmationDialog(
+                    requireContext(),
+                    getString(R.string.permission_warning_title),
+                    getString(R.string.notification_permission_info),
+                ).apply {
+                    onSelected = { ok ->
+                        if (ok) {
+                            allowNotificationPermission()
+                        }
                     }
                 }
-            }
             confirmationDialog?.show()
         }
     }
 
-
     private fun checkStoragePermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
         ) == PackageManager.PERMISSION_GRANTED
     }
-
 
     private fun initNotificationPermission() {
         if (!viewModel.notificationRuntimeRequested) {
@@ -201,11 +205,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.POST_NOTIFICATIONS
+                Manifest.permission.POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_GRANTED
-        } else true
+        } else {
+            true
+        }
     }
-
 
     private fun initMenuButtonListener() {
         with(binding) {
@@ -216,15 +221,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ibApk.click {
                 navigate(
                     HomeFragmentDirections.actionHomeImage(
-                        MediaType.FILES, DocumentType.APK.name
-                    )
+                        MediaType.FILES,
+                        DocumentType.APK.name,
+                    ),
                 )
             }
             ibArchives.click {
                 navigate(
                     HomeFragmentDirections.actionHomeImage(
-                        MediaType.FILES, DocumentType.ARCHIVE.name
-                    )
+                        MediaType.FILES,
+                        DocumentType.ARCHIVE.name,
+                    ),
                 )
             }
 

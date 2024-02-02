@@ -10,7 +10,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object FileProviderModule {
-
     @Provides
     @Singleton
     fun provideFileProvider(application: Application): FilePathProvider {

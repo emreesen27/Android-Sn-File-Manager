@@ -10,20 +10,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val mySharedPreferences: MySharedPreferences
-) : ViewModel() {
+class MainViewModel
+    @Inject
+    constructor(
+        private val mySharedPreferences: MySharedPreferences,
+    ) : ViewModel() {
+        private val _firstRunLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
+        val firstRunLiveData: LiveData<Event<Boolean>> = _firstRunLiveData
 
-    private val _firstRunLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    val firstRunLiveData: LiveData<Event<Boolean>> = _firstRunLiveData
+        init {
+            checkFirsRun()
+        }
 
-    init {
-        checkFirsRun()
+        private fun checkFirsRun() {
+            val firstRun: Boolean = mySharedPreferences.getBoolean(PrefsTag.FIRST_RUN)
+            _firstRunLiveData.postValue(Event(firstRun))
+        }
     }
-
-    private fun checkFirsRun() {
-        val firstRun: Boolean = mySharedPreferences.getBoolean(PrefsTag.FIRST_RUN)
-        _firstRunLiveData.postValue(Event(firstRun))
-    }
-
-}

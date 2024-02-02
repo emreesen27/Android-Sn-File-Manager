@@ -21,9 +21,8 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 
 class DetailDialogViewModel : ViewModel() {
-
     private val _detailItemLiveData: MutableLiveData<MutableList<Detail>> = MutableLiveData()
-    val detailLiveData: LiveData<MutableList<Detail>> = _detailItemLiveData
+    val detailItemLiveData: LiveData<MutableList<Detail>> = _detailItemLiveData
 
     val progressObservable = ObservableBoolean(false)
 
@@ -44,36 +43,40 @@ class DetailDialogViewModel : ViewModel() {
                 val totalSizeAndCount = getTotalSizeAndFileCount(itemList)
                 if (itemCount > 1) {
                     if (isContainsFolder) {
-                        val items = createDetailItemList(
-                            R.string.selected_item_count to itemCount.toString(),
-                            R.string.total_size to totalSizeAndCount.first.toHumanReadableByteCount(),
-                            R.string.number_of_children to totalSizeAndCount.second.toString()
-                        )
+                        val items =
+                            createDetailItemList(
+                                R.string.selected_item_count to itemCount.toString(),
+                                R.string.total_size to totalSizeAndCount.first.toHumanReadableByteCount(),
+                                R.string.number_of_children to totalSizeAndCount.second.toString(),
+                            )
                         detailItemList.addAll(items)
                     } else {
-                        val items = createDetailItemList(
-                            R.string.selected_item_count to itemCount.toString(),
-                            R.string.total_size to totalSizeAndCount.first.toHumanReadableByteCount()
-                        )
+                        val items =
+                            createDetailItemList(
+                                R.string.selected_item_count to itemCount.toString(),
+                                R.string.total_size to totalSizeAndCount.first.toHumanReadableByteCount(),
+                            )
                         detailItemList.addAll(items)
                     }
                 } else {
                     if (isContainsFolder) {
-                        val items = createDetailItemList(
-                            R.string.name to itemList.first().name,
-                            R.string.path to itemList.first().absolutePath.getDirectoryNameFromPath(),
-                            R.string.size to totalSizeAndCount.first.toHumanReadableByteCount(),
-                            R.string.number_of_children to totalSizeAndCount.second.toString()
-                        )
+                        val items =
+                            createDetailItemList(
+                                R.string.name to itemList.first().name,
+                                R.string.path to itemList.first().absolutePath.getDirectoryNameFromPath(),
+                                R.string.size to totalSizeAndCount.first.toHumanReadableByteCount(),
+                                R.string.number_of_children to totalSizeAndCount.second.toString(),
+                            )
                         detailItemList.addAll(items)
                     } else {
                         val item = itemList.first()
-                        val items = createDetailItemList(
-                            R.string.name to item.name,
-                            R.string.path to item.absolutePath.getDirectoryNameFromPath(),
-                            R.string.size to item.readableSize,
-                            R.string.last_modified to item.lastModified
-                        )
+                        val items =
+                            createDetailItemList(
+                                R.string.name to item.name,
+                                R.string.path to item.absolutePath.getDirectoryNameFromPath(),
+                                R.string.size to item.readableSize,
+                                R.string.last_modified to item.lastModified,
+                            )
                         detailItemList.addAll(items)
                     }
                 }
@@ -91,19 +94,21 @@ class DetailDialogViewModel : ViewModel() {
         if (itemList.size > 1) {
             val itemSize = itemList.size
             val totalSize: String = itemList.sumOf { it.size }.toHumanReadableByteCount()
-            val items = createDetailItemList(
-                R.string.selected_item_count to itemSize.toString(),
-                R.string.total_size to totalSize
-            )
+            val items =
+                createDetailItemList(
+                    R.string.selected_item_count to itemSize.toString(),
+                    R.string.total_size to totalSize,
+                )
             detailItemList.addAll(items)
         } else if (itemList.size == 1) {
             val item = itemList.first()
-            val items = createDetailItemList(
-                R.string.name to item.name,
-                R.string.path to item.data.getDirectoryNameFromPath(),
-                R.string.size to item.size.toHumanReadableByteCount(),
-                R.string.last_modified to item.dateModified.toFormattedDateFromUnixTime(),
-            )
+            val items =
+                createDetailItemList(
+                    R.string.name to item.name,
+                    R.string.path to item.data.getDirectoryNameFromPath(),
+                    R.string.size to item.size.toHumanReadableByteCount(),
+                    R.string.last_modified to item.dateModified.toFormattedDateFromUnixTime(),
+                )
             detailItemList.addAll(items)
         }
         _detailItemLiveData.postValue(detailItemList)
@@ -115,23 +120,22 @@ class DetailDialogViewModel : ViewModel() {
                 val childResult =
                     getTotalSizeAndFileCount(
                         Files.list(Paths.get(item.absolutePath)).collect(Collectors.toList())
-                            .map { it.toFileModel() })
+                            .map { it.toFileModel() },
+                    )
                 Pair(acc.first + childResult.first, acc.second + childResult.second)
             } else {
                 Pair(acc.first + item.size, acc.second + 1)
             }
         }
 
-    private fun itemsContainsFolder(itemList: List<FileModel>): Boolean =
-        itemList.any { it.isDirectory }
+    private fun itemsContainsFolder(itemList: List<FileModel>): Boolean = itemList.any { it.isDirectory }
 
     private fun createDetailItemList(vararg pairs: Pair<Int, String>): List<Detail> {
         return pairs.map { (titleResId, value) ->
             Detail(
                 StringValue.StringResource(titleResId),
-                value
+                value,
             )
         }
     }
-
 }
