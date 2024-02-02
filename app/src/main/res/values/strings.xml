@@ -89,4 +89,5 @@
     <string name="notification_permission_info">You need to allow notifications to see the progress of operations such as copying, deleting, etc.</string>
     <string name="folder_permission_info">You do not have permission to view this folder</string>
     <string name="search_hint">At least 3 characters</string>
+    <string name="path_conflict_warning">Target and source cannot be the same</string>
 </resources>

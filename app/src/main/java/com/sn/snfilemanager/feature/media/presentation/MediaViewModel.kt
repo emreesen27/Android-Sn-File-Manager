@@ -19,9 +19,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,8 +41,11 @@ class MediaViewModel @Inject constructor(
     private val _getMediaLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
     val getMediaLiveData: LiveData<Event<List<Media>>> = _getMediaLiveData
 
-    private val _conflictQuestionLiveData: MutableLiveData<Event<File>> = MutableLiveData()
-    val conflictQuestionLiveData: LiveData<Event<File>> = _conflictQuestionLiveData
+    private val _pathConflictLiveData: MutableLiveData<Event<String>> = MutableLiveData()
+    val pathConflictLiveData: LiveData<Event<String>> = _pathConflictLiveData
+
+    private val _conflictQuestionLiveData: MutableLiveData<Event<String>> = MutableLiveData()
+    val conflictQuestionLiveData: LiveData<Event<String>> = _conflictQuestionLiveData
 
     private val _startMoveJobLiveData: MutableLiveData<Event<Pair<List<Media>, Path>>> =
         MutableLiveData()
@@ -99,20 +102,25 @@ class MediaViewModel @Inject constructor(
 
     fun moveMedia(destinationPath: Path) {
         val operationItemList: MutableList<Media> = mutableListOf()
-        if (!isCopy) checkPathConflicts(destinationPath.toFile().absolutePath)
         viewModelScope.launch {
             val job = async {
                 for (i in selectedItemList.indices) {
-                    val file = selectedItemList[i]
-                    val targetPath = destinationPath.resolve(file.name)
+                    val media = selectedItemList[i]
+                    val targetPath = destinationPath.resolve(media.name)
+
+                    if (destinationPath.toFile().absolutePath == media.data.substringBeforeLast("/")) {
+                        _pathConflictLiveData.postValue(Event(media.name))
+                        continue
+                    }
+
                     if (Files.exists(targetPath)) {
-                        _conflictQuestionLiveData.postValue(Event(targetPath.toFile()))
+                        _conflictQuestionLiveData.postValue(Event(media.name))
                         val result = conflictDialogDeferred.await()
                         conflictDialogDeferred = CompletableDeferred()
 
                         if (!result.second) {
-                            file.conflictStrategy = result.first
-                            operationItemList.add(file)
+                            media.conflictStrategy = result.first
+                            operationItemList.add(media)
                         } else {
                             if (i < selectedItemList.size - 1) {
                                 for (remainingFile in selectedItemList.subList(
@@ -126,7 +134,7 @@ class MediaViewModel @Inject constructor(
                             break
                         }
                     } else {
-                        operationItemList.add(file)
+                        operationItemList.add(media)
                     }
                 }
             }
@@ -189,10 +197,6 @@ class MediaViewModel @Inject constructor(
                 _getMediaLiveData.value = Event(result)
             }
         }
-    }
-
-    private fun checkPathConflicts(path: String): Boolean {
-        return selectedItemList.removeIf { path == it.data.substringBeforeLast("/") }
     }
 
     fun getSelectedItem() = selectedItemList
