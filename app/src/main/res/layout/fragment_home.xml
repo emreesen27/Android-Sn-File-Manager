@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingVertical="@dimen/_5sdp"
+                android:paddingVertical="@dimen/_15sdp"
                 android:stretchColumns="0,1,2">
 
                 <TableRow
