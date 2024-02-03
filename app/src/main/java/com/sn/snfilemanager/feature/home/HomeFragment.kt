@@ -214,32 +214,81 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initMenuButtonListener() {
         with(binding) {
-            ibImages.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.IMAGES)) }
-            ibVideo.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.VIDEOS)) }
-            ibSound.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.AUDIOS)) }
-            ibDocuments.click { navigate(HomeFragmentDirections.actionHomeImage(MediaType.FILES)) }
+            ibImages.click {
+                navigate(
+                    HomeFragmentDirections.actionHomeMedia(
+                        mediaType = MediaType.IMAGES,
+                        title = getString(R.string.images)
+                    )
+                )
+            }
+            ibVideo.click {
+                navigate(
+                    HomeFragmentDirections.actionHomeMedia(
+                        mediaType = MediaType.VIDEOS,
+                        getString(R.string.videos)
+                    )
+                )
+            }
+            ibSound.click {
+                navigate(
+                    HomeFragmentDirections.actionHomeMedia(
+                        mediaType = MediaType.AUDIOS,
+                        title = getString(R.string.sounds)
+                    )
+                )
+            }
+            ibDocuments.click {
+                navigate(
+                    HomeFragmentDirections.actionHomeMedia(
+                        mediaType = MediaType.FILES,
+                        title = getString(R.string.documents)
+                    )
+                )
+            }
             ibApk.click {
                 navigate(
-                    HomeFragmentDirections.actionHomeImage(
-                        MediaType.FILES,
-                        DocumentType.APK.name,
+                    HomeFragmentDirections.actionHomeMedia(
+                        mediaType = MediaType.FILES,
+                        documentType = DocumentType.APK.name,
+                        title = getString(R.string.apk_files)
                     ),
                 )
             }
             ibArchives.click {
                 navigate(
-                    HomeFragmentDirections.actionHomeImage(
-                        MediaType.FILES,
-                        DocumentType.ARCHIVE.name,
+                    HomeFragmentDirections.actionHomeMedia(
+                        mediaType = MediaType.FILES,
+                        documentType = DocumentType.ARCHIVE.name,
+                        title = getString(R.string.archives)
                     ),
                 )
             }
 
-            btnDownload.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.DOWNLOAD)) }
-            btnFile.click { navigate(HomeFragmentDirections.actionHomeFile(RootPath.INTERNAL)) }
+            btnDownload.click {
+                navigate(
+                    HomeFragmentDirections.actionHomeFile(
+                        storageArgs = RootPath.DOWNLOAD,
+                        title = getString(R.string.downloads)
+                    )
+                )
+            }
+            btnFile.click {
+                navigate(
+                    HomeFragmentDirections.actionHomeFile(
+                        storageArgs = RootPath.INTERNAL,
+                        title = getString(R.string.folders)
+                    )
+                )
+            }
             btnExternalFile.click {
                 viewModel.availableExternalStorageLiveData.value?.let {
-                    navigate(HomeFragmentDirections.actionHomeFile(RootPath.EXTERNAL))
+                    navigate(
+                        HomeFragmentDirections.actionHomeFile(
+                            storageArgs = RootPath.EXTERNAL,
+                            title = getString(R.string.folders)
+                        )
+                    )
                 }
             }
         }

@@ -21,7 +21,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        initObserve()
+        initDestinationListener()
         initConfig()
+    }
+
+    private fun initDestinationListener() {
+        findNavController(R.id.base_nav_host).addOnDestinationChangedListener { _, destination, arguments ->
+            val title = when (destination.id) {
+                R.id.settings_fragment -> {
+                    getString(R.string.settings)
+                }
+
+                R.id.home_fragment -> {
+                    getString(R.string.home)
+                }
+
+                else -> arguments?.getString("title") ?: getString(R.string.app_name)
+            }
+            supportActionBar?.title = title
+        }
+    }
+
+    private fun initObserve() {
         observe(vm.firstRunLiveData) { event ->
             event.getContentIfNotHandled()?.let { firstRun ->
                 setFirsScreen(firstRun)
