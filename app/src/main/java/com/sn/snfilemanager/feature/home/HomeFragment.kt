@@ -218,32 +218,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.IMAGES,
-                        title = getString(R.string.images)
-                    )
+                        title = getString(R.string.images),
+                    ),
                 )
             }
             ibVideo.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.VIDEOS,
-                        getString(R.string.videos)
-                    )
+                        getString(R.string.videos),
+                    ),
                 )
             }
             ibSound.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.AUDIOS,
-                        title = getString(R.string.sounds)
-                    )
+                        title = getString(R.string.sounds),
+                    ),
                 )
             }
             ibDocuments.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.FILES,
-                        title = getString(R.string.documents)
-                    )
+                        title = getString(R.string.documents),
+                    ),
                 )
             }
             ibApk.click {
@@ -251,7 +251,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.FILES,
                         documentType = DocumentType.APK.name,
-                        title = getString(R.string.apk_files)
+                        title = getString(R.string.apk_files),
                     ),
                 )
             }
@@ -260,7 +260,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.FILES,
                         documentType = DocumentType.ARCHIVE.name,
-                        title = getString(R.string.archives)
+                        title = getString(R.string.archives),
                     ),
                 )
             }
@@ -269,16 +269,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 navigate(
                     HomeFragmentDirections.actionHomeFile(
                         storageArgs = RootPath.DOWNLOAD,
-                        title = getString(R.string.downloads)
-                    )
+                        title = getString(R.string.downloads),
+                    ),
                 )
             }
             btnFile.click {
                 navigate(
                     HomeFragmentDirections.actionHomeFile(
                         storageArgs = RootPath.INTERNAL,
-                        title = getString(R.string.folders)
-                    )
+                        title = getString(R.string.folders),
+                    ),
                 )
             }
             btnExternalFile.click {
@@ -286,8 +286,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     navigate(
                         HomeFragmentDirections.actionHomeFile(
                             storageArgs = RootPath.EXTERNAL,
-                            title = getString(R.string.folders)
-                        )
+                            title = getString(R.string.folders),
+                        ),
                     )
                 }
             }

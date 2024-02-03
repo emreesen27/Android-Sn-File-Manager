@@ -28,17 +28,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun initDestinationListener() {
         findNavController(R.id.base_nav_host).addOnDestinationChangedListener { _, destination, arguments ->
-            val title = when (destination.id) {
-                R.id.settings_fragment -> {
-                    getString(R.string.settings)
-                }
+            val title =
+                when (destination.id) {
+                    R.id.settings_fragment -> {
+                        getString(R.string.settings)
+                    }
 
-                R.id.home_fragment -> {
-                    getString(R.string.home)
-                }
+                    R.id.home_fragment -> {
+                        getString(R.string.home)
+                    }
 
-                else -> arguments?.getString("title") ?: getString(R.string.app_name)
-            }
+                    else -> arguments?.getString("title") ?: getString(R.string.app_name)
+                }
             supportActionBar?.title = title
         }
     }
