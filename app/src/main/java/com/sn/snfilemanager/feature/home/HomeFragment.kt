@@ -222,7 +222,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ),
                 )
             }
-            ibVideo.click {
+            ibVideos.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.VIDEOS,
@@ -230,7 +230,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ),
                 )
             }
-            ibSound.click {
+            ibSounds.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.AUDIOS,
@@ -246,7 +246,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ),
                 )
             }
-            ibApk.click {
+            ibApks.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.FILES,
@@ -261,15 +261,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         mediaType = MediaType.FILES,
                         documentType = DocumentType.ARCHIVE.name,
                         title = getString(R.string.archives),
-                    ),
-                )
-            }
-
-            btnDownload.click {
-                navigate(
-                    HomeFragmentDirections.actionHomeFile(
-                        storageArgs = RootPath.DOWNLOAD,
-                        title = getString(R.string.downloads),
                     ),
                 )
             }
@@ -290,6 +281,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         ),
                     )
                 }
+            }
+            btnSettings.click {
+                navigate(HomeFragmentDirections.actionSettings())
             }
         }
     }

@@ -167,7 +167,6 @@ class FilesListFragment :
             updateFileList(viewModel.getStoragePath(args.storageArgs))
             val rootBread =
                 when (args.storageArgs) {
-                    RootPath.DOWNLOAD -> getString(R.string.downloads)
                     RootPath.EXTERNAL -> getString(R.string.external_storage)
                     RootPath.INTERNAL -> getString(R.string.internal)
                 }

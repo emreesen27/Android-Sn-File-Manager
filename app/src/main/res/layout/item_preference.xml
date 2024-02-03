@@ -15,7 +15,7 @@
         android:fontFamily="@font/adamina"
         android:padding="@dimen/_3sdp"
         android:textColor="@color/first_text_color"
-        android:textSize="@dimen/_13ssp" />
+        android:textSize="@dimen/_12ssp" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@android:id/summary"
@@ -24,6 +24,6 @@
         android:fontFamily="@font/adamina"
         android:padding="@dimen/_3sdp"
         android:textColor="@color/second_text_color"
-        android:textSize="@dimen/_12ssp" />
+        android:textSize="@dimen/_10ssp" />
 
 </LinearLayout>
