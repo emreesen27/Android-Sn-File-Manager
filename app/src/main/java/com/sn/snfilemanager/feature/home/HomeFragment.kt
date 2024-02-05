@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.sn.mediastorepv.data.MediaType
@@ -34,9 +35,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun getViewBinding() = FragmentHomeBinding.inflate(layoutInflater)
 
-    override fun getActionBarStatus(): Boolean = true
-
     override fun getMenuResId(): Int = R.menu.menu_home
+
+    override fun getToolbar(): Toolbar = binding.toolbar
 
     override fun setupViews() {
         initMenuButtonListener()

@@ -26,5 +26,13 @@
 
         <item name="android:actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
         <item name="android:textColorPrimary">@color/first_text_color</item>
+        <item name="actionModeStyle">@style/Base.Widget.AppCompat.ActionMode</item>
     </style>
+
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
 </resources>

@@ -76,7 +76,6 @@ class FilesListViewModel
             when (rootPath) {
                 RootPath.INTERNAL -> filePathProvider.internalStorageRootPath
                 RootPath.EXTERNAL -> filePathProvider.externalStorageRootPath
-                else -> filePathProvider.downloadDirectoryPath
             }
 
         fun updateDirectoryList(path: String) {

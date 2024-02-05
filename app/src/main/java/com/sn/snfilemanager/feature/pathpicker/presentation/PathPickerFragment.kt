@@ -19,8 +19,6 @@ class PathPickerFragment : BaseFragment<FragmentPathPickerBinding, PathPickerVie
 
     override fun getViewBinding() = FragmentPathPickerBinding.inflate(layoutInflater)
 
-    override fun getActionBarStatus() = true
-
     override fun getMenuResId() = R.menu.menu_path_picker
 
     override fun onMenuItemSelected(menuItemId: Int) =
