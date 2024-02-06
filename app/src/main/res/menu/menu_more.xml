@@ -1,8 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/detail"
-        android:title="@string/detail" />
-    <item
-        android:id="@+id/open_with"
-        android:title="@string/open_with" />
-</menu>

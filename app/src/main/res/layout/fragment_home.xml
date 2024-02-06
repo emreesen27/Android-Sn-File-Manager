@@ -1,201 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/bg_color"
         tools:context=".feature.home.HomeFragment">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_categories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:fontFamily="@font/adamina"
-            android:text="@string/categories"
-            android:textColor="@color/first_text_color"
-            android:textSize="@dimen/_13ssp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_category_card"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:backgroundTint="@color/bg_color"
-            app:cardElevation="@dimen/_1sdp"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_categories">
+            android:background="@color/bg_color"
+            android:elevation="@dimen/_1sdp"
+            app:liftOnScroll="true">
 
-            <TableLayout
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingVertical="@dimen/_15sdp"
-                android:stretchColumns="0,1,2">
+                android:layout_height="?attr/actionBarSize"
+                app:title="@string/home"
+                app:titleTextColor="@color/first_text_color" />
 
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/_1sdp"
-                    android:layout_weight="1">
-
-                    <com.sn.snfilemanager.view.component.ImageButton
-                        android:id="@+id/ib_images"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:btnImage="@drawable/ic_image"
-                        app:btnText="@string/images" />
-
-                    <com.sn.snfilemanager.view.component.ImageButton
-                        android:id="@+id/ib_sound"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:btnImage="@drawable/ic_sound"
-                        app:btnText="@string/sounds" />
+        </com.google.android.material.appbar.AppBarLayout>
 
 
-                    <com.sn.snfilemanager.view.component.ImageButton
-                        android:id="@+id/ib_video"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:btnImage="@drawable/ic_video"
-                        app:btnText="@string/videos" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/_1sdp"
-                    android:layout_weight="1">
-
-                    <com.sn.snfilemanager.view.component.ImageButton
-                        android:id="@+id/ib_documents"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:btnImage="@drawable/ic_document"
-                        app:btnText="@string/documents" />
-
-                    <com.sn.snfilemanager.view.component.ImageButton
-                        android:id="@+id/ib_archives"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:btnImage="@drawable/ic_archive"
-                        app:btnText="@string/archives" />
-
-                    <com.sn.snfilemanager.view.component.ImageButton
-                        android:id="@+id/ib_apk"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:btnImage="@drawable/ic_android"
-                        app:btnText="@string/apk_files" />
-
-                </TableRow>
-
-            </TableLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_storage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:fontFamily="@font/adamina"
-            android:text="@string/storage"
-            android:textColor="@color/first_text_color"
-            android:textSize="@dimen/_13ssp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cv_category_card" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_storage_card"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:backgroundTint="@color/bg_color"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toBottomOf="@+id/tv_storage">
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <com.sn.snfilemanager.view.component.HrImageButton
-                android:id="@+id/btn_file"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/ic_phone"
-                app:subTitle="20gb"
-                app:title="@string/internal_storage" />
+                android:orientation="vertical">
 
-        </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_category"
+                    style="@style/Widget.MaterialFiles.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_external_storage_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:backgroundTint="@color/bg_color"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toBottomOf="@+id/cv_storage_card">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg_color"
+                        android:orientation="vertical">
 
-            <com.sn.snfilemanager.view.component.HrImageButton
-                android:id="@+id/btn_external_file"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_sd_card"
-                app:subTitle="20gb"
-                app:title="@string/external_storage" />
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tv_categories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/adamina"
+                            android:padding="@dimen/_10sdp"
+                            android:text="@string/categories"
+                            android:textColor="@color/first_text_color"
+                            android:textSize="@dimen/_13ssp" />
 
-        </com.google.android.material.card.MaterialCardView>
+                        <com.sn.snfilemanager.view.component.ImageButton
+                            android:id="@+id/ib_images"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:btnImage="@drawable/ic_image"
+                            app:btnText="@string/images" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_short_cut"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:fontFamily="@font/adamina"
-            android:text="@string/short_cut"
-            android:textColor="@color/first_text_color"
-            android:textSize="@dimen/_13ssp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cv_external_storage_card" />
+                        <com.sn.snfilemanager.view.component.ImageButton
+                            android:id="@+id/ib_videos"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:btnImage="@drawable/ic_video"
+                            app:btnText="@string/videos" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv_download"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:backgroundTint="@color/bg_color"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toBottomOf="@+id/tv_short_cut">
+                        <com.sn.snfilemanager.view.component.ImageButton
+                            android:id="@+id/ib_sounds"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:btnImage="@drawable/ic_sound"
+                            app:btnText="@string/sounds" />
 
-            <com.sn.snfilemanager.view.component.HrImageButton
-                android:id="@+id/btn_download"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_download"
-                app:subTitle="@string/download_desc"
-                app:title="@string/downloads" />
+                        <com.sn.snfilemanager.view.component.ImageButton
+                            android:id="@+id/ib_documents"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:btnImage="@drawable/ic_document"
+                            app:btnText="@string/documents" />
 
-        </com.google.android.material.card.MaterialCardView>
+                        <com.sn.snfilemanager.view.component.ImageButton
+                            android:id="@+id/ib_archives"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:btnImage="@drawable/ic_archive"
+                            app:btnText="@string/archives" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                        <com.sn.snfilemanager.view.component.ImageButton
+                            android:id="@+id/ib_apks"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:btnImage="@drawable/ic_android"
+                            app:btnText="@string/apk_files" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_storage_card"
+                    style="@style/Widget.MaterialFiles.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_category">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg_color"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tv_storage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/adamina"
+                            android:padding="@dimen/_10sdp"
+                            android:text="@string/storage"
+                            android:textColor="@color/first_text_color"
+                            android:textSize="@dimen/_13ssp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/cv_category_card" />
+
+                        <com.sn.snfilemanager.view.component.HrImageButton
+                            android:id="@+id/btn_file"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:icon="@drawable/ic_phone"
+                            app:subTitle="20gb"
+                            app:title="@string/internal_storage" />
+
+                        <com.sn.snfilemanager.view.component.HrImageButton
+                            android:id="@+id/btn_external_file"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:icon="@drawable/ic_sd_card"
+                            app:subTitle="20gb"
+                            app:title="@string/external_storage" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_other"
+                    style="@style/Widget.MaterialFiles.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_storage_card">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg_color"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tv_other"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/adamina"
+                            android:padding="@dimen/_10sdp"
+                            android:text="@string/other"
+                            android:textColor="@color/first_text_color"
+                            android:textSize="@dimen/_13ssp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/cv_external_storage_card" />
+
+                        <com.sn.snfilemanager.view.component.HrImageButton
+                            android:id="@+id/btn_settings"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:icon="@drawable/ic_settings"
+                            app:subTitle="@string/settings_desc"
+                            app:title="@string/settings" />
+
+                        <com.sn.snfilemanager.view.component.HrImageButton
+                            android:id="@+id/btn_about"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:padding="@dimen/_10sdp"
+                            app:icon="@drawable/ic_about"
+                            app:subTitle="@string/about_desc"
+                            app:title="@string/about" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </layout>

@@ -26,13 +26,18 @@ class PathPickerViewModel
             }
         }
 
+        fun updateDirectoryListWithPos(position: Int) {
+            if (position >= 0 && position < directoryList.size) {
+                directoryList.subList(position + 1, directoryList.size).clear()
+            }
+        }
+
         fun getDirectoryList() = directoryList
 
         fun getStoragePath(rootPath: RootPath): String =
             when (rootPath) {
                 RootPath.INTERNAL -> filePathProvider.internalStorageRootPath
                 RootPath.EXTERNAL -> filePathProvider.externalStorageRootPath
-                else -> filePathProvider.downloadDirectoryPath
             }
 
         fun getDirectoryList(directoryPath: String): List<Path> {

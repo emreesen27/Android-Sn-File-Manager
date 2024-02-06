@@ -31,9 +31,9 @@ class BreadCrumbAdapter(var breadCrumbItemClickListener: BreadCrumbItemClickList
         val item = breadCrumbItemsData[position]
 
         if (position == 0) {
-            holder.breadCrumbSeparator.visibility = View.GONE
+            holder.breadCrumbSeparator.setImageResource(R.drawable.ic_root_folder)
         } else {
-            holder.breadCrumbSeparator.visibility = View.VISIBLE
+            holder.breadCrumbSeparator.setImageResource(R.drawable.ic_arrow_right)
         }
 
         holder.breadCrumbTitle.text = item.title

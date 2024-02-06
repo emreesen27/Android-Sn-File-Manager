@@ -20,7 +20,7 @@
 
         <View
             android:id="@+id/center_view"
-            android:layout_width="0.5dp"
+            android:layout_width="0.7dp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginVertical="@dimen/_5sdp"
             android:background="@color/divider_color"

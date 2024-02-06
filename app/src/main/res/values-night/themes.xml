@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/soft_blue</item>
         <item name="colorOnSecondary">@color/first_text_color</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >@color/bg_color</item>
+        <item name="android:statusBarColor">@color/bg_color</item>
         <item name="android:windowBackground">@color/bg_color</item>
         <item name="android:navigationBarColor">@color/bg_color</item>
         <item name="android:windowLightStatusBar">false</item>
@@ -21,9 +21,13 @@
 
         <item name="android:actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
         <item name="android:textColorPrimary">@color/first_text_color</item>
+        <item name="android:actionModeStyle">@style/Base.Widget.AppCompat.ActionMode</item>
     </style>
 
-    <style name="MyOverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:tint">@color/first_text_color</item>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
+
 </resources>

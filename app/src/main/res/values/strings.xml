@@ -12,9 +12,8 @@
     <string name="search">Search</string>
     <string name="about">About</string>
     <string name="folders">Folders</string>
-    <string name="downloads">Downloads</string>
     <string name="archives">Archives</string>
-    <string name="download_desc">View all downloaded files</string>
+    <string name="settings_desc">Customize design and behavior settings</string>
     <string name="images">Images</string>
     <string name="sounds">Sounds</string>
     <string name="videos">Videos</string>
@@ -22,7 +21,7 @@
     <string name="apk_files">Apk files</string>
     <string name="categories">Categories</string>
     <string name="storage">Storage</string>
-    <string name="short_cut">Shortcut</string>
+    <string name="other">Other</string>
     <string name="internal_storage">Internal storage</string>
     <string name="internal">Internal</string>
     <string name="external_storage">External storage</string>
@@ -92,4 +91,5 @@
     <string name="folder_permission_info">You do not have permission to view this folder</string>
     <string name="search_hint">At least 3 characters</string>
     <string name="path_conflict_warning">Target and source cannot be the same</string>
+    <string name="choose_a_directory">Choose a directory</string>
 </resources>

@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.sn.mediastorepv.data.MediaType
@@ -34,9 +35,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun getViewBinding() = FragmentHomeBinding.inflate(layoutInflater)
 
-    override fun getActionBarStatus(): Boolean = true
-
     override fun getMenuResId(): Int = R.menu.menu_home
+
+    override fun getToolbar(): Toolbar = binding.toolbar
 
     override fun setupViews() {
         initMenuButtonListener()
@@ -222,7 +223,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ),
                 )
             }
-            ibVideo.click {
+            ibVideos.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.VIDEOS,
@@ -230,7 +231,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ),
                 )
             }
-            ibSound.click {
+            ibSounds.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.AUDIOS,
@@ -246,7 +247,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ),
                 )
             }
-            ibApk.click {
+            ibApks.click {
                 navigate(
                     HomeFragmentDirections.actionHomeMedia(
                         mediaType = MediaType.FILES,
@@ -261,15 +262,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         mediaType = MediaType.FILES,
                         documentType = DocumentType.ARCHIVE.name,
                         title = getString(R.string.archives),
-                    ),
-                )
-            }
-
-            btnDownload.click {
-                navigate(
-                    HomeFragmentDirections.actionHomeFile(
-                        storageArgs = RootPath.DOWNLOAD,
-                        title = getString(R.string.downloads),
                     ),
                 )
             }
@@ -290,6 +282,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         ),
                     )
                 }
+            }
+            btnSettings.click {
+                navigate(HomeFragmentDirections.actionSettings())
             }
         }
     }

@@ -12,8 +12,6 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
 
     override fun getViewBinding() = FragmentStartBinding.inflate(layoutInflater)
 
-    override fun getActionBarStatus(): Boolean = false
-
     override fun setupViews() {
         setVersionText()
         clickContinue()

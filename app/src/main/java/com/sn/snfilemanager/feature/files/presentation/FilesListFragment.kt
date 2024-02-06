@@ -1,24 +1,23 @@
 package com.sn.snfilemanager.feature.files.presentation
 
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.navArgs
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.getMimeType
-import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.getUrisForFile
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
-import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.extensions.warningToast
@@ -26,6 +25,7 @@ import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
+import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
@@ -44,17 +44,19 @@ import java.nio.file.Paths
 class FilesListFragment :
     BaseFragment<FragmentFilesListBinding, FilesListViewModel>(),
     FileItemAdapter.SelectionCallback,
-    JobCompletedCallback {
+    JobCompletedCallback,
+    ActionMode.Callback {
     private val args: FilesListFragmentArgs by navArgs()
     private var adapter: FileItemAdapter? = null
+    private var actionMode: ActionMode? = null
 
     override fun getViewModelClass() = FilesListViewModel::class.java
 
     override fun getViewBinding() = FragmentFilesListBinding.inflate(layoutInflater)
 
-    override fun getActionBarStatus() = true
-
     override fun getMenuResId(): Int = R.menu.menu_base
+
+    override fun getToolbar(): Toolbar = binding.toolbar
 
     override fun onMenuItemSelected(menuItemId: Int) =
         when (menuItemId) {
@@ -66,8 +68,61 @@ class FilesListFragment :
             else -> super.onMenuItemSelected(menuItemId)
         }
 
-    override var actionCancelCLick: (() -> Unit)? = {
+    override fun onCreateActionMode(
+        mode: ActionMode?,
+        menu: Menu?,
+    ): Boolean {
+        actionMode = mode
+        mode?.menuInflater?.inflate(R.menu.menu_action, menu)
+        return true
+    }
+
+    override fun onPrepareActionMode(
+        mode: ActionMode?,
+        menu: Menu?,
+    ): Boolean {
+        return false
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+        actionMode = null
         clearSelection()
+    }
+
+    override fun onActionItemClicked(
+        mode: ActionMode?,
+        item: MenuItem?,
+    ): Boolean {
+        checkActionMenuStatus()
+        when (item?.itemId) {
+            R.id.action_copy -> {
+                viewModel.isCopy = true
+                showPathSelectionDialog()
+            }
+
+            R.id.action_move -> {
+                viewModel.isCopy = false
+                showPathSelectionDialog()
+            }
+
+            R.id.action_delete -> {
+                actionDelete()
+            }
+
+            R.id.action_share -> {
+                actionShare()
+            }
+
+            R.id.action_open_with -> {
+                actionOpenWith()
+            }
+
+            R.id.action_detail -> {
+                actionDetail()
+            }
+        }
+
+        return true
     }
 
     override fun setupViews() {
@@ -75,43 +130,40 @@ class FilesListFragment :
         binding.lifecycleOwner = viewLifecycleOwner
         initAdapter()
         handleBackPressed()
-        handlePathSelected()
-        initOperationsMenuClicks()
         initBreadListener()
         initFirstList()
     }
 
     override fun onStartSelection() {
-        updateMenusOnSelection(true)
+        (activity as? AppCompatActivity)?.startSupportActionMode(this)
     }
 
     override fun onEndSelection() {
-        updateMenusOnSelection(false)
+        actionMode?.finish()
     }
 
     override fun onUpdateSelection(selectedSize: Int) {
-        updateActionMenu(getString(R.string.selected_count, selectedSize))
+        actionMode?.title = selectedSize.toString()
     }
 
     override fun scannedOnCompleted() {
         // scanned completed
     }
 
-    override fun jobOnCompleted(jobType: JobType) {
+    override fun <T> jobOnCompleted(
+        jobType: JobType,
+        data: List<T>?,
+    ) {
         when (jobType) {
             JobType.COPY -> {
                 viewModel.currentPath?.let { path ->
                     viewModel.getFilesList(path)
-                    activity?.runOnUiThread {
-                        clearSelection()
-                    }
                 }
             }
 
             JobType.DELETE -> {
                 activity?.runOnUiThread {
-                    adapter?.removeItems(viewModel.getSelectedItem())
-                    clearSelection()
+                    data?.filterIsInstance<FileModel>()?.let { adapter?.removeItems(it) }
                 }
             }
         }
@@ -124,15 +176,22 @@ class FilesListFragment :
                     onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                         viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                     }
-                    onDismiss = { clearSelection() }
+                    onDismiss = { actionMode?.finish() }
                 }.show()
             }
         }
         observe(viewModel.startMoveJobLiveData) { event ->
             event.getContentIfNotHandled()?.let { data ->
                 if (data.first.isNotEmpty()) {
+                    actionMode?.finish()
                     startCopyService(data.first, data.second)
                 }
+            }
+        }
+        observe(viewModel.startDeleteJobLiveData) { event ->
+            event.getContentIfNotHandled()?.let { data ->
+                actionMode?.finish()
+                startDeleteService(data)
             }
         }
         observe(viewModel.updateListLiveData) { event ->
@@ -150,13 +209,13 @@ class FilesListFragment :
                 if (stateAndProgress.first) {
                     binding.rcvFiles.gone()
                     if (stateAndProgress.second) {
-                        showProgressDialog()
+                        // show progress
                     } else {
-                        hideProgressDialog()
+                        // hide progress
                     }
                 } else {
                     binding.rcvFiles.visible()
-                    hideProgressDialog()
+                    // hide progress
                 }
             }
         }
@@ -167,7 +226,6 @@ class FilesListFragment :
             updateFileList(viewModel.getStoragePath(args.storageArgs))
             val rootBread =
                 when (args.storageArgs) {
-                    RootPath.DOWNLOAD -> getString(R.string.downloads)
                     RootPath.EXTERNAL -> getString(R.string.external_storage)
                     RootPath.INTERNAL -> getString(R.string.internal)
                 }
@@ -213,64 +271,14 @@ class FilesListFragment :
         )
     }
 
-    private fun updateMenusOnSelection(isSelectionActive: Boolean) {
-        setToolbarVisibility(!isSelectionActive)
-        setActionMenuVisibility(isSelectionActive)
-        if (isSelectionActive) {
-            binding.layoutMenu.container.visible()
+    private fun checkActionMenuStatus() {
+        if (viewModel.selectedItemsContainsFolder()) {
+            actionMode?.menu?.findItem(R.id.action_share)?.isVisible = false
+            actionMode?.menu?.findItem(R.id.action_open_with)?.isVisible = false
         } else {
-            binding.layoutMenu.container.gone()
-        }
-    }
-
-    private fun initOperationsMenuClicks() {
-        with(binding.layoutMenu) {
-            tvMove.click {
-                viewModel.isCopy = false
-                updateMenusOnSelection(false)
-                navigatePathSelection()
-            }
-            tvCopy.click {
-                viewModel.isCopy = true
-                updateMenusOnSelection(false)
-                navigatePathSelection()
-            }
-            tvDelete.click {
-                ConfirmationDialog(
-                    requireContext(),
-                    getString(R.string.are_you_sure),
-                    getString(R.string.delete_warning),
-                ).apply {
-                    onSelected = { selected ->
-                        if (selected) {
-                            adapter?.finishSelectionAndReset()
-                            startDeleteService()
-                        } else {
-                            clearSelection()
-                        }
-                    }
-                }.show()
-            }
-            tvShare.click {
-                val files = viewModel.getSelectedItemToFiles()
-                val uris = context?.getUrisForFile(files)
-                uris?.let {
-                    context?.shareFiles(it)
-                }
-            }
-            tvMore.click {
-                showPopupMenu(it)
-            }
-        }
-    }
-
-    private fun setShareStatus() {
-        if (selectionIsActive()) {
-            if (viewModel.selectedItemsContainsFolder()) {
-                binding.layoutMenu.tvShare.gone()
-            } else {
-                binding.layoutMenu.tvShare.visible()
-            }
+            actionMode?.menu?.findItem(R.id.action_share)?.isVisible = true
+            actionMode?.menu?.findItem(R.id.action_open_with)?.isVisible =
+                viewModel.isSingleItemSelected()
         }
     }
 
@@ -281,7 +289,7 @@ class FilesListFragment :
                     requireContext(),
                     onSelected = { model, selected ->
                         viewModel.addSelectedItem(model, selected)
-                        setShareStatus()
+                        checkActionMenuStatus()
                     },
                     onClick = { model ->
                         if (model.isDirectory) {
@@ -313,54 +321,56 @@ class FilesListFragment :
         }
     }
 
-    private fun navigatePathSelection() {
-        navigate(FilesListFragmentDirections.actionPathPicker())
-    }
-
-    private fun showPopupMenu(v: View) {
-        val popup = PopupMenu(requireContext(), v)
-        popup.menuInflater.inflate(R.menu.menu_more, popup.menu)
-
-        if (!viewModel.isSingleItemSelected() || viewModel.selectedItemsContainsFolder()) {
-            popup.menu.removeItem(R.id.open_with)
-        }
-
-        popup.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.detail -> showDetailDialog()
-                R.id.open_with -> openWith()
+    private fun showPathSelectionDialog() {
+        PathPickerFragment(pathCallback = { path ->
+            if (path.isNullOrEmpty()) {
+                actionMode?.finish()
+                context?.infoToast(getString(R.string.path_not_selected))
+            } else {
+                viewModel.moveFilesAndDirectories(Paths.get(path))
             }
-            true
-        }
-        popup.setOnDismissListener {}
-        popup.show()
+        }).show(
+            childFragmentManager,
+            DetailDialog.TAG,
+        )
     }
 
-    private fun showDetailDialog() {
+    private fun actionDetail() {
         DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
             childFragmentManager,
             DetailDialog.TAG,
         )
     }
 
-    private fun openWith() {
+    private fun actionOpenWith() {
         viewModel.getSelectedItem().firstOrNull()?.let { selectedItem ->
             selectedItem.absolutePath.getMimeType()
                 ?.let { context?.openFileWithOtherApp(selectedItem.absolutePath, it) }
         }
     }
 
-    private fun handlePathSelected() {
-        getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
-            viewModel.moveFilesAndDirectories(Paths.get(path))
-            adapter?.finishSelectionAndReset()
-            removeKey("path")
+    private fun actionShare() {
+        val files = viewModel.getSelectedItemToFiles()
+        val uris = context?.getUrisForFile(files)
+        uris?.let {
+            context?.shareFiles(it)
         }
-        getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
-            clearSelection()
-            context?.infoToast(msg)
-            removeKey("no_selected")
-        }
+    }
+
+    private fun actionDelete() {
+        ConfirmationDialog(
+            requireContext(),
+            getString(R.string.are_you_sure),
+            getString(R.string.delete_warning),
+        ).apply {
+            onSelected = { selected ->
+                if (selected) {
+                    viewModel.deleteFiles()
+                } else {
+                    actionMode?.finish()
+                }
+            }
+        }.show()
     }
 
     private fun startCopyService(
@@ -376,16 +386,16 @@ class FilesListFragment :
         )
     }
 
-    private fun startDeleteService() {
+    private fun startDeleteService(operationItemList: List<FileModel>) {
         JobService.delete(
-            viewModel.getSelectedItem(),
+            operationItemList,
             this@FilesListFragment,
             requireContext(),
         )
     }
 
     private fun initSearch() {
-        getToolbar()?.menu?.findItem(R.id.action_search)?.let { item ->
+        binding.toolbar.menu?.findItem(R.id.action_search)?.let { item ->
             val searchView = item.actionView as? SearchView
             searchView?.queryHint = getString(R.string.search_hint)
             searchView?.setOnQueryTextListener(
@@ -411,7 +421,7 @@ class FilesListFragment :
 
                     override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
                         return if (selectionIsActive()) {
-                            clearSelection()
+                            actionMode?.finish()
                             false
                         } else {
                             true
@@ -429,19 +439,13 @@ class FilesListFragment :
         val callback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    adapter?.selectionIsActive()?.let { isActive ->
-                        if (isActive) {
-                            clearSelection()
-                        } else {
-                            if (directoryList.size > 1) {
-                                directoryList.removeAt(directoryList.lastIndex)
-                                updateFileList(directoryList.last())
-                                binding.breadcrumbBar.removeLastBreadCrumbItem()
-                            } else {
-                                isEnabled = false
-                                requireActivity().onBackPressedDispatcher.onBackPressed()
-                            }
-                        }
+                    if (directoryList.size > 1) {
+                        directoryList.removeAt(directoryList.lastIndex)
+                        updateFileList(directoryList.last())
+                        binding.breadcrumbBar.removeLastBreadCrumbItem()
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }

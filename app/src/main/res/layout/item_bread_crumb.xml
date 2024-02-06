@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="@dimen/_5sdp"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_arrow_right"
         tools:ignore="ContentDescription,RtlSymmetry" />
 

@@ -37,7 +37,7 @@ class CopyFileJob(
     }
 
     override fun onCompleted() {
-        completed.jobOnCompleted(JobType.COPY)
+        completed.jobOnCompleted<Nothing>(JobType.COPY, null)
         scanFile(movedItemPathList) {
             completed.scannedOnCompleted()
         }

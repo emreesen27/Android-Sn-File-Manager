@@ -58,6 +58,10 @@ class FilesListViewModel
             MutableLiveData()
         val startMoveJobLiveData: LiveData<Event<Pair<List<FileModel>, Path>>> = _startMoveJobLiveData
 
+        private val _startDeleteJobLiveData: MutableLiveData<Event<List<FileModel>>> =
+            MutableLiveData()
+        val startDeleteJobLiveData: LiveData<Event<List<FileModel>>> = _startDeleteJobLiveData
+
         private val _updateListLiveData: MutableLiveData<Event<List<FileModel>>> = MutableLiveData()
         val updateListLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
 
@@ -76,7 +80,6 @@ class FilesListViewModel
             when (rootPath) {
                 RootPath.INTERNAL -> filePathProvider.internalStorageRootPath
                 RootPath.EXTERNAL -> filePathProvider.externalStorageRootPath
-                else -> filePathProvider.downloadDirectoryPath
             }
 
         fun updateDirectoryList(path: String) {
@@ -203,6 +206,11 @@ class FilesListViewModel
                 job.await()
                 _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
             }
+        }
+
+        fun deleteFiles() {
+            val operationItemList: List<FileModel> = selectedItemList.toList()
+            _startDeleteJobLiveData.postValue(Event(operationItemList))
         }
 
         private fun removeSearchCallback() {
