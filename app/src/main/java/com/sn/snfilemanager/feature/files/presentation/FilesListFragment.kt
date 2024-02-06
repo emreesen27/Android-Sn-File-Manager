@@ -208,14 +208,8 @@ class FilesListFragment :
             event.getContentIfNotHandled()?.let { stateAndProgress ->
                 if (stateAndProgress.first) {
                     binding.rcvFiles.gone()
-                    if (stateAndProgress.second) {
-                        // show progress
-                    } else {
-                        // hide progress
-                    }
                 } else {
                     binding.rcvFiles.visible()
-                    // hide progress
                 }
             }
         }

@@ -39,10 +39,25 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_3sdp"
                 android:paddingVertical="@dimen/_15sdp"
-                android:visibility="@{vm.searchStateLiveData.peekContent().first == true ? View.GONE : View.VISIBLE}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:visibility="@{vm.searchStateLiveData.peekContent().first == true ? View.GONE : View.VISIBLE}" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/adamina"
+                android:text="@string/start_search_msg"
+                android:textAlignment="center"
+                android:textColor="@color/first_text_color"
+                android:textSize="@dimen/_13ssp"
+                android:visibility="@{vm.searchStateLiveData.peekContent().first == true &amp;&amp; vm.searchStateLiveData.peekContent().second == false ? View.VISIBLE : View.GONE}" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="@{vm.searchStateLiveData.peekContent().second == true ? View.VISIBLE : View.GONE}" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
