@@ -12,14 +12,12 @@ import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.getMimeType
-import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.getUrisForFile
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
-import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.extensions.warningToast
@@ -27,6 +25,7 @@ import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
+import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
@@ -75,7 +74,6 @@ class FilesListFragment :
     ): Boolean {
         actionMode = mode
         mode?.menuInflater?.inflate(R.menu.menu_action, menu)
-
         return true
     }
 
@@ -99,19 +97,16 @@ class FilesListFragment :
         when (item?.itemId) {
             R.id.action_copy -> {
                 viewModel.isCopy = true
-                actionMode?.finish()
-                navigatePathSelection()
-            }
-
-            R.id.action_delete -> {
-                actionMode?.finish()
-                actionDelete()
+                showPathSelectionDialog()
             }
 
             R.id.action_move -> {
                 viewModel.isCopy = false
-                actionMode?.finish()
-                navigatePathSelection()
+                showPathSelectionDialog()
+            }
+
+            R.id.action_delete -> {
+                actionDelete()
             }
 
             R.id.action_share -> {
@@ -135,7 +130,6 @@ class FilesListFragment :
         binding.lifecycleOwner = viewLifecycleOwner
         initAdapter()
         handleBackPressed()
-        handlePathSelected()
         initBreadListener()
         initFirstList()
     }
@@ -156,21 +150,20 @@ class FilesListFragment :
         // scanned completed
     }
 
-    override fun jobOnCompleted(jobType: JobType) {
+    override fun <T> jobOnCompleted(
+        jobType: JobType,
+        data: List<T>?,
+    ) {
         when (jobType) {
             JobType.COPY -> {
                 viewModel.currentPath?.let { path ->
                     viewModel.getFilesList(path)
-                    activity?.runOnUiThread {
-                        clearSelection()
-                    }
                 }
             }
 
             JobType.DELETE -> {
                 activity?.runOnUiThread {
-                    adapter?.removeItems(viewModel.getSelectedItem())
-                    clearSelection()
+                    data?.filterIsInstance<FileModel>()?.let { adapter?.removeItems(it) }
                 }
             }
         }
@@ -183,15 +176,22 @@ class FilesListFragment :
                     onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                         viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                     }
-                    onDismiss = { clearSelection() }
+                    onDismiss = { actionMode?.finish() }
                 }.show()
             }
         }
         observe(viewModel.startMoveJobLiveData) { event ->
             event.getContentIfNotHandled()?.let { data ->
                 if (data.first.isNotEmpty()) {
+                    actionMode?.finish()
                     startCopyService(data.first, data.second)
                 }
+            }
+        }
+        observe(viewModel.startDeleteJobLiveData) { event ->
+            event.getContentIfNotHandled()?.let { data ->
+                actionMode?.finish()
+                startDeleteService(data)
             }
         }
         observe(viewModel.updateListLiveData) { event ->
@@ -209,13 +209,13 @@ class FilesListFragment :
                 if (stateAndProgress.first) {
                     binding.rcvFiles.gone()
                     if (stateAndProgress.second) {
-                        showProgressDialog()
+                        // show progress
                     } else {
-                        hideProgressDialog()
+                        // hide progress
                     }
                 } else {
                     binding.rcvFiles.visible()
-                    hideProgressDialog()
+                    // hide progress
                 }
             }
         }
@@ -321,8 +321,18 @@ class FilesListFragment :
         }
     }
 
-    private fun navigatePathSelection() {
-        navigate(FilesListFragmentDirections.actionPathPicker())
+    private fun showPathSelectionDialog() {
+        PathPickerFragment(pathCallback = { path ->
+            if (path.isNullOrEmpty()) {
+                actionMode?.finish()
+                context?.infoToast(getString(R.string.path_not_selected))
+            } else {
+                viewModel.moveFilesAndDirectories(Paths.get(path))
+            }
+        }).show(
+            childFragmentManager,
+            DetailDialog.TAG,
+        )
     }
 
     private fun actionDetail() {
@@ -355,26 +365,12 @@ class FilesListFragment :
         ).apply {
             onSelected = { selected ->
                 if (selected) {
-                    adapter?.finishSelectionAndReset()
-                    startDeleteService()
+                    viewModel.deleteFiles()
                 } else {
-                    clearSelection()
+                    actionMode?.finish()
                 }
             }
         }.show()
-    }
-
-    private fun handlePathSelected() {
-        getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
-            viewModel.moveFilesAndDirectories(Paths.get(path))
-            adapter?.finishSelectionAndReset()
-            removeKey("path")
-        }
-        getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
-            clearSelection()
-            context?.infoToast(msg)
-            removeKey("no_selected")
-        }
     }
 
     private fun startCopyService(
@@ -390,9 +386,9 @@ class FilesListFragment :
         )
     }
 
-    private fun startDeleteService() {
+    private fun startDeleteService(operationItemList: List<FileModel>) {
         JobService.delete(
-            viewModel.getSelectedItem(),
+            operationItemList,
             this@FilesListFragment,
             requireContext(),
         )
@@ -425,7 +421,7 @@ class FilesListFragment :
 
                     override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
                         return if (selectionIsActive()) {
-                            clearSelection()
+                            actionMode?.finish()
                             false
                         } else {
                             true
@@ -443,19 +439,13 @@ class FilesListFragment :
         val callback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    adapter?.selectionIsActive()?.let { isActive ->
-                        if (isActive) {
-                            clearSelection()
-                        } else {
-                            if (directoryList.size > 1) {
-                                directoryList.removeAt(directoryList.lastIndex)
-                                updateFileList(directoryList.last())
-                                binding.breadcrumbBar.removeLastBreadCrumbItem()
-                            } else {
-                                isEnabled = false
-                                requireActivity().onBackPressedDispatcher.onBackPressed()
-                            }
-                        }
+                    if (directoryList.size > 1) {
+                        directoryList.removeAt(directoryList.lastIndex)
+                        updateFileList(directoryList.last())
+                        binding.breadcrumbBar.removeLastBreadCrumbItem()
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }

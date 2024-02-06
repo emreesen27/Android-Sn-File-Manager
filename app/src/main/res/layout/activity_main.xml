@@ -9,38 +9,6 @@
         android:background="@color/bg_color"
         tools:context=".MainActivity">
 
-
-        <include
-            android:id="@+id/action_menu"
-            layout="@layout/layout_action_menu"
-            android:layout_width="0dp"
-            android:layout_height="?android:attr/actionBarSize"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="action_menu" />
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:indeterminate="true"
-            android:padding="@dimen/_1sdp"
-            android:visibility="invisible"
-            app:indicatorColor="@color/main_color"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/barrier" />
-
         <fragment
             android:id="@+id/base_nav_host"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -50,7 +18,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progress"
+            app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/navigation" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

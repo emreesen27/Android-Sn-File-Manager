@@ -51,6 +51,9 @@ class MediaViewModel
             MutableLiveData()
         val startMoveJobLiveData: LiveData<Event<Pair<List<Media>, Path>>> = _startMoveJobLiveData
 
+        private val _startDeleteJobLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
+        val startDeleteJobLiveData: LiveData<Event<List<Media>>> = _startDeleteJobLiveData
+
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
         private fun getFilteredMediaTypes(): MutableSet<String>? =
@@ -143,6 +146,11 @@ class MediaViewModel
                 job.await()
                 _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
             }
+        }
+
+        fun deleteMedia() {
+            val operationItemList: List<Media> = selectedItemList.toList()
+            _startDeleteJobLiveData.postValue(Event(operationItemList))
         }
 
         fun getMimeByMediaType() =

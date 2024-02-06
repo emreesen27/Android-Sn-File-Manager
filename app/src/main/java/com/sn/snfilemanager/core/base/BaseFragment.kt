@@ -17,14 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
-import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.sn.snfilemanager.R
-import com.sn.snfilemanager.core.extensions.invisible
-import com.sn.snfilemanager.core.extensions.visible
 
 abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragment() {
-    private var progress: LinearProgressIndicator? = null
-
     open var useSharedViewModel: Boolean = false
 
     protected lateinit var viewModel: VModel
@@ -58,7 +52,6 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        progress = activity?.findViewById(R.id.progress)
         setupViews()
         observeData()
     }
@@ -85,14 +78,6 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
 
     fun invalidateOptionsMenu() {
         requireActivity().invalidateOptionsMenu()
-    }
-
-    fun showProgressDialog() {
-        progress?.visible()
-    }
-
-    fun hideProgressDialog() {
-        progress?.invisible()
     }
 
     private fun initMenu(

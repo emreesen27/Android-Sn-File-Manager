@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
 import com.sn.mediastorepv.data.ConflictStrategy
@@ -12,18 +11,17 @@ import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
-import com.sn.snfilemanager.core.extensions.getNavigationResult
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
-import com.sn.snfilemanager.core.extensions.removeKey
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.warningToast
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.filter.FilterBottomSheet
 import com.sn.snfilemanager.feature.media.adapter.MediaItemAdapter
+import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
@@ -98,19 +96,16 @@ class MediaFragment :
         when (item?.itemId) {
             R.id.action_copy -> {
                 viewModel.isCopy = true
-                actionMode?.finish()
-                navigatePathSelection()
-            }
-
-            R.id.action_delete -> {
-                actionMode?.finish()
-                actionDelete()
+                showPathSelectionDialog()
             }
 
             R.id.action_move -> {
                 viewModel.isCopy = false
-                actionMode?.finish()
-                navigatePathSelection()
+                showPathSelectionDialog()
+            }
+
+            R.id.action_delete -> {
+                actionDelete()
             }
 
             R.id.action_share -> {
@@ -145,8 +140,6 @@ class MediaFragment :
         binding.vm = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         initAdapter()
-        handleBackPressed()
-        handlePathSelected()
     }
 
     override fun onStartSelection() {
@@ -165,18 +158,16 @@ class MediaFragment :
         viewModel.getMedia()
     }
 
-    override fun jobOnCompleted(jobType: JobType) {
+    override fun <T> jobOnCompleted(
+        jobType: JobType,
+        data: List<T>?,
+    ) {
         when (jobType) {
-            JobType.COPY -> {
-                activity?.runOnUiThread {
-                    clearSelection()
-                }
-            }
+            JobType.COPY -> {}
 
             JobType.DELETE -> {
                 activity?.runOnUiThread {
-                    adapter?.removeItems(viewModel.getSelectedItem())
-                    clearSelection()
+                    data?.filterIsInstance<Media>()?.let { adapter?.removeItems(it) }
                 }
             }
         }
@@ -195,15 +186,22 @@ class MediaFragment :
                         onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                             viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                         }
-                        onDismiss = { clearSelection() }
+                        onDismiss = { actionMode?.finish() }
                     }.show()
                 }
             }
             observe(viewModel.startMoveJobLiveData) { event ->
                 event.getContentIfNotHandled()?.let { data ->
                     if (data.first.isNotEmpty()) {
+                        actionMode?.finish()
                         startCopyService(data.first, data.second)
                     }
+                }
+            }
+            observe(viewModel.startDeleteJobLiveData) { event ->
+                event.getContentIfNotHandled()?.let { data ->
+                    actionMode?.finish()
+                    startDeleteService(data)
                 }
             }
             observe(viewModel.pathConflictLiveData) { event ->
@@ -212,34 +210,6 @@ class MediaFragment :
                 }
             }
         }
-    }
-
-    private fun handlePathSelected() {
-        getNavigationResult("path")?.observe(viewLifecycleOwner) { path ->
-            viewModel.moveMedia(Paths.get(path))
-            adapter?.finishSelectionAndReset()
-            removeKey("path")
-        }
-        getNavigationResult("no_selected")?.observe(viewLifecycleOwner) { msg ->
-            clearSelection()
-            context?.infoToast(msg)
-            removeKey("no_selected")
-        }
-    }
-
-    private fun handleBackPressed() {
-        val callback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (selectionIsActive()) {
-                        clearSelection()
-                    } else {
-                        isEnabled = false
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
     private fun actionShare() {
@@ -255,9 +225,9 @@ class MediaFragment :
         ).apply {
             onSelected = { selected ->
                 if (selected) {
-                    startDeleteService()
+                    viewModel.deleteMedia()
                 } else {
-                    clearSelection()
+                    actionMode?.finish()
                 }
             }
         }.show()
@@ -276,9 +246,9 @@ class MediaFragment :
         )
     }
 
-    private fun startDeleteService() {
+    private fun startDeleteService(operationItemList: List<Media>) {
         JobService.deleteMedia(
-            viewModel.getSelectedItem(),
+            operationItemList,
             this@MediaFragment,
             requireContext(),
         )
@@ -302,8 +272,18 @@ class MediaFragment :
             viewModel.isSingleItemSelected()
     }
 
-    private fun navigatePathSelection() {
-        navigate(MediaFragmentDirections.actionPathPicker())
+    private fun showPathSelectionDialog() {
+        PathPickerFragment(pathCallback = { path ->
+            if (path.isNullOrEmpty()) {
+                actionMode?.finish()
+                context?.infoToast(getString(R.string.path_not_selected))
+            } else {
+                viewModel.moveMedia(Paths.get(path))
+            }
+        }).show(
+            childFragmentManager,
+            DetailDialog.TAG,
+        )
     }
 
     private fun clearSelection() {
@@ -337,7 +317,7 @@ class MediaFragment :
 
                     override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
                         return if (selectionIsActive()) {
-                            clearSelection()
+                            actionMode?.finish()
                             false
                         } else {
                             true

@@ -1,7 +1,10 @@
 package com.sn.snfilemanager.job
 
 interface JobCompletedCallback {
-    fun jobOnCompleted(jobType: JobType)
+    fun <T> jobOnCompleted(
+        jobType: JobType,
+        data: List<T>?,
+    )
 
     fun scannedOnCompleted()
 }

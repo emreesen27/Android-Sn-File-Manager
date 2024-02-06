@@ -32,7 +32,7 @@ class MoveMediaJob(
     }
 
     override fun onCompleted() {
-        callback.jobOnCompleted(JobType.COPY)
+        callback.jobOnCompleted<Nothing>(JobType.COPY, null)
         scanFile(movedItemPathList) {
             callback.scannedOnCompleted()
         }

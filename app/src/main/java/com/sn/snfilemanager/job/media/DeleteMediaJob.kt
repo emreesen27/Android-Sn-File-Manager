@@ -21,7 +21,7 @@ class DeleteMediaJob(
     }
 
     override fun onCompleted() {
-        callback.jobOnCompleted(JobType.DELETE)
+        callback.jobOnCompleted(JobType.DELETE, sourcesMedia)
     }
 
     private fun deleteMedia() {

@@ -29,7 +29,7 @@ class DeleteFileJob(
     }
 
     override fun onCompleted() {
-        completed.jobOnCompleted(JobType.DELETE)
+        completed.jobOnCompleted(JobType.DELETE, sourceFiles)
         scanFile(deletedItemPathList)
     }
 

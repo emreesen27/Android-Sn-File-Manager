@@ -8,7 +8,7 @@
     android:elevation="@dimen/_5sdp"
     android:orientation="horizontal"
     android:padding="@dimen/_10sdp"
-    android:visibility="gone">
+    android:visibility="visible">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_delete"
