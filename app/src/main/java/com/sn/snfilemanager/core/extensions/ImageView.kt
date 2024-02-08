@@ -17,7 +17,7 @@ fun ImageView.loadWithGlide(
     Glide.with(context)
         .asBitmap()
         .load(videoPath)
-        .fitCenter()
+        // .fitCenter()
         .placeholder(R.drawable.layer_placeholder)
         .error(R.drawable.layer_broken_placeholder)
         .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
