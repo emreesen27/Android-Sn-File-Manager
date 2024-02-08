@@ -17,6 +17,7 @@ import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.RootPath
@@ -274,6 +275,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 )
             }
             btnExternalFile.click {
+                context?.infoToast("This feature is not supported in beta version")
+                /*
                 viewModel.availableExternalStorageLiveData.value?.let {
                     navigate(
                         HomeFragmentDirections.actionHomeFile(
@@ -282,6 +285,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         ),
                     )
                 }
+                 */
             }
             btnSettings.click {
                 navigate(HomeFragmentDirections.actionSettings())
