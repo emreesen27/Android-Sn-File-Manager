@@ -60,7 +60,7 @@
             android:textSize="@dimen/_13ssp" />
 
         <View
-            android:layout_width="0.7dp"
+            android:layout_width="1dp"
             android:layout_height="@dimen/_40sdp"
             android:background="@color/divider_color" />
 
@@ -76,7 +76,7 @@
             android:textSize="@dimen/_13ssp" />
 
         <View
-            android:layout_width="0.7dp"
+            android:layout_width="1dp"
             android:layout_height="@dimen/_40sdp"
             android:background="@color/divider_color" />
 

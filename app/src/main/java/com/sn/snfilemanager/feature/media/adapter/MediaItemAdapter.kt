@@ -14,7 +14,9 @@ import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.BR
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.invisible
+import com.sn.snfilemanager.core.extensions.loadWithGlide
 import com.sn.snfilemanager.core.extensions.setMargins
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.FileExtension
@@ -167,8 +169,9 @@ class MediaItemAdapter(
             }
         }
 
+        // Todo FileNotFundEx -> media scanner or file ex control
         private fun bindImages(data: Media) {
-            Glide.with(binding.root).load(data.uri).into((binding as ItemImagesBinding).ivImage)
+            (binding as ItemImagesBinding).ivImage.loadWithGlide(data.uri)
             setSelectedVisibility(binding.ivSelected, binding.ivImage, data)
         }
 
@@ -179,7 +182,15 @@ class MediaItemAdapter(
         }
 
         private fun bindVideo(data: Media) {
-            Glide.with(binding.root).load(data.uri).into((binding as ItemVideoBinding).ivImage)
+            (binding as ItemVideoBinding).ivImage.loadWithGlide(
+                data.uri,
+            ) { exception ->
+                if (exception == null) {
+                    binding.ivPlay.visible()
+                } else {
+                    binding.ivPlay.gone()
+                }
+            }
             setSelectedVisibility(binding.ivSelected, binding.ivImage, data)
         }
 

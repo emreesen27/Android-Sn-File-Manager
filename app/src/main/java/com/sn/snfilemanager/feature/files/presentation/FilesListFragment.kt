@@ -167,6 +167,7 @@ class FilesListFragment :
                 }
             }
         }
+        activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }
 
     override fun observeData() {

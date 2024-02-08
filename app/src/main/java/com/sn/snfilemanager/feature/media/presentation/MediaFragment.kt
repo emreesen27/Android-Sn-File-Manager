@@ -171,6 +171,7 @@ class MediaFragment :
                 }
             }
         }
+        activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }
 
     override fun observeData() {

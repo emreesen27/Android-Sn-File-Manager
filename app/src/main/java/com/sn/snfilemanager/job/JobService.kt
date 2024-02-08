@@ -60,7 +60,6 @@ class JobService : Service() {
                     synchronized(runningJobs) {
                         runningJobs.remove(job)
                         updateWakeWifiLockLocked()
-                        job.onCompleted()
                     }
                 }
             runningJobs[job] = newJob
