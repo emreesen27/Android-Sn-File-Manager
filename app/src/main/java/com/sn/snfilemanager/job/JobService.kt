@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.nio.file.Path
 
+// This class and some associated classes are inspired by or directly implemented from Material Files by Hai Zhang.
 class JobService : Service() {
     private lateinit var wakeWifiLock: WakeWifiLock
     internal lateinit var notificationManager: FrNotificationManager

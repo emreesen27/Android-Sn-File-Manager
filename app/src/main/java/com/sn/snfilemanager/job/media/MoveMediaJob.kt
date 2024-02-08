@@ -22,6 +22,7 @@ class MoveMediaJob(
     private val callback: JobCompletedCallback,
 ) : BaseJob() {
     private var movedItemCount: Int = 0
+    private var scannedItemCount: Int = 0
     private var title = if (isCopy) R.string.copying else R.string.moving
     private val totalItemCount: Int = sourcesMedia.size
     private val movedItemPathList: MutableList<String> = mutableListOf()
@@ -34,7 +35,10 @@ class MoveMediaJob(
     override fun onCompleted() {
         callback.jobOnCompleted<Nothing>(JobType.COPY, null)
         scanFile(movedItemPathList) {
-            callback.scannedOnCompleted()
+            scannedItemCount++
+            if (movedItemPathList.size == scannedItemCount) {
+                callback.scannedOnCompleted()
+            }
         }
     }
 
