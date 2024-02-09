@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="@color/orange_folder"
+        android:pathData="m93.72,35.35v42.69a7.35,7.35 0,0 1,-7.36 7.36h-72.72a7.35,7.35 0,0 1,-7.36 -7.36v-50.05h80.08a7.36,7.36 0,0 1,7.36 7.36z" />
+    <path
+        android:fillColor="@color/orange_folder"
+        android:pathData="m45.18,27.99h-38.9v-6.03a7.36,7.36 0,0 1,7.36 -7.36h18.52a7.36,7.36 0,0 1,6.08 3.21z" />
+    <path
+        android:fillColor="@color/orange_folder_secondary"
+        android:pathData="m65.36,27.99h-20.18l-6.94,-10.18a7.36,7.36 0,0 0,-6.08 -3.21h20.17a7.38,7.38 0,0 1,6.09 3.21z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="m64.81,47.65 l-10.15,-10.15a1,1 0,0 0,-0.71 -0.29h-14.06a5,5 0,0 0,-4.99 4.99v28.98a5,5 0,0 0,4.99 4.99h20.22a5,5 0,0 0,4.99 -4.99v-22.83a1,1 0,0 0,-0.29 -0.71zM54.95,40.63 L61.69,47.36h-3.74a3,3 0,0 1,-2.99 -2.99zM60.11,74.18h-20.22a3,3 0,0 1,-2.99 -2.99v-28.98a3,3 0,0 1,2.99 -2.99h13.06v5.16a5,5 0,0 0,4.99 4.99h5.15v21.83a3,3 0,0 1,-2.99 2.99zM58.13,54.51h-16.27a1,1 0,0 1,0 -2h16.27a1,1 0,0 1,0 2zM58.13,59.65h-16.27a1,1 0,0 1,0 -2h16.27a1,1 0,0 1,0 2zM58.13,64.8h-16.27a1,1 0,1 1,0 -2h16.27a1,1 0,1 1,0 2z" />
+</vector>

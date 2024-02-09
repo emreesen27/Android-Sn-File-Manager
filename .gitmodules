@@ -1,0 +1,3 @@
+[submodule "mediastorepv"]
+	path = mediastorepv
+	url = https://github.com/emreesen27/media-store

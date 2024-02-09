@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_color"
+        tools:context=".feature.start.StartFragment">
+
+        <ImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_app_icon"
+            android:src="@drawable/ic_app_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.20" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_app_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/adamina"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textColor="@color/first_text_color"
+            android:textSize="@dimen/_20ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_app_icon" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/adamina"
+            android:textAlignment="center"
+            android:textColor="@color/second_text_color"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintTop_toBottomOf="@+id/mtv_app_name"
+            tools:text="1.0.0" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_open_source_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:drawableStart="@drawable/ic_circle"
+            android:drawablePadding="@dimen/_5sdp"
+            android:fontFamily="@font/adamina"
+            android:gravity="top"
+            android:linksClickable="false"
+            android:padding="@dimen/_5sdp"
+            android:selectAllOnFocus="false"
+            android:text="@string/open_source_license"
+            android:textColor="@color/second_text_color"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toTopOf="@+id/mtv_privacy_policy"
+            app:layout_constraintStart_toStartOf="@+id/btn_continue" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/mtv_privacy_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:autoLink="all"
+            android:drawableStart="@drawable/ic_circle"
+            android:drawablePadding="@dimen/_5sdp"
+            android:fontFamily="@font/adamina"
+            android:gravity="top"
+            android:linksClickable="false"
+            android:padding="@dimen/_5sdp"
+            android:selectAllOnFocus="false"
+            android:text="@string/privacy_policy"
+            android:textColor="@color/second_text_color"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_continue"
+            app:layout_constraintStart_toStartOf="@+id/btn_continue" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_continue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_30sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:backgroundTint="@color/main_color"
+            android:fontFamily="@font/adamina"
+            android:padding="10dp"
+            android:text="@string/continue_key"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

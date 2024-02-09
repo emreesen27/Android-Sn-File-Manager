@@ -1,0 +1,12 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+NC='\033[0m'
+
+INPUT_FILE=$1
+START_LINE=$(head -n 1 "$INPUT_FILE")
+PATTERN="^\[(DEV|FIX)\]\[.*\]$"
+if ! [[ "$START_LINE" =~ $PATTERN ]]; then
+  echo -e "${RED}Commit message format is incorrect. Please use format: [DEV|FIX][commit message]${NC}"
+  exit 1
+fi

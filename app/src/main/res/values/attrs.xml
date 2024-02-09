@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ImageButton">
+        <attr name="btnText" format="string" />
+        <attr name="btnImage" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="HrImageButton">
+        <attr name="title" format="string" />
+        <attr name="subTitle" format="string" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+
+</resources>

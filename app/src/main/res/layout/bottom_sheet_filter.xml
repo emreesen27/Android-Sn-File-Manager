@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_color">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chips_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            app:selectionRequired="true"
+            app:singleSelection="false">
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <View
+            android:id="@+id/center_view"
+            android:layout_width="1dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginVertical="@dimen/_5sdp"
+            android:background="@color/divider_color"
+            app:layout_constraintBottom_toBottomOf="@+id/container"
+            app:layout_constraintEnd_toEndOf="@+id/container"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/container"
+            app:layout_constraintTop_toBottomOf="@+id/chips_group" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_5sdp"
+            android:text="@string/cancel"
+            android:textColor="@color/app_buton_state_list"
+            android:textSize="@dimen/_13ssp"
+            app:layout_constraintBottom_toBottomOf="@id/center_view"
+            app:layout_constraintEnd_toStartOf="@+id/center_view"
+            app:layout_constraintTop_toTopOf="@id/center_view" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/btn_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:fontFamily="@font/adamina"
+            android:padding="@dimen/_5sdp"
+            android:text="@string/apply"
+            android:textColor="@color/app_buton_state_list"
+            android:textSize="@dimen/_13ssp"
+            app:layout_constraintBottom_toBottomOf="@id/center_view"
+            app:layout_constraintStart_toEndOf="@+id/center_view"
+            app:layout_constraintTop_toTopOf="@id/center_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

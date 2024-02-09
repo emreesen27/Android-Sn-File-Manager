@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/loading_fragment">
+
+    <fragment
+        android:id="@+id/loading_fragment"
+        android:name="com.sn.snfilemanager.LoadingFragment"
+        tools:layout="@layout/fragment_loading">
+        <action
+            android:id="@+id/action_loading_to_start"
+            app:destination="@id/start_fragment"
+            app:popUpTo="@+id/loading_fragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loading_to_home"
+            app:destination="@id/home_fragment"
+            app:popUpTo="@id/loading_fragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/start_fragment"
+        android:name="com.sn.snfilemanager.feature.start.StartFragment"
+        tools:layout="@layout/fragment_start">
+
+        <action
+            android:id="@+id/action_start_to_home"
+            app:destination="@+id/home_fragment"
+            app:popUpTo="@+id/start_fragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.sn.snfilemanager.feature.home.HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_home_media"
+            app:destination="@+id/media_list_fragment" />
+
+        <action
+            android:id="@+id/action_home_file"
+            app:destination="@+id/file_list_fragment" />
+
+        <action
+            android:id="@+id/action_settings"
+            app:destination="@+id/settings_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/media_list_fragment"
+        android:name="com.sn.snfilemanager.feature.media.presentation.MediaFragment"
+        tools:layout="@layout/fragment_media">
+
+        <action
+            android:id="@+id/action_path_picker"
+            app:destination="@+id/path_picker_fragment" />
+
+        <argument
+            android:name="mediaType"
+            app:argType="com.sn.mediastorepv.data.MediaType" />
+
+        <argument
+            android:name="documentType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="title"
+            app:argType="string"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/file_list_fragment"
+        android:name="com.sn.snfilemanager.feature.files.presentation.FilesListFragment"
+        tools:layout="@layout/fragment_files_list">
+
+        <argument
+            android:name="storageArgs"
+            app:argType="com.sn.snfilemanager.core.util.RootPath" />
+
+        <argument
+            android:name="title"
+            app:argType="string"/>
+
+        <action
+            android:id="@+id/action_path_picker"
+            app:destination="@+id/path_picker_fragment" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/path_picker_fragment"
+        android:name="com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment"
+        tools:layout="@layout/fragment_path_picker" />
+
+
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.sn.snfilemanager.feature.settings.SettingsFragment" />
+
+</navigation>

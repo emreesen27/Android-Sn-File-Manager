@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_rounded"
+    android:minHeight="@dimen/_400sdp"
+    tools:context=".feature.pathpicker.presentation.PathPickerFragment">
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_10sdp"
+        android:text="@string/choose_a_directory"
+        android:textColor="@color/first_text_color"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.sn.snfilemanager.view.component.breadcrumb.BreadCrumbView
+        android:id="@+id/breadcrumb_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/desc" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/center_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/breadcrumb_bar"
+        tools:listitem="@layout/item_file" />
+
+
+    <View
+        android:id="@+id/center_view"
+        android:layout_width="1dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginVertical="@dimen/_5sdp"
+        android:background="@color/divider_color"
+        app:layout_constraintBottom_toBottomOf="@+id/container"
+        app:layout_constraintEnd_toEndOf="@+id/container"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/container"
+        app:layout_constraintTop_toBottomOf="@+id/recycler" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/cancel"
+        android:textColor="@color/app_buton_state_list"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintBottom_toBottomOf="@id/center_view"
+        app:layout_constraintEnd_toStartOf="@+id/center_view"
+        app:layout_constraintTop_toTopOf="@id/center_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:fontFamily="@font/adamina"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/apply"
+        android:textColor="@color/app_buton_state_list"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintBottom_toBottomOf="@id/center_view"
+        app:layout_constraintStart_toEndOf="@+id/center_view"
+        app:layout_constraintTop_toTopOf="@id/center_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
