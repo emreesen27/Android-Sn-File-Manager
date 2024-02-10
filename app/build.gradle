@@ -6,6 +6,8 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-parcelize'
     id 'org.jlleitschuh.gradle.ktlint' version '12.1.0'
+    id 'com.google.firebase.crashlytics'
+    id "com.google.gms.google-services"
 }
 
 task installGitHooks(type: Copy) {
@@ -43,7 +45,11 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            applicationIdSuffix = '.debug'
+        }
+
+        relaase {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -100,6 +106,11 @@ dependencies {
     // Animation
     implementation 'com.airbnb.android:lottie:5.0.3'
     implementation 'com.github.gayanvoice:android-animations-kotlin:1.0.1'
+
+    // Firebase
+    implementation(platform('com.google.firebase:firebase-bom:32.7.2'))
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
