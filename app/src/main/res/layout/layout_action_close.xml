@@ -15,7 +15,7 @@
         android:contentDescription="?attr/actionModeCloseContentDescription"
         android:focusable="true"
         android:paddingStart="12dp"
-        app:srcCompat="@drawable/ic_arrow_back"
+        app:srcCompat="@drawable/ic_cancel"
         tools:ignore="RtlSymmetry" />
 
 </LinearLayout>
