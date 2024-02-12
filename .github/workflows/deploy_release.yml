@@ -14,6 +14,8 @@ jobs:
         run: git init
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          submodules: 'true'
 
       - name: Create file
         run: cat /home/runner/work/Android-Sn-File-Manager/Android-Sn-File-Manager/app/google-services.json | base64
