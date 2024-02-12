@@ -22,6 +22,12 @@ task installCommitMsgHook(type: Copy) {
     fileMode 0777
 }
 
+task printVersionName {
+    doLast {
+        println android.defaultConfig.versionName
+    }
+}
+
 tasks.getByPath(':app:preBuild').dependsOn installGitHooks
 tasks.getByPath(':app:preBuild').dependsOn installCommitMsgHook
 
@@ -34,7 +40,7 @@ android {
         minSdk 26
         targetSdk 34
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.0-beta1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

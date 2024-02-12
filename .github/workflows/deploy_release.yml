@@ -1,0 +1,78 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  sign_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fix Git permissions
+        run: git init
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+
+      - name: Create Google Services JSON
+        id: create_google_json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "google-services.json"
+          json: ${{ secrets.GOOGLE_SERVICES_JSON }}
+
+      - name: Move Google Services JSON to App Directory
+        run: mv google-services.json /home/runner/work/Android-Sn-File-Manager/Android-Sn-File-Manager/app/google-services.json
+
+      - name: Build APK with Gradle
+        run: ./gradlew assembleRelease
+
+      - name: Sign app APK
+        id: sign_app
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
+
+      # Upload the signed APK as an artifact
+      - name: Upload Signed APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: Signed app APK
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+
+      - name: Retrieve Version
+        run: |
+          VERSION_NAME=$(./gradlew -q printVersionName)
+          echo "::set-output name=VERSION_NAME::$VERSION_NAME"
+        id: android_version
+      
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        with:
+          tag_name: ${{ steps.android_version.outputs.VERSION_NAME }}
+          release_name: Release ${{ steps.android_version.outputs.VERSION_NAME }}
+          body: |
+            This is the release APK for version ${{ steps.android_version.outputs.VERSION_NAME }}.
+            See here for changes in version -> [Changelog](https://github.com/emreesen27/Android-Sn-File-Manager/blob/master/CHANGELOG)
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
