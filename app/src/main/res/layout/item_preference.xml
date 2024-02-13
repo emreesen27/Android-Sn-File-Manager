@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/adamina"
-        android:padding="@dimen/_3sdp"
         android:textColor="@color/first_text_color"
         android:textSize="@dimen/_12ssp"
         tools:text="@string/app_name" />
@@ -25,7 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_15sdp"
         android:fontFamily="@font/adamina"
-        android:paddingHorizontal="@dimen/_3sdp"
         android:textColor="@color/second_text_color"
         android:textSize="@dimen/_10ssp"
         tools:text="@string/app_name" />
