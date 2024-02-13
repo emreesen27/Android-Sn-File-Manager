@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
-import com.sn.snfilemanager.core.util.Config
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.util.Config
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.feature.files.data.FileModel
