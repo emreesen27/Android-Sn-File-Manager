@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import androidx.preference.ListPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.sn.snfilemanager.R
@@ -18,13 +17,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         rootKey: String?,
     ) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-
-        val aboutButton: Preference? = findPreference(SettingsUtils.SN_ABOUT)
-        aboutButton?.setOnPreferenceClickListener {
-            // todo
-            // findNavController().navigate(SettingsFragmentDirections.actionSettingsToAbout())
-            true
-        }
 
         val themeListPreference: ListPreference? = findPreference(SettingsUtils.SN_THEME_MODE)
         val hiddenFilePreference: SwitchPreferenceCompat? =

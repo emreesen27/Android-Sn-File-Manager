@@ -7,6 +7,7 @@
     <string name="open_source_license"><u>Open source license</u></string>
     <string name="privacy_policy"><u>Privacy policy</u></string>
     <string name="settings">Settings</string>
+    <string name="version">Version</string>
     <string name="home">Home</string>
     <string name="filter">Filter</string>
     <string name="search">Search</string>
@@ -93,4 +94,9 @@
     <string name="start_search_msg">Please enter at least 3 characters to start searching</string>
     <string name="path_conflict_warning">Target and source cannot be the same</string>
     <string name="choose_a_directory">Choose a directory</string>
+    <string name="view_github">View on Github</string>
+    <string name="licenses">Licenses</string>
+    <string name="github"><u>Github</u></string>
+    <string name="license"><u>License</u></string>
+    <string name="third_party_licenses">Third party licenses</string>
 </resources>

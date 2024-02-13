@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/_10sdp"
-    android:layout_marginTop="@dimen/_8sdp"
+    android:layout_marginTop="@dimen/_5sdp"
     android:layout_marginBottom="@dimen/_3sdp"
     android:orientation="vertical"
     android:padding="5dp">
@@ -23,6 +23,7 @@
         android:id="@android:id/summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_15sdp"
         android:fontFamily="@font/adamina"
         android:paddingHorizontal="@dimen/_3sdp"
         android:textColor="@color/second_text_color"
