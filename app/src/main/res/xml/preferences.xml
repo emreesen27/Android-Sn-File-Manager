@@ -2,6 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.sn.snfilemanager.feature.settings.SettingsToolbar
+        app:allowDividerBelow="false"
+        app:key="sn.settings.toolbar"
+        app:layout="@layout/toolbar_settings" />
+
     <PreferenceCategory
         android:layout="@layout/item_preference_title"
         app:title="@string/title_interface">
@@ -31,12 +36,5 @@
             app:summaryOn="@string/hidden_file_on" />
 
     </PreferenceCategory>
-
-    <Preference
-        android:layout="@layout/item_preference"
-        app:allowDividerAbove="true"
-        app:key="sn.about"
-        app:summary="@string/about_desc"
-        app:title="@string/about" />
 
 </PreferenceScreen>
