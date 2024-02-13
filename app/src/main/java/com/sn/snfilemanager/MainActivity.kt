@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import com.sn.snfilemanager.core.Config
+import com.sn.snfilemanager.core.util.Config
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.databinding.ActivityMainBinding
 import com.sn.snfilemanager.feature.settings.SettingsUtils

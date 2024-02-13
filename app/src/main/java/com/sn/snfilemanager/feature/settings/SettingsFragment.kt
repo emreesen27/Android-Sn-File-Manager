@@ -7,7 +7,7 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.sn.snfilemanager.R
-import com.sn.snfilemanager.core.Config
+import com.sn.snfilemanager.core.util.Config
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var mListenerOptions: OnSharedPreferenceChangeListener
