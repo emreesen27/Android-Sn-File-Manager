@@ -1,8 +1,13 @@
 package com.sn.snfilemanager.feature.start
 
+import android.content.Intent
+import android.net.Uri
 import com.sn.snfilemanager.BuildConfig
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.startActivitySafely
+import com.sn.snfilemanager.core.util.Constant.OPEN_SOURCE_LICENSE
+import com.sn.snfilemanager.core.util.Constant.PRIVACY_URL
 import com.sn.snfilemanager.databinding.FragmentStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,9 +34,13 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartViewModel>() {
         }
     }
 
-    // Todo click implementation
     private fun clicksPolicy() {
-        binding.mtvPrivacyPolicy.click { }
-        binding.mtvOpenSourcePolicy.click { }
+        binding.mtvPrivacyPolicy.click { openUrl(PRIVACY_URL) }
+        binding.mtvOpenSourcePolicy.click { openUrl(OPEN_SOURCE_LICENSE) }
+    }
+
+    private fun openUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context?.startActivitySafely(intent)
     }
 }

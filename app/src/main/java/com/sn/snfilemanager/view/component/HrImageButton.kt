@@ -6,6 +6,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.textview.MaterialTextView
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.visible
 
 class HrImageButton
     @JvmOverloads
@@ -23,10 +25,11 @@ class HrImageButton
                 titleTextView.text = value
             }
 
-        var subTitle: String
+        var subTitle: String?
             get() = subTitleTextView.text.toString()
             set(value) {
                 subTitleTextView.text = value
+                checkSubTitle()
             }
 
         init {
@@ -43,5 +46,13 @@ class HrImageButton
             iconImageView.setImageDrawable(attributes.getDrawable(R.styleable.HrImageButton_icon))
 
             attributes.recycle()
+        }
+
+        private fun checkSubTitle() {
+            if (subTitle.isNullOrEmpty()) {
+                subTitleTextView.gone()
+            } else {
+                subTitleTextView.visible()
+            }
         }
     }

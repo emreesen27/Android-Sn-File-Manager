@@ -290,6 +290,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             btnSettings.click {
                 navigate(HomeFragmentDirections.actionSettings())
             }
+            btnAbout.click {
+                navigate(HomeFragmentDirections.actionAbout())
+            }
         }
     }
 }

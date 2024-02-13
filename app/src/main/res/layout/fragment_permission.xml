@@ -59,6 +59,8 @@
         android:backgroundTint="@color/main_color"
         android:fontFamily="@font/adamina"
         android:padding="10dp"
+        android:textAllCaps="false"
+        android:textSize="@dimen/_12ssp"
         android:text="@string/continue_key"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
