@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/adamina"
         android:textColor="@color/main_color"
-        android:textSize="@dimen/_13ssp" />
+        android:textSize="@dimen/_12ssp" />
 
 </LinearLayout>
