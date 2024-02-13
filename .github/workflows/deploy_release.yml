@@ -41,7 +41,6 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      # Upload the signed APK as an artifact
       - name: Upload Signed APK
         uses: actions/upload-artifact@v2
         with:
@@ -64,7 +63,7 @@ jobs:
           release_name: Release ${{ steps.android_version.outputs.VERSION_NAME }}
           body: |
             This is the release APK for version ${{ steps.android_version.outputs.VERSION_NAME }}.
-            See here for changes in version -> [Changelog](https://github.com/emreesen27/Android-Sn-File-Manager/blob/master/CHANGELOG)
+            See here for changes in version -> [Changelog](https://github.com/emreesen27/Android-Sn-File-Manager/blob/master/CHANGELOG.md)
 
       - name: Upload Release Asset
         id: upload-release-asset
