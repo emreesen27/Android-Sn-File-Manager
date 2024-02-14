@@ -94,4 +94,7 @@
     <string name="github"><u>Github</u></string>
     <string name="license"><u>Lisans</u></string>
     <string name="third_party_licenses">Üçüncü taraf lisansları</string>
+    <string name="system">Sistem</string>
+    <string name="dark">Koyu</string>
+    <string name="light">Açık</string>
 </resources>
