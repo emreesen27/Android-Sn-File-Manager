@@ -9,6 +9,6 @@ class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         val theme = SettingsUtils.resolveThemeMode(this)
-        SettingsUtils.changeTheme(theme)
+        SettingsUtils.changeTheme(applicationContext, theme)
     }
 }
