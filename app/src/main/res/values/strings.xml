@@ -98,6 +98,7 @@
     <string name="github"><u>Github</u></string>
     <string name="license"><u>License</u></string>
     <string name="third_party_licenses">Third party licenses</string>
+    <string name="media">Media</string>
     <string name="system">System</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
