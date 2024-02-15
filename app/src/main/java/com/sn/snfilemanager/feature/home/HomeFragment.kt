@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
@@ -47,6 +48,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onResume() {
         super.onResume()
         initPermission()
+        setStatusBarColor()
     }
 
     override fun onMenuItemSelected(menuItemId: Int) =
@@ -212,6 +214,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         } else {
             true
         }
+    }
+
+    private fun setStatusBarColor() {
+        binding.appBar.setBackgroundColor(getColor(requireContext(), R.color.bg_color))
     }
 
     private fun initMenuButtonListener() {

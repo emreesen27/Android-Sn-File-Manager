@@ -12,38 +12,40 @@ import com.sn.snfilemanager.R
 
 fun ImageView.loadWithGlide(
     videoPath: Any,
+    placeholderResId: Int? = R.drawable.layer_placeholder,
     readyOrFailed: ((e: GlideException?) -> Unit)? = null,
 ) {
-    Glide.with(context)
-        .asBitmap()
-        .load(videoPath)
-        // .fitCenter()
-        .placeholder(R.drawable.layer_placeholder)
-        .error(R.drawable.layer_broken_placeholder)
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-        .addListener(
-            object : RequestListener<Bitmap> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    isFirstResource: Boolean,
-                ): Boolean {
-                    readyOrFailed?.invoke(e)
-                    return false
-                }
+    val builder =
+        Glide.with(context)
+            .asBitmap()
+            .load(videoPath)
+            // .fitCenter()
+            .error(R.drawable.layer_broken_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .addListener(
+                object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Bitmap>?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        readyOrFailed?.invoke(e)
+                        return false
+                    }
 
-                override fun onResourceReady(
-                    resource: Bitmap?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean,
-                ): Boolean {
-                    readyOrFailed?.invoke(null)
-                    return false
-                }
-            },
-        )
-        .into(this)
+                    override fun onResourceReady(
+                        resource: Bitmap?,
+                        model: Any?,
+                        target: Target<Bitmap>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        readyOrFailed?.invoke(null)
+                        return false
+                    }
+                },
+            )
+    placeholderResId?.let { builder.placeholder(it) }
+    builder.into(this)
 }
