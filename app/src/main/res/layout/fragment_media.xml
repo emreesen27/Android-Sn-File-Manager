@@ -22,13 +22,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_color"
-            android:elevation="@dimen/_1sdp"
             app:liftOnScroll="true">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/bg_color"
+                app:contentInsetStart="0dp"
+                app:contentInsetStartWithNavigation="0dp"
+                app:navigationContentDescription="@string/media"
+                app:navigationIcon="@drawable/ic_arrow_back"
                 app:title="@string/app_name"
                 app:titleTextColor="@color/first_text_color" />
 
