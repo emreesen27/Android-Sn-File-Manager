@@ -12,4 +12,9 @@
         <attr name="icon" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="ColorSyncAppBar">
+        <attr name="adjustStatusBarColorOnLift" format="boolean" />
+        <attr name="defaultStatusBarColor" format="color" />
+    </declare-styleable>
+
 </resources>

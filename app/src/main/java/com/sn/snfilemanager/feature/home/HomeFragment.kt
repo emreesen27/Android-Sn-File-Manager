@@ -48,7 +48,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onResume() {
         super.onResume()
         initPermission()
-        setStatusBarColor()
+        binding.appBar.sync()
     }
 
     override fun onMenuItemSelected(menuItemId: Int) =

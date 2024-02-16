@@ -5,4 +5,5 @@
     <color name="first_text_color">#FFEEEEEE</color>
     <color name="second_text_color">#FFCCCCCC</color>
     <color name="divider_color">#FF333333</color>
+    <color name="lift_color">#FF1F1F1F</color>
 </resources>

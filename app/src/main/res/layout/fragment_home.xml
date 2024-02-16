@@ -9,13 +9,15 @@
         android:background="@color/bg_color"
         tools:context=".feature.home.HomeFragment">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_color"
+            app:adjustStatusBarColorOnLift="true"
+            app:defaultStatusBarColor="@color/bg_color"
             app:liftOnScroll="true"
-            app:liftOnScrollColor="@null">
+            app:liftOnScrollColor="@color/lift_color">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -24,7 +26,7 @@
                 app:title="@string/home"
                 app:titleTextColor="@color/first_text_color" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+        </com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar>
 
 
         <androidx.core.widget.NestedScrollView

@@ -4,15 +4,26 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_settings"
+    <com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:contentInsetStart="0dp"
-        app:contentInsetStartWithNavigation="0dp"
-        app:navigationContentDescription="@string/settings"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:title="@string/settings"
-        app:titleTextColor="@color/first_text_color" />
+        android:layout_height="wrap_content"
+        android:background="@color/bg_color"
+        app:adjustStatusBarColorOnLift="true"
+        app:liftOnScroll="true"
+        app:liftOnScrollColor="@color/soft_red">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_settings"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationContentDescription="@string/settings"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="@string/settings"
+            app:titleTextColor="@color/first_text_color" />
+
+    </com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar>
 
 </LinearLayout>

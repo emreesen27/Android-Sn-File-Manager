@@ -19,17 +19,21 @@
         android:background="@color/bg_color"
         tools:context=".feature.media.presentation.MediaFragment">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_color"
-            app:liftOnScroll="true">
+            app:adjustStatusBarColorOnLift="true"
+            app:defaultStatusBarColor="@color/bg_color"
+            app:liftOnScroll="true"
+            app:liftOnScrollColor="@color/lift_color"
+            app:liftOnScrollTargetViewId="@id/rcv_files">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/bg_color"
                 app:contentInsetStart="0dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_scrollFlags="scroll|enterAlways"
@@ -42,7 +46,6 @@
                 android:id="@+id/breadcrumb_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_30sdp"
-                android:background="@color/bg_color"
                 android:paddingVertical="@dimen/_15sdp"
                 android:visibility="@{vm.searchStateLiveData.peekContent().first == true ? View.GONE : View.VISIBLE}" />
 
@@ -64,7 +67,7 @@
                 android:indeterminate="true"
                 android:visibility="@{vm.searchStateLiveData.peekContent().second == true ? View.VISIBLE : View.GONE}" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+        </com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar>
 
 
         <androidx.recyclerview.widget.RecyclerView

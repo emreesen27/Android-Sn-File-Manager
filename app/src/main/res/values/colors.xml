@@ -6,6 +6,7 @@
     <color name="first_text_color">#FF333333</color>
     <color name="second_text_color">#FF666666</color>
     <color name="divider_color">#FFDDDDDD</color>
+    <color name="lift_color">#FFF8F8FF</color>
 
     <color name="main_color">#FF2F65B9</color>
     <color name="ash_gray">#FF98B6B1</color>

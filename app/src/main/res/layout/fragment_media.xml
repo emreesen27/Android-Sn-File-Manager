@@ -18,17 +18,21 @@
         android:background="@color/bg_color"
         tools:context=".feature.media.presentation.MediaFragment">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_color"
-            app:liftOnScroll="true">
+            app:adjustStatusBarColorOnLift="true"
+            app:defaultStatusBarColor="@color/bg_color"
+            app:liftOnScroll="true"
+            app:liftOnScrollColor="@color/lift_color"
+            app:liftOnScrollTargetViewId="@id/rcv_media">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/bg_color"
                 app:contentInsetStart="0dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:navigationContentDescription="@string/media"
@@ -36,11 +40,11 @@
                 app:title="@string/app_name"
                 app:titleTextColor="@color/first_text_color" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+        </com.sn.snfilemanager.view.component.appbar.ColorSyncAppBar>
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rcv_media"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
