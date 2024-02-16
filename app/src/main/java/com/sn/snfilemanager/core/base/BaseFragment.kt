@@ -43,6 +43,9 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
             getMenuResId()?.let { menuId ->
                 initMenu(menuId, toolbar)
             }
+            toolbar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
         }
         return binding.root
     }

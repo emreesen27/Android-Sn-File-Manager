@@ -34,8 +34,8 @@
     <string name="search_image_hint">Enter the name of the image</string>
     <string name="nothing_found">Nothing found</string>
     <string name="type_search_image_info">"Type the name of the image you want to search"</string>
-    <string name="child_modified">%s</string>
-    <string name="file_size">%s - %s </string>
+    <string name="child_modified" translatable="false">%s</string>
+    <string name="file_size" translatable="false">%s - %s </string>
     <string name="permission_message">Access permissions must be granted before the application can perform file operations</string>
     <string name="permission_warning_message">The application cannot work properly without the necessary permissions. Please go to settings and provide necessary permissions</string>
     <string name="click_to_allow">Click to allow</string>
@@ -46,9 +46,8 @@
     <string name="move">Move</string>
     <string name="conflict_warning">Conflict found in these files</string>
     <string name="delete">Delete</string>
-    <string name="copy">Copy</string>
+    <string name="copy_key">Copy</string>
     <string name="share">Share</string>
-    <string name="more">More</string>
     <string name="detail">Detail</string>
     <string name="skip">Skip</string>
     <string name="keep_both">Keep both</string>
@@ -99,4 +98,8 @@
     <string name="github"><u>Github</u></string>
     <string name="license"><u>License</u></string>
     <string name="third_party_licenses">Third party licenses</string>
+    <string name="media">Media</string>
+    <string name="system">System</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
 </resources>

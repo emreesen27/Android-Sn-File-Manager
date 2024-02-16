@@ -29,7 +29,12 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/bg_color"
+                app:contentInsetStart="0dp"
+                app:contentInsetStartWithNavigation="0dp"
                 app:layout_scrollFlags="scroll|enterAlways"
+                app:navigationContentDescription="@string/folders"
+                app:navigationIcon="@drawable/ic_arrow_back"
                 app:title="@string/folders"
                 app:titleTextColor="@color/first_text_color" />
 
@@ -37,7 +42,7 @@
                 android:id="@+id/breadcrumb_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginTop="@dimen/_3sdp"
+                android:background="@color/bg_color"
                 android:paddingVertical="@dimen/_15sdp"
                 android:visibility="@{vm.searchStateLiveData.peekContent().first == true ? View.GONE : View.VISIBLE}" />
 

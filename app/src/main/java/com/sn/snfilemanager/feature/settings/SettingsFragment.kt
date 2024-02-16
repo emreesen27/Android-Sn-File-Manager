@@ -27,7 +27,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 when (key) {
                     SettingsUtils.SN_THEME_MODE -> {
                         SettingsUtils.changeTheme(
-                            themeListPreference?.value ?: SettingsUtils.SYSTEM,
+                            requireContext(),
+                            themeListPreference?.value ?: SettingsUtils.SYSTEM.asString(context),
                         )
                     }
 

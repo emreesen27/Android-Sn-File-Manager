@@ -184,6 +184,7 @@ class MediaItemAdapter(
         private fun bindVideo(data: Media) {
             (binding as ItemVideoBinding).ivImage.loadWithGlide(
                 data.uri,
+                R.drawable.layer_placeholder_transparent,
             ) { exception ->
                 if (exception == null) {
                     binding.ivPlay.visible()

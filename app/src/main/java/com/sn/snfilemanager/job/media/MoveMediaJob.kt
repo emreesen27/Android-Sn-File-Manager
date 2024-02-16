@@ -78,7 +78,7 @@ class MoveMediaJob(
 
     private fun updateProgress() {
         val progress = ((movedItemCount.toDouble() / totalItemCount.toDouble()) * 100).toInt()
-        val title = if (isCopy) R.string.copy else R.string.move
+        val title = if (isCopy) R.string.copy_key else R.string.move
         postNotification(title, progress)
     }
 }

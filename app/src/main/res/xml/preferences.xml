@@ -12,7 +12,7 @@
         app:title="@string/title_interface">
 
         <ListPreference
-            android:defaultValue="System"
+            android:defaultValue="@string/system"
             android:entries="@array/theme_mode"
             android:entryValues="@array/theme_mode"
             android:layout="@layout/item_preference"

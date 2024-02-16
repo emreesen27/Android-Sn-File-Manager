@@ -10,11 +10,12 @@
         tools:context=".feature.home.HomeFragment">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_color"
-            android:elevation="@dimen/_1sdp"
-            app:liftOnScroll="true">
+            app:liftOnScroll="true"
+            app:liftOnScrollColor="@null">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
