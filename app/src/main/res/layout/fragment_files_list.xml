@@ -24,10 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg_color"
-            app:adjustStatusBarColorOnLift="true"
-            app:defaultStatusBarColor="@color/bg_color"
+            app:adjustStatusBarColorOnLift="false"
             app:liftOnScroll="true"
-            app:liftOnScrollColor="@color/lift_color"
+            app:liftOnScrollColor="@color/bg_color"
             app:liftOnScrollTargetViewId="@id/rcv_files">
 
             <com.google.android.material.appbar.MaterialToolbar

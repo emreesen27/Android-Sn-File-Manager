@@ -2,7 +2,6 @@ package com.sn.snfilemanager.feature.files.presentation
 
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
@@ -30,7 +29,6 @@ import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
-import com.sn.snfilemanager.view.component.appbar.ColorOnChange
 import com.sn.snfilemanager.view.component.breadcrumb.BreadCrumbItemClickListener
 import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
@@ -84,7 +82,6 @@ class FilesListFragment :
         menu: Menu?,
     ): Boolean {
         binding.breadcrumbBar.gone()
-        syncActionModeColor()
         return false
     }
 
@@ -430,19 +427,6 @@ class FilesListFragment :
                 },
             )
         }
-    }
-
-    private fun syncActionModeColor() {
-        val actionBar =
-            (activity?.window?.decorView?.findViewById(androidx.appcompat.R.id.action_mode_bar) as? View)?.apply {
-                setBackgroundColor(binding.appBar.getCurrentColor())
-            }
-        binding.appBar.colorOnChange =
-            object : ColorOnChange {
-                override fun colorOnChange(color: Int) {
-                    actionBar?.setBackgroundColor(color)
-                }
-            }
     }
 
     private fun selectionIsActive(): Boolean = adapter?.selectionIsActive() ?: false

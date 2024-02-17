@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.navArgs
 import com.sn.mediastorepv.data.ConflictStrategy
@@ -26,7 +25,6 @@ import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
-import com.sn.snfilemanager.view.component.appbar.ColorOnChange
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
@@ -83,7 +81,6 @@ class MediaFragment :
         mode: ActionMode?,
         menu: Menu?,
     ): Boolean {
-        syncActionModeColor()
         return false
     }
 
@@ -366,19 +363,6 @@ class MediaFragment :
                     }
 
                 else -> getString(R.string.app_name)
-            }
-    }
-
-    private fun syncActionModeColor() {
-        val actionBar =
-            (activity?.window?.decorView?.findViewById(androidx.appcompat.R.id.action_mode_bar) as? View)?.apply {
-                setBackgroundColor(binding.appBar.getCurrentColor())
-            }
-        binding.appBar.colorOnChange =
-            object : ColorOnChange {
-                override fun colorOnChange(color: Int) {
-                    actionBar?.setBackgroundColor(color)
-                }
             }
     }
 
