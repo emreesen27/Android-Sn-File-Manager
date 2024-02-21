@@ -98,4 +98,5 @@
     <string name="system">Sistem</string>
     <string name="dark">Koyu</string>
     <string name="light">Açık</string>
+    <string name="show_store">Mağazada göster</string>
 </resources>

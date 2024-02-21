@@ -1,3 +1,7 @@
+## v1.0.0-beta4 (--.--.----)
+
+* Home screen menu arrangement
+
 ## v1.0.0-beta3 (16.02.2024)
 
 * UI improvement
