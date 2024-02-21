@@ -18,8 +18,11 @@ import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.getPackage
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
+import com.sn.snfilemanager.core.extensions.openUrl
+import com.sn.snfilemanager.core.util.Constant
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentHomeBinding
@@ -53,12 +56,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun onMenuItemSelected(menuItemId: Int) =
         when (menuItemId) {
-            R.id.settings -> {
-                navigate(HomeFragmentDirections.actionSettings())
-                true
-            }
-
-            R.id.about -> {
+            R.id.store -> {
+                context?.openUrl(Constant.STORE_URL)
                 true
             }
 
@@ -135,7 +134,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val intent =
             Intent(
                 Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                Uri.parse("package:${requireActivity().packageName}"),
+                Uri.parse(context?.getPackage()),
             )
         startActivity(intent)
     }
@@ -144,7 +143,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val intent =
             Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:${requireActivity().packageName}"),
+                Uri.parse(context?.getPackage()),
             )
         startActivity(intent)
     }

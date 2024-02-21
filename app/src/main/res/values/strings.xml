@@ -102,4 +102,5 @@
     <string name="system">System</string>
     <string name="dark">Dark</string>
     <string name="light">Light</string>
+    <string name="show_store">Show in store</string>
 </resources>
