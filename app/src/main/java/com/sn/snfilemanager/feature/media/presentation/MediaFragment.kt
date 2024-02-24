@@ -170,6 +170,7 @@ class MediaFragment :
                     data?.filterIsInstance<Media>()?.let { adapter?.removeItems(it) }
                 }
             }
+            JobType.CREATE -> {}
         }
         activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }

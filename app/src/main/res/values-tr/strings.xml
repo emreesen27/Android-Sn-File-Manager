@@ -99,4 +99,8 @@
     <string name="dark">Koyu</string>
     <string name="light">Açık</string>
     <string name="show_store">Mağazada göster</string>
+    <string name="create_folder">Klasör oluştur</string>
+    <string name="create">Oluştur</string>
+    <string name="folder_name">Klasör adı</string>
+    <string name="folder_exists_warning">Bu ada sahip klasör zaten mevcut</string>
 </resources>

@@ -47,4 +47,9 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="boxStrokeWidth">1dp</item>
+    </style>
+
 </resources>
