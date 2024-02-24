@@ -103,4 +103,8 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="show_store">Show in store</string>
+    <string name="create_folder">Create folder</string>
+    <string name="create">Create</string>
+    <string name="folder_name">Folder name</string>
+    <string name="folder_exists_warning">The folder with this name already exists</string>
 </resources>

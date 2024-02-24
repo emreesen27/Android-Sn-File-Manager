@@ -12,6 +12,7 @@ import com.sn.snfilemanager.core.util.FrNotificationManager
 import com.sn.snfilemanager.core.util.WakeWifiLock
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.job.file.CopyFileJob
+import com.sn.snfilemanager.job.file.CreateDirectory
 import com.sn.snfilemanager.job.file.DeleteFileJob
 import com.sn.snfilemanager.job.media.DeleteMediaJob
 import com.sn.snfilemanager.job.media.MoveMediaJob
@@ -149,6 +150,14 @@ class JobService : Service() {
             context: Context,
         ) {
             startJob(MoveMediaJob(sources, targetPath, isCopy, completed), context)
+        }
+
+        fun createDirectory(
+            targetPath: Path,
+            completed: JobCompletedCallback,
+            context: Context,
+        ) {
+            startJob(CreateDirectory(targetPath, completed), context)
         }
 
         @MainThread
