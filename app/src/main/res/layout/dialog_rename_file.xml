@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/adamina"
         android:padding="@dimen/_10sdp"
-        android:text="@string/create_folder"
+        android:text="@string/rename"
         android:textColor="@color/first_text_color"
         android:textSize="@dimen/_13ssp"
         app:layout_constraintEnd_toEndOf="@+id/container"

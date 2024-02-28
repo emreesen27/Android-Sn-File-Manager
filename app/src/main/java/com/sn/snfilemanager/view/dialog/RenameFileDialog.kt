@@ -18,6 +18,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
+import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
 class RenameFileDialog<T>(
@@ -85,8 +86,14 @@ class RenameFileDialog<T>(
             val name = binding.etName.text.toString()
             val ext = binding.etExt.text.toString().takeIf { it.isNotBlank() }?.let { ".$it" } ?: ""
             val newName = if (ext.isNotEmpty()) "$name$ext" else name
+
+            if (newName == path.name) {
+                binding.inputLayout.error = getString(R.string.current_file_name_warning)
+                return@click
+            }
+
             if (isNameExists(newName)) {
-                binding.inputLayout.error = getString(R.string.folder_exists_warning)
+                binding.inputLayout.error = getString(R.string.file_exists_warning)
             } else {
                 onRename?.invoke(newName)
                 dismiss()
