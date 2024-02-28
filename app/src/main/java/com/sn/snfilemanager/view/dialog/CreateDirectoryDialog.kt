@@ -17,8 +17,7 @@ import java.nio.file.Paths
 class CreateDirectoryDialog(
     private val path: String,
     private val onCreate: ((Path) -> Unit)? = null,
-) :
-    DialogFragment() {
+) : DialogFragment() {
     private val binding: DialogCreateDirectoryBinding by lazy {
         DialogCreateDirectoryBinding.inflate(layoutInflater)
     }

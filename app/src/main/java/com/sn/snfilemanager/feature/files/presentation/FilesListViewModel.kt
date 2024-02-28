@@ -73,6 +73,9 @@ class FilesListViewModel
         private val _startCreateFolderJob: MutableLiveData<Event<Path>> = MutableLiveData()
         val startCreateFolderJob: LiveData<Event<Path>> = _startCreateFolderJob
 
+        private val _startRenameFileJob: MutableLiveData<Event<Pair<FileModel, String>>> = MutableLiveData()
+        val startRenameFileJob: LiveData<Event<Pair<FileModel, String>>> = _startRenameFileJob
+
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
         companion object {
@@ -226,6 +229,17 @@ class FilesListViewModel
         // Todo check free space
         fun createFolder(targetPath: Path) {
             _startCreateFolderJob.value = Event(targetPath)
+        }
+
+        fun renameFile(newName: String) {
+            val file = selectedItemList.firstOrNull()
+            file?.let {
+                if (Files.isWritable(Paths.get(file.absolutePath))) {
+                    _startRenameFileJob.value = Event(Pair(file, newName))
+                } else {
+                    // show toast
+                }
+            }
         }
 
         fun deleteFiles() {

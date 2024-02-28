@@ -34,5 +34,9 @@
         android:title="@string/detail"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_rename"
+        android:title="@string/rename"
+        app:showAsAction="never" />
 
 </menu>

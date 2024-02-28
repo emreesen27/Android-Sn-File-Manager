@@ -54,6 +54,9 @@ class MediaViewModel
         private val _startDeleteJobLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
         val startDeleteJobLiveData: LiveData<Event<List<Media>>> = _startDeleteJobLiveData
 
+        private val _completedRenameMediaJob: MutableLiveData<Event<Media>> = MutableLiveData()
+        val completedRenameMediaJob: LiveData<Event<Media>> = _completedRenameMediaJob
+
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
         private fun getFilteredMediaTypes(): MutableSet<String>? =
@@ -145,6 +148,22 @@ class MediaViewModel
                     }
                 job.await()
                 _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+            }
+        }
+
+        fun renameMedia(
+            media: Media,
+            newName: String,
+        ) {
+            viewModelScope.launch {
+                when (val result = mediaStoreProvider.renameMedia(media, newName)) {
+                    is BaseResult.Success -> {
+                        _completedRenameMediaJob.postValue(Event(result.data))
+                    }
+                    is BaseResult.Failure -> {
+                        println("err:${result.exception}")
+                    }
+                }
             }
         }
 

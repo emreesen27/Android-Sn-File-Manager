@@ -101,6 +101,10 @@
     <string name="show_store">Mağazada göster</string>
     <string name="create_folder">Klasör oluştur</string>
     <string name="create">Oluştur</string>
+    <string name="rename">Yeniden adlandır</string>
+    <string name="name_key">Name</string>
     <string name="folder_name">Klasör adı</string>
     <string name="folder_exists_warning">Bu ada sahip klasör zaten mevcut</string>
+    <string name="extension">Uzantı</string>
+    <string name="change_ext_warning">Uzantıyı değiştirmek dosyanın kullanılamaz hale gelmesine neden olabilir</string>
 </resources>

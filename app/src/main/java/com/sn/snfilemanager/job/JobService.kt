@@ -14,6 +14,7 @@ import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.job.file.CopyFileJob
 import com.sn.snfilemanager.job.file.CreateDirectory
 import com.sn.snfilemanager.job.file.DeleteFileJob
+import com.sn.snfilemanager.job.file.RenameFileJob
 import com.sn.snfilemanager.job.media.DeleteMediaJob
 import com.sn.snfilemanager.job.media.MoveMediaJob
 import kotlinx.coroutines.CoroutineScope
@@ -158,6 +159,15 @@ class JobService : Service() {
             context: Context,
         ) {
             startJob(CreateDirectory(targetPath, completed), context)
+        }
+
+        fun rename(
+            file: FileModel,
+            newName: String,
+            callback: JobCompletedCallback,
+            context: Context,
+        ) {
+            startJob(RenameFileJob(file, newName, callback), context)
         }
 
         @MainThread

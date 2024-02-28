@@ -32,9 +32,9 @@ class MediaItemAdapter(
 ) : RecyclerView.Adapter<MediaItemAdapter.AutoCompleteViewHolder>() {
     private val selectedItems: MutableList<Media> = mutableListOf()
     private var isSelectionModeActive = false
-    private var mediaItems: List<Media> = emptyList()
+    private var mediaItems: MutableList<Media> = mutableListOf()
 
-    fun setItems(newItems: List<Media>) {
+    fun setItems(newItems: MutableList<Media>) {
         val diffResult = DiffUtil.calculateDiff(MediaDiffCallback(mediaItems, newItems))
         mediaItems = newItems
         diffResult.dispatchUpdatesTo(this)
@@ -48,6 +48,12 @@ class MediaItemAdapter(
                 notifyItemRemoved(position)
             }
         }
+    }
+
+    fun updateItem(mediaFile: Media) {
+        val index = mediaItems.indexOfFirst { it.id == mediaFile.id }
+        mediaItems[index] = mediaFile
+        notifyItemChanged(index)
     }
 
     fun finishSelectionAndReset() {

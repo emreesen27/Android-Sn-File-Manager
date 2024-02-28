@@ -27,6 +27,7 @@ import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
+import com.sn.snfilemanager.view.dialog.RenameFileDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.nio.file.Path
@@ -93,6 +94,7 @@ class MediaFragment :
         mode: ActionMode?,
         item: MenuItem?,
     ): Boolean {
+        checkActionMenuStatus()
         when (item?.itemId) {
             R.id.action_copy -> {
                 viewModel.isCopy = true
@@ -118,6 +120,10 @@ class MediaFragment :
 
             R.id.action_detail -> {
                 actionDetail()
+            }
+
+            R.id.action_rename -> {
+                showRenameDialog()
             }
         }
 
@@ -170,7 +176,9 @@ class MediaFragment :
                     data?.filterIsInstance<Media>()?.let { adapter?.removeItems(it) }
                 }
             }
+
             JobType.CREATE -> {}
+            JobType.RENAME -> {}
         }
         activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }
@@ -179,7 +187,7 @@ class MediaFragment :
         viewModel.run {
             observe(getMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { data ->
-                    adapter?.setItems(data)
+                    adapter?.setItems(data.toMutableList())
                 }
             }
             observe(conflictQuestionLiveData) { event ->
@@ -198,6 +206,12 @@ class MediaFragment :
                         actionMode?.finish()
                         startCopyService(data.first, data.second)
                     }
+                }
+            }
+            observe(viewModel.completedRenameMediaJob) { event ->
+                event.getContentIfNotHandled()?.let { media ->
+                    adapter?.updateItem(media)
+                    context?.infoToast(getString(R.string.completed))
                 }
             }
             observe(viewModel.startDeleteJobLiveData) { event ->
@@ -272,6 +286,8 @@ class MediaFragment :
     private fun checkActionMenuStatus() {
         actionMode?.menu?.findItem(R.id.action_open_with)?.isVisible =
             viewModel.isSingleItemSelected()
+        actionMode?.menu?.findItem(R.id.action_rename)?.isVisible =
+            viewModel.isSingleItemSelected()
     }
 
     private fun showPathSelectionDialog() {
@@ -286,6 +302,14 @@ class MediaFragment :
             childFragmentManager,
             DetailDialog.TAG,
         )
+    }
+
+    private fun showRenameDialog() {
+        val media = viewModel.getSelectedItem().first()
+        RenameFileDialog(file = media, onRename = { newName ->
+            actionMode?.finish()
+            viewModel.renameMedia(media, newName)
+        }).show(childFragmentManager, RenameFileDialog.TAG)
     }
 
     private fun clearSelection() {
@@ -373,8 +397,8 @@ class MediaFragment :
                 MediaItemAdapter(
                     onClick = { model -> openFile(model) },
                     onSelected = { model, selected ->
-                        checkActionMenuStatus()
                         viewModel.addSelectedItem(model, selected)
+                        checkActionMenuStatus()
                     },
                     selectionCallback = this@MediaFragment,
                 )

@@ -33,7 +33,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         private const val ARG_MIME_TYPE = "ARG_CHIP"
-        const val TAG = "FilterBottomSheet"
+        const val TAG = "FILTER_BOTTOM_SHEET_DIALOG"
 
         fun newInstance(mimeTypes: MimeTypes): FilterBottomSheet {
             return FilterBottomSheet().apply {

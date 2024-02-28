@@ -37,6 +37,12 @@ class FileItemAdapter(
         notifyItemInserted(fileItems.size)
     }
 
+    fun updateItem(item: FileModel) {
+        val index = fileItems.indexOfFirst { it.id == item.id }
+        fileItems[index] = item
+        notifyItemChanged(index)
+    }
+
     fun removeItems(filesToRemove: List<FileModel>) {
         for (fileToRemove in filesToRemove) {
             val position = fileItems.indexOf(fileToRemove)
