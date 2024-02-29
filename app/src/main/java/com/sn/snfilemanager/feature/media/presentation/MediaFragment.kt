@@ -93,6 +93,7 @@ class MediaFragment :
         mode: ActionMode?,
         item: MenuItem?,
     ): Boolean {
+        checkActionMenuStatus()
         when (item?.itemId) {
             R.id.action_copy -> {
                 viewModel.isCopy = true
@@ -170,6 +171,7 @@ class MediaFragment :
                     data?.filterIsInstance<Media>()?.let { adapter?.removeItems(it) }
                 }
             }
+            JobType.CREATE -> {}
         }
         activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }
@@ -372,8 +374,8 @@ class MediaFragment :
                 MediaItemAdapter(
                     onClick = { model -> openFile(model) },
                     onSelected = { model, selected ->
-                        checkActionMenuStatus()
                         viewModel.addSelectedItem(model, selected)
+                        checkActionMenuStatus()
                     },
                     selectionCallback = this@MediaFragment,
                 )

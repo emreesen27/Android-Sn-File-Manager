@@ -62,12 +62,16 @@ class FilesListViewModel
             MutableLiveData()
         val startDeleteJobLiveData: LiveData<Event<List<FileModel>>> = _startDeleteJobLiveData
 
-        private val _updateListLiveData: MutableLiveData<Event<List<FileModel>>> = MutableLiveData()
-        val updateListLiveData: LiveData<Event<List<FileModel>>> = _updateListLiveData
+        private val _updateListLiveData: MutableLiveData<Event<MutableList<FileModel>>> =
+            MutableLiveData()
+        val updateListLiveData: LiveData<Event<MutableList<FileModel>>> = _updateListLiveData
 
         private val _searchStateLiveData: MutableLiveData<Event<Pair<Boolean, Boolean>>> =
             MutableLiveData()
         val searchStateLiveData: LiveData<Event<Pair<Boolean, Boolean>>> = _searchStateLiveData
+
+        private val _startCreateFolderJob: MutableLiveData<Event<Path>> = MutableLiveData()
+        val startCreateFolderJob: LiveData<Event<Path>> = _startCreateFolderJob
 
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
@@ -133,7 +137,7 @@ class FilesListViewModel
                     val fileList: MutableList<FileModel> = mutableListOf()
 
                     if (totalFiles == 0L) {
-                        _updateListLiveData.postValue(Event(emptyList()))
+                        _updateListLiveData.postValue(Event(mutableListOf()))
                         return@launch
                     }
 
@@ -145,17 +149,27 @@ class FilesListViewModel
                                 .skip(processedFiles)
                                 .limit(currentBatchSize)
                                 .forEach { file ->
-                                    if (Files.isReadable(file) && (Config.hiddenFile || !Files.isHidden(file))) {
+                                    if (Files.isReadable(file) && (
+                                            Config.hiddenFile ||
+                                                !Files.isHidden(
+                                                    file,
+                                                )
+                                        )
+                                    ) {
                                         fileList.add(file.toFileModel())
                                     }
                                 }
                         }
                         withContext(Dispatchers.Main) {
-                            _updateListLiveData.postValue(Event(fileList.toList()))
+                            _updateListLiveData.postValue(Event(fileList))
                         }
                         processedFiles += currentBatchSize
                     }
                 }
+        }
+
+        fun setUpdateList(files: MutableList<FileModel>) {
+            _updateListLiveData.postValue(Event(files))
         }
 
         fun cancelFileListJob() {
@@ -164,6 +178,7 @@ class FilesListViewModel
             }
         }
 
+        // Todo check free space
         fun moveFilesAndDirectories(destinationPath: Path) {
             val operationItemList: MutableList<FileModel> = mutableListOf()
             viewModelScope.launch {
@@ -206,6 +221,11 @@ class FilesListViewModel
                 job.await()
                 _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
             }
+        }
+
+        // Todo check free space
+        fun createFolder(targetPath: Path) {
+            _startCreateFolderJob.value = Event(targetPath)
         }
 
         fun deleteFiles() {
@@ -252,7 +272,7 @@ class FilesListViewModel
                                 is BaseResult.Success -> {
                                     val list = result.data.map { Paths.get(it).toFileModel() }
                                     _searchStateLiveData.postValue(Event(Pair(false, false)))
-                                    _updateListLiveData.postValue(Event(list))
+                                    _updateListLiveData.postValue(Event(list.toMutableList()))
                                 }
 
                                 is BaseResult.Failure -> {

@@ -25,6 +25,7 @@ import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
 import com.sn.snfilemanager.feature.files.data.FileModel
+import com.sn.snfilemanager.feature.files.data.toFileModel
 import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobService
@@ -33,6 +34,7 @@ import com.sn.snfilemanager.view.component.breadcrumb.BreadCrumbItemClickListene
 import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
+import com.sn.snfilemanager.view.dialog.CreateDirectoryDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -54,7 +56,7 @@ class FilesListFragment :
 
     override fun getViewBinding() = FragmentFilesListBinding.inflate(layoutInflater)
 
-    override fun getMenuResId(): Int = R.menu.menu_base
+    override fun getMenuResId(): Int = R.menu.menu_files
 
     override fun getToolbar(): Toolbar = binding.toolbar
 
@@ -62,6 +64,13 @@ class FilesListFragment :
         when (menuItemId) {
             R.id.action_search -> {
                 initSearch()
+                true
+            }
+
+            R.id.create_folder -> {
+                viewModel.currentPath?.let { path ->
+                    showCreateDirectoryDialog(path)
+                }
                 true
             }
 
@@ -164,6 +173,16 @@ class FilesListFragment :
             JobType.DELETE -> {
                 activity?.runOnUiThread {
                     data?.filterIsInstance<FileModel>()?.let { adapter?.removeItems(it) }
+                    adapter?.getItems()?.let { viewModel.setUpdateList(it) }
+                }
+            }
+
+            JobType.CREATE -> {
+                activity?.runOnUiThread {
+                    data?.filterIsInstance<Path>()?.firstOrNull()?.toFileModel()?.let { file ->
+                        adapter?.addItem(file)
+                        adapter?.getItems()?.let { viewModel.setUpdateList(it) }
+                    }
                 }
             }
         }
@@ -193,6 +212,11 @@ class FilesListFragment :
             event.getContentIfNotHandled()?.let { data ->
                 actionMode?.finish()
                 startDeleteService(data)
+            }
+        }
+        observe(viewModel.startCreateFolderJob) { event ->
+            event.getContentIfNotHandled()?.let { path ->
+                startCreateDirectory(path)
             }
         }
         observe(viewModel.updateListLiveData) { event ->
@@ -330,6 +354,12 @@ class FilesListFragment :
         )
     }
 
+    private fun showCreateDirectoryDialog(path: String) {
+        CreateDirectoryDialog(path = path, onCreate = { folderName ->
+            viewModel.createFolder(folderName)
+        }).show(childFragmentManager, CreateDirectoryDialog.TAG)
+    }
+
     private fun actionDetail() {
         DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
             childFragmentManager,
@@ -384,6 +414,14 @@ class FilesListFragment :
     private fun startDeleteService(operationItemList: List<FileModel>) {
         JobService.delete(
             operationItemList,
+            this@FilesListFragment,
+            requireContext(),
+        )
+    }
+
+    private fun startCreateDirectory(destinationPath: Path) {
+        JobService.createDirectory(
+            destinationPath,
             this@FilesListFragment,
             requireContext(),
         )
