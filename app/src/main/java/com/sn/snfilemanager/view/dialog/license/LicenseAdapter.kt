@@ -1,13 +1,11 @@
 package com.sn.snfilemanager.view.dialog.license
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sn.snfilemanager.core.extensions.click
-import com.sn.snfilemanager.core.extensions.startActivitySafely
+import com.sn.snfilemanager.core.extensions.openUrl
 import com.sn.snfilemanager.databinding.ItemLicenseBinding
 
 class LicenseAdapter(private val context: Context) :
@@ -72,13 +70,13 @@ class LicenseAdapter(private val context: Context) :
             binding.mtvGithub.click {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     val clickedLicense = licenses[adapterPosition]
-                    openUrl(clickedLicense.url)
+                    context.openUrl(clickedLicense.url)
                 }
             }
             binding.mtvLicense.click {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     val clickedLicense = licenses[adapterPosition]
-                    openUrl(clickedLicense.license)
+                    context.openUrl(clickedLicense.url)
                 }
             }
         }
@@ -86,10 +84,5 @@ class LicenseAdapter(private val context: Context) :
         fun bind(model: License) {
             binding.mtvName.text = model.name
         }
-    }
-
-    private fun openUrl(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivitySafely(intent)
     }
 }

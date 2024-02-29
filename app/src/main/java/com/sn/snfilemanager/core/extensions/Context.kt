@@ -115,3 +115,10 @@ fun Context.startActivitySafely(intent: Intent) {
         // Todo
     }
 }
+
+fun Context.openUrl(url: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    startActivitySafely(intent)
+}
+
+fun Context.getPackage(): String = "package:${this.packageName}"

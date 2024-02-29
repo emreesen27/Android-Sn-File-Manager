@@ -24,12 +24,17 @@ class FileItemAdapter(
 ) : RecyclerView.Adapter<FileItemAdapter.FileViewHolder>() {
     private val selectedItems: MutableList<FileModel> = mutableListOf()
     private var isSelectionModeActive = false
-    private var fileItems: List<FileModel> = emptyList()
+    private var fileItems: MutableList<FileModel> = mutableListOf()
 
-    fun setItems(newItems: List<FileModel>) {
+    fun setItems(newItems: MutableList<FileModel>) {
         val diffResult = DiffUtil.calculateDiff(FileDiffCallback(fileItems, newItems))
         fileItems = newItems
         diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun addItem(newItems: FileModel) {
+        fileItems.add(newItems)
+        notifyItemInserted(fileItems.size)
     }
 
     fun removeItems(filesToRemove: List<FileModel>) {
@@ -54,6 +59,8 @@ class FileItemAdapter(
         isSelectionModeActive = false
         selectionCallback?.onEndSelection()
     }
+
+    fun getItems(): MutableList<FileModel> = fileItems
 
     fun getSelectedItems(): MutableList<FileModel> = selectedItems
 

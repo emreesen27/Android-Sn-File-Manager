@@ -1,11 +1,9 @@
 package com.sn.snfilemanager.feature.about
 
-import android.content.Intent
-import android.net.Uri
 import androidx.navigation.fragment.findNavController
 import com.sn.snfilemanager.core.base.BaseFragment
 import com.sn.snfilemanager.core.extensions.click
-import com.sn.snfilemanager.core.extensions.startActivitySafely
+import com.sn.snfilemanager.core.extensions.openUrl
 import com.sn.snfilemanager.core.util.Constant.GITHUB_URL
 import com.sn.snfilemanager.core.util.Constant.PRIVACY_URL
 import com.sn.snfilemanager.databinding.FragmentAboutBinding
@@ -24,17 +22,12 @@ class AboutFragment : BaseFragment<FragmentAboutBinding, AboutViewModel>() {
 
     private fun initClicks() {
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
-        binding.btnGithub.click { openUrl(GITHUB_URL) }
+        binding.btnGithub.click { context?.openUrl(GITHUB_URL) }
         binding.btnLicense.click { showLicensesDialog() }
-        binding.btnPrivacy.click { openUrl(PRIVACY_URL) }
+        binding.btnPrivacy.click { context?.openUrl(PRIVACY_URL) }
     }
 
     private fun showLicensesDialog() {
         LicenseDialog().show(childFragmentManager, LicenseDialog.TAG)
-    }
-
-    private fun openUrl(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context?.startActivitySafely(intent)
     }
 }
