@@ -1,4 +1,4 @@
-## v1.0.0-beta4 (--.--.----)
+## v1.0.0-beta4 (29.02.2024)
 
 * Home screen menu arrangement
 * Create folder feature added
