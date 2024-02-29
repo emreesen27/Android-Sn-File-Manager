@@ -1,4 +1,4 @@
-# <a href="https://play.google.com/store/apps/details?id=com.sn.secretive">Sn File Manager</a>
+# <a href="https://play.google.com/store/apps/details?id=com.sn.snfilemanager">Sn File Manager</a>  
 
 Simple File Manager for Android
 
@@ -33,6 +33,6 @@ Preview
 | <img src="https://github.com/emreesen27/Android-Sn-File-Manager/blob/assets/assets/home_ss.png?raw=true" width="180" height="400"></img> | <img src="https://github.com/emreesen27/Android-Sn-File-Manager/blob/assets/assets/image_ss.png?raw=true" width="180" height="400"></img> | <img src="https://github.com/emreesen27/Android-Sn-File-Manager/blob/assets/assets/folders_ss.png?raw=true" width="180" height="400"></img> |
 | <img src="https://github.com/emreesen27/Android-Sn-File-Manager/blob/assets/assets/home_dark_ss.png?raw=true" width="180" height="400"></img> |<img src="https://github.com/emreesen27/Android-Sn-File-Manager/blob/assets/assets/images_dark_ss.png?raw=true" width="180" height="400"></img> | <img src="https://github.com/emreesen27/Android-Sn-File-Manager/blob/assets/assets/folders_dark_ss.png?raw=true" width="180" height="400"></img> |
 
-
-
-
+Run & Contributing 
+---
+ Read [this](https://github.com/emreesen27/Android-Sn-File-Manager/blob/develop/CONTRIBUTING.md) before running the project or contributing
