@@ -22,6 +22,7 @@ fun BaseJob.postNotification(
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setCategory(CATEGORY_PROGRESS)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .setProgress(100, progress, false)
             .build()
     service.notificationManager.notify(id, notification)
