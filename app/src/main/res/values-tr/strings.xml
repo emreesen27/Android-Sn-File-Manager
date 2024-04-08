@@ -27,7 +27,7 @@
     <string name="available_storage">Kullanılabilir bellek %s</string>
     <string name="no_external_storage">Harici bellek bulunamadı</string>
     <string name="selected_count">%d öğe seçildi</string>
-    <string name="select_all">Hepsini seç</string>
+    <string name="select_all">Tümünü seç</string>
     <string name="cancel">İptal</string>
     <string name="search_image_hint">Resim adını girin</string>
     <string name="nothing_found">Hiçbir şey bulunamadı</string>

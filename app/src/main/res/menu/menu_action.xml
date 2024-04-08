@@ -34,5 +34,9 @@
         android:title="@string/detail"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_select_all"
+        android:title="@string/select_all"
+        app:showAsAction="never" />
 
 </menu>

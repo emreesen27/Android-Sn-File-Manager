@@ -1,3 +1,6 @@
+## v1.0.0-beta5 (--.--.--)
+* The 'Select All' feature has been added
+
 ## v1.0.0-beta4 (29.02.2024)
 
 * Home screen menu arrangement

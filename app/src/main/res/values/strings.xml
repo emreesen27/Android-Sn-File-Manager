@@ -68,7 +68,7 @@
     <string name="selected_item_count">Selected Item Count</string>
     <string name="total_size">Total Size</string>
     <string name="number_of_children">Number Of Children</string>
-    <string name="open_with">Open With</string>
+    <string name="open_with">Open with</string>
     <string name="no_app_open_with">No application found to open the file</string>
     <string name="last_modified">Last Modified</string>
     <string name="added_date">Added Date</string>

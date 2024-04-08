@@ -101,6 +101,17 @@ class MediaItemAdapter(
         return mediaItems.size
     }
 
+    fun selectAll() {
+        selectedItems.clear()
+        selectedItems.addAll(mediaItems)
+        for (mediaItem in mediaItems) {
+            mediaItem.isSelected = true
+            onSelected?.invoke(mediaItem, true)
+        }
+        notifyItemRangeChanged(0, mediaItems.size)
+        selectionCallback?.onUpdateSelection(selectedItems.size)
+    }
+
     private fun startSelection(mediaFile: Media) {
         selectionCallback?.onStartSelection()
         isSelectionModeActive = true

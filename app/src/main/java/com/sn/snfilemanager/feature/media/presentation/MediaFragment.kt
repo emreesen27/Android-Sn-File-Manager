@@ -120,6 +120,10 @@ class MediaFragment :
             R.id.action_detail -> {
                 actionDetail()
             }
+
+            R.id.action_select_all -> {
+                adapter?.selectAll()
+            }
         }
 
         return true
