@@ -1,4 +1,4 @@
-## v1.0.0-beta5 (--.--.--)
+## v1.0.0-beta5 (08.04.2024)
 
 * The 'Select All' feature added
 * Notification behavior added
