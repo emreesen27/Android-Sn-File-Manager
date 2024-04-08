@@ -27,7 +27,7 @@
     <string name="available_storage">Kullanılabilir bellek %s</string>
     <string name="no_external_storage">Harici bellek bulunamadı</string>
     <string name="selected_count">%d öğe seçildi</string>
-    <string name="select_all">Hepsini seç</string>
+    <string name="select_all">Tümünü seç</string>
     <string name="cancel">İptal</string>
     <string name="search_image_hint">Resim adını girin</string>
     <string name="nothing_found">Hiçbir şey bulunamadı</string>
@@ -54,7 +54,7 @@
     <string name="are_you_sure">Emin misiniz ?</string>
     <string name="delete_warning">Seçilen dosyalar silinecek</string>
     <string name="path_not_selected">Yol seçilmedi</string>
-    <string name="no_item">"Burada bir şey yok"</string>
+    <string name="no_item">Burada bir şey yok</string>
     <string name="no_app_share">Paylaşım yapabilecek uygulama bulunamadı</string>
     <string name="max_share_file">Maksimum dosya sayısını aştınız</string>
     <string name="ok">Tamam</string>
@@ -103,4 +103,5 @@
     <string name="create">Oluştur</string>
     <string name="folder_name">Klasör adı</string>
     <string name="folder_exists_warning">Bu ada sahip klasör zaten mevcut</string>
+    <string name="no_folder">Görüntülenecek bir klasör yok</string>
 </resources>

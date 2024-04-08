@@ -58,7 +58,7 @@
     <string name="are_you_sure">Are you sure ?</string>
     <string name="delete_warning">Selected files will be deleted</string>
     <string name="path_not_selected">Path not selected</string>
-    <string name="no_item">"There is nothing here "</string>
+    <string name="no_item">There is nothing here</string>
     <string name="no_app_share">No application found that can share</string>
     <string name="max_share_file">You have exceeded the maximum number of files</string>
     <string name="ok">OK</string>
@@ -68,7 +68,7 @@
     <string name="selected_item_count">Selected Item Count</string>
     <string name="total_size">Total Size</string>
     <string name="number_of_children">Number Of Children</string>
-    <string name="open_with">Open With</string>
+    <string name="open_with">Open with</string>
     <string name="no_app_open_with">No application found to open the file</string>
     <string name="last_modified">Last Modified</string>
     <string name="added_date">Added Date</string>
@@ -107,4 +107,5 @@
     <string name="create">Create</string>
     <string name="folder_name">Folder name</string>
     <string name="folder_exists_warning">The folder with this name already exists</string>
+    <string name="no_folder">There is no folder to display</string>
 </resources>
