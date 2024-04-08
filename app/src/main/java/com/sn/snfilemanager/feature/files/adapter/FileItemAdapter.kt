@@ -47,6 +47,17 @@ class FileItemAdapter(
         }
     }
 
+    fun selectAll() {
+        selectedItems.clear()
+        selectedItems.addAll(fileItems)
+        for (fileItem in fileItems) {
+            fileItem.isSelected = true
+            onSelected?.invoke(fileItem, true)
+        }
+        notifyItemRangeChanged(0, fileItems.size)
+        selectionCallback?.onUpdateSelection(selectedItems.size)
+    }
+
     fun finishSelectionAndReset() {
         for (selectedItem in selectedItems) {
             val position = fileItems.indexOf(selectedItem)

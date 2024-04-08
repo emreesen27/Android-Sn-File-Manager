@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/bg_color">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_title"
@@ -35,6 +36,7 @@
             android:fontFamily="@font/adamina"
             android:hint="@string/folder_name"
             android:padding="@dimen/_8sdp"
+            android:textColor="@color/first_text_color"
             android:textColorHint="@color/first_text_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
