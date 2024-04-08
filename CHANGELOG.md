@@ -2,6 +2,7 @@
 
 * The 'Select All' feature added
 * Notification behavior added
+* UI improvement
 
 ## v1.0.0-beta4 (29.02.2024)
 

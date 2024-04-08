@@ -103,4 +103,5 @@
     <string name="create">Oluştur</string>
     <string name="folder_name">Klasör adı</string>
     <string name="folder_exists_warning">Bu ada sahip klasör zaten mevcut</string>
+    <string name="no_folder">Görüntülecek bir klasör yok</string>
 </resources>

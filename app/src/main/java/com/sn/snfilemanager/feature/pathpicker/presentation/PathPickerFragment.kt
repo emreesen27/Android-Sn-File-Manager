@@ -10,6 +10,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.core.extensions.gone
+import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentPathPickerBinding
 import com.sn.snfilemanager.feature.files.data.toFileModel
@@ -70,7 +72,9 @@ class PathPickerFragment(private val pathCallback: ((String?) -> Unit)? = null) 
         with(viewModel) {
             currentPath = directoryPath
             updateDirectoryList(directoryPath)
-            adapter?.setItems(getDirectoryList(directoryPath).map { it.toFileModel() })
+            val item = getDirectoryList(directoryPath).map { it.toFileModel() }
+            if (item.isEmpty()) binding.tvEmpty.visible() else binding.tvEmpty.gone()
+            adapter?.setItems(item)
         }
     }
 
