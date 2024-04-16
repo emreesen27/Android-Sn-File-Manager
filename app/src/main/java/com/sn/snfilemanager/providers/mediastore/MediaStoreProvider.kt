@@ -39,4 +39,22 @@ class MediaStoreProvider
                 BaseResult.Failure(e)
             }
         }
+
+        suspend fun renameMedia(
+            media: Media,
+            newName: String,
+        ): BaseResult<Media> {
+            return try {
+                withContext(Dispatchers.IO) {
+                    val updatedMedia = mediaStoreBuilder.build().renameMedia(media, newName)
+                    if (updatedMedia != null) {
+                        BaseResult.Success(updatedMedia)
+                    } else {
+                        BaseResult.Failure(Exception("Media renaming failed"))
+                    }
+                }
+            } catch (e: Exception) {
+                BaseResult.Failure(e)
+            }
+        }
     }

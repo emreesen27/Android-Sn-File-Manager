@@ -1,4 +1,4 @@
-package com.sn.snfilemanager.feature.filter
+package com.sn.snfilemanager.view.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FilterBottomSheet : BottomSheetDialogFragment() {
+class FilterBottomSheetDialog : BottomSheetDialogFragment() {
     @Inject
     lateinit var sharedPreferences: MySharedPreferences
 
@@ -33,10 +33,10 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         private const val ARG_MIME_TYPE = "ARG_CHIP"
-        const val TAG = "FilterBottomSheet"
+        const val TAG = "FILTER_BOTTOM_SHEET_DIALOG"
 
-        fun newInstance(mimeTypes: MimeTypes): FilterBottomSheet {
-            return FilterBottomSheet().apply {
+        fun newInstance(mimeTypes: MimeTypes): FilterBottomSheetDialog {
+            return FilterBottomSheetDialog().apply {
                 arguments =
                     Bundle().apply {
                         putParcelable(ARG_MIME_TYPE, mimeTypes)
