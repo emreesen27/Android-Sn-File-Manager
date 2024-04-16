@@ -35,6 +35,7 @@ import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.CreateDirectoryDialog
+import com.sn.snfilemanager.view.dialog.RenameFileDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -133,6 +134,10 @@ class FilesListFragment :
             R.id.action_select_all -> {
                 adapter?.selectAll()
             }
+
+            R.id.action_rename -> {
+                showRenameDialog()
+            }
         }
 
         return true
@@ -189,6 +194,14 @@ class FilesListFragment :
                     }
                 }
             }
+
+            JobType.RENAME -> {
+                activity?.runOnUiThread {
+                    data?.filterIsInstance<FileModel>()?.firstOrNull()?.let { file ->
+                        adapter?.updateItem(file)
+                    }
+                }
+            }
         }
         activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }
@@ -220,7 +233,7 @@ class FilesListFragment :
         }
         observe(viewModel.startCreateFolderJob) { event ->
             event.getContentIfNotHandled()?.let { path ->
-                startCreateDirectory(path)
+                startCreateDirectoryService(path)
             }
         }
         observe(viewModel.updateListLiveData) { event ->
@@ -240,6 +253,12 @@ class FilesListFragment :
                 } else {
                     binding.rcvFiles.visible()
                 }
+            }
+        }
+        observe(viewModel.startRenameFileJob) { event ->
+            event.getContentIfNotHandled()?.let { data ->
+                actionMode?.finish()
+                startRenameService(data.first, data.second)
             }
         }
     }
@@ -303,6 +322,7 @@ class FilesListFragment :
             actionMode?.menu?.findItem(R.id.action_open_with)?.isVisible =
                 viewModel.isSingleItemSelected()
         }
+        actionMode?.menu?.findItem(R.id.action_rename)?.isVisible = viewModel.isSingleItemSelected()
     }
 
     private fun initAdapter() {
@@ -364,6 +384,12 @@ class FilesListFragment :
         }).show(childFragmentManager, CreateDirectoryDialog.TAG)
     }
 
+    private fun showRenameDialog() {
+        RenameFileDialog(file = viewModel.getSelectedItem().first(), onRename = { newName ->
+            viewModel.renameFile(newName)
+        }).show(childFragmentManager, RenameFileDialog.TAG)
+    }
+
     private fun actionDetail() {
         DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
             childFragmentManager,
@@ -423,9 +449,21 @@ class FilesListFragment :
         )
     }
 
-    private fun startCreateDirectory(destinationPath: Path) {
+    private fun startCreateDirectoryService(destinationPath: Path) {
         JobService.createDirectory(
             destinationPath,
+            this@FilesListFragment,
+            requireContext(),
+        )
+    }
+
+    private fun startRenameService(
+        file: FileModel,
+        newName: String,
+    ) {
+        JobService.rename(
+            file,
+            newName,
             this@FilesListFragment,
             requireContext(),
         )

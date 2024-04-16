@@ -4,4 +4,5 @@ enum class JobType {
     COPY,
     DELETE,
     CREATE,
+    RENAME,
 }
