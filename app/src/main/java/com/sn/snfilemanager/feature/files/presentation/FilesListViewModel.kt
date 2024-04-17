@@ -284,7 +284,14 @@ class FilesListViewModel
                                     )
                             ) {
                                 is BaseResult.Success -> {
-                                    val list = result.data.map { Paths.get(it).toFileModel() }
+                                    val list =
+                                        result.data.mapNotNull {
+                                            if (Files.exists(Paths.get(it))) {
+                                                Paths.get(it).toFileModel()
+                                            } else {
+                                                null
+                                            }
+                                        }
                                     _searchStateLiveData.postValue(Event(Pair(false, false)))
                                     _updateListLiveData.postValue(Event(list.toMutableList()))
                                 }
