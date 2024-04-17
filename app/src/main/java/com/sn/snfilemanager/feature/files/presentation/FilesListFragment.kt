@@ -182,7 +182,6 @@ class FilesListFragment :
             JobType.DELETE -> {
                 activity?.runOnUiThread {
                     data?.filterIsInstance<FileModel>()?.let { adapter?.removeItems(it) }
-                    adapter?.getItems()?.let { viewModel.setUpdateList(it) }
                 }
             }
 
@@ -190,7 +189,6 @@ class FilesListFragment :
                 activity?.runOnUiThread {
                     data?.filterIsInstance<Path>()?.firstOrNull()?.toFileModel()?.let { file ->
                         adapter?.addItem(file)
-                        adapter?.getItems()?.let { viewModel.setUpdateList(it) }
                     }
                 }
             }
