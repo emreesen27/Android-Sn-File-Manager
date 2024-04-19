@@ -180,6 +180,7 @@ class MediaFragment :
                     data?.filterIsInstance<Media>()?.let { adapter?.removeItems(it) }
                 }
             }
+
             JobType.CREATE -> {}
             JobType.RENAME -> {}
         }
@@ -195,12 +196,12 @@ class MediaFragment :
             }
             observe(conflictQuestionLiveData) { event ->
                 event.getContentIfNotHandled()?.let { mediaName ->
-                    ConflictDialog(requireContext(), mediaName).apply {
+                    ConflictDialog(mediaName).apply {
                         onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                             viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                         }
                         onDismiss = { actionMode?.finish() }
-                    }.show()
+                    }.showDialog(childFragmentManager)
                 }
             }
             observe(viewModel.startMoveJobLiveData) { event ->
@@ -239,7 +240,6 @@ class MediaFragment :
 
     private fun actionDelete() {
         ConfirmationDialog(
-            requireContext(),
             getString(R.string.are_you_sure),
             getString(R.string.delete_warning),
         ).apply {
@@ -250,7 +250,7 @@ class MediaFragment :
                     actionMode?.finish()
                 }
             }
-        }.show()
+        }.showDialog(childFragmentManager)
     }
 
     private fun startCopyService(
@@ -275,9 +275,8 @@ class MediaFragment :
     }
 
     private fun actionDetail() {
-        DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
+        DetailDialog(requireContext(), viewModel.getSelectedItem()).showDialog(
             childFragmentManager,
-            DetailDialog.TAG,
         )
     }
 
@@ -302,10 +301,7 @@ class MediaFragment :
             } else {
                 viewModel.moveMedia(Paths.get(path))
             }
-        }).show(
-            childFragmentManager,
-            DetailDialog.TAG,
-        )
+        }).showDialog(childFragmentManager)
     }
 
     private fun showRenameDialog() {
@@ -313,7 +309,7 @@ class MediaFragment :
         RenameFileDialog(file = media, onRename = { newName ->
             actionMode?.finish()
             viewModel.renameMedia(media, newName)
-        }).show(childFragmentManager, RenameFileDialog.TAG)
+        }).showDialog(childFragmentManager)
     }
 
     private fun clearSelection() {

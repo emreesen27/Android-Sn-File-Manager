@@ -76,7 +76,7 @@ class LicenseAdapter(private val context: Context) :
             binding.mtvLicense.click {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     val clickedLicense = licenses[adapterPosition]
-                    context.openUrl(clickedLicense.url)
+                    context.openUrl(clickedLicense.license)
                 }
             }
         }
