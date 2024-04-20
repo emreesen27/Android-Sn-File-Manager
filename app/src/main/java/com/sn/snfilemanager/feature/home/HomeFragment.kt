@@ -161,20 +161,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun showPermissionDialog(type: PermissionDialogType = PermissionDialogType.DEFAULT) {
-        if (permissionDialog == null || permissionDialog?.isShowing == false) {
+        if (permissionDialog == null || permissionDialog?.isVisible == false) {
             permissionDialog =
-                PermissionDialog(requireContext(), type).apply {
+                PermissionDialog(type).apply {
                     onAllow = { allowStoragePermission() }
                 }
-            permissionDialog?.show()
+            permissionDialog?.showDialog(childFragmentManager)
         }
     }
 
     private fun showNotificationDialog() {
-        if (confirmationDialog == null || confirmationDialog?.isShowing == false) {
+        if (confirmationDialog == null || confirmationDialog?.isVisible == false) {
             confirmationDialog =
                 ConfirmationDialog(
-                    requireContext(),
                     getString(R.string.permission_warning_title),
                     getString(R.string.notification_permission_info),
                 ).apply {
@@ -184,7 +183,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                     }
                 }
-            confirmationDialog?.show()
+            confirmationDialog?.showDialog(childFragmentManager)
         }
     }
 

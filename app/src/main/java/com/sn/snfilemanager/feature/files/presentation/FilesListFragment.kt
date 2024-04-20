@@ -207,12 +207,12 @@ class FilesListFragment :
     override fun observeData() {
         observe(viewModel.conflictQuestionLiveData) { event ->
             event.getContentIfNotHandled()?.let { fileName ->
-                ConflictDialog(requireContext(), fileName).apply {
+                ConflictDialog(fileName).apply {
                     onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                         viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                     }
                     onDismiss = { actionMode?.finish() }
-                }.show()
+                }.showDialog(childFragmentManager)
             }
         }
         observe(viewModel.startMoveJobLiveData) { event ->
@@ -370,29 +370,26 @@ class FilesListFragment :
             } else {
                 viewModel.moveFilesAndDirectories(Paths.get(path))
             }
-        }).show(
-            childFragmentManager,
-            DetailDialog.TAG,
-        )
+        }).showDialog(childFragmentManager)
     }
 
     private fun showCreateDirectoryDialog(path: String) {
         CreateDirectoryDialog(path = path, onCreate = { folderName ->
             viewModel.createFolder(folderName)
-        }).show(childFragmentManager, CreateDirectoryDialog.TAG)
+        }).showDialog(childFragmentManager)
     }
 
     private fun showRenameDialog() {
         RenameFileDialog(file = viewModel.getSelectedItem().first(), onRename = { newName ->
             viewModel.renameFile(newName)
-        }).show(childFragmentManager, RenameFileDialog.TAG)
+        }).showDialog(childFragmentManager)
     }
 
     private fun actionDetail() {
-        DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
-            childFragmentManager,
-            DetailDialog.TAG,
-        )
+        DetailDialog(
+            requireContext(),
+            viewModel.getSelectedItem(),
+        ).showDialog(childFragmentManager)
     }
 
     private fun actionOpenWith() {
@@ -412,7 +409,6 @@ class FilesListFragment :
 
     private fun actionDelete() {
         ConfirmationDialog(
-            requireContext(),
             getString(R.string.are_you_sure),
             getString(R.string.delete_warning),
         ).apply {
@@ -423,7 +419,7 @@ class FilesListFragment :
                     actionMode?.finish()
                 }
             }
-        }.show()
+        }.showDialog(childFragmentManager)
     }
 
     private fun startCopyService(
