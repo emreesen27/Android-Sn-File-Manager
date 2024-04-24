@@ -1,3 +1,9 @@
+## v1.0.0-beta6 (24.04.2024)
+* The "Rename" feature added.
+* Dialogs UI improvement
+* The issue of license URLs redirecting to the wrong address fixed
+* The 'Access Denied' error in the function calculating file count and size fixed.
+
 ## v1.0.0-beta5 (08.04.2024)
 
 * The 'Select All' feature added
