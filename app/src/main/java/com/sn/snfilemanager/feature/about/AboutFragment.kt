@@ -28,6 +28,6 @@ class AboutFragment : BaseFragment<FragmentAboutBinding, AboutViewModel>() {
     }
 
     private fun showLicensesDialog() {
-        LicenseDialog().show(childFragmentManager, LicenseDialog.TAG)
+        LicenseDialog().showDialog(childFragmentManager)
     }
 }

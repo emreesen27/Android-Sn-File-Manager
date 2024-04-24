@@ -1,13 +1,8 @@
 package com.sn.snfilemanager.view.dialog
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.base.BaseDialog
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.DialogCreateDirectoryBinding
 import java.nio.file.Files
@@ -17,37 +12,13 @@ import java.nio.file.Paths
 class CreateDirectoryDialog(
     private val path: String,
     private val onCreate: ((Path) -> Unit)? = null,
-) :
-    DialogFragment() {
-    private val binding: DialogCreateDirectoryBinding by lazy {
-        DialogCreateDirectoryBinding.inflate(layoutInflater)
-    }
+) : BaseDialog<DialogCreateDirectoryBinding>() {
+    override val dialogTag: String
+        get() = "CREATE_DIRECTORY_DIALOG"
 
-    companion object {
-        const val TAG = "CREATE_DIRECTORY_DIALOG"
-    }
+    override fun getViewBinding() = DialogCreateDirectoryBinding.inflate(layoutInflater)
 
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(
-            ConstraintLayout.LayoutParams.MATCH_PARENT,
-            ConstraintLayout.LayoutParams.WRAP_CONTENT,
-        )
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        return binding.root
-    }
-
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setupViews() {
         binding.etFolderName.requestFocus()
         binding.btnCancel.click { dismiss() }
         binding.btnCreate.click {

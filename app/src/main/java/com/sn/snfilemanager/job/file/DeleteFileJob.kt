@@ -5,6 +5,7 @@ import com.sn.snfilemanager.core.base.BaseJob
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.postNotification
 import com.sn.snfilemanager.core.extensions.scanFile
+import com.sn.snfilemanager.core.util.FileUtils.getTotalSizeAndFileCount
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobType
@@ -20,11 +21,12 @@ class DeleteFileJob(
     private val completed: JobCompletedCallback,
 ) : BaseJob() {
     private var deletedCount: Long = 0
-    private val totalItemCount = calculateItemCount(sourceFiles)
+    private var totalItemCount: Long = 0
     private val deletedItemPathList: MutableList<String> = mutableListOf()
 
     override fun run() {
         handler.post { service.infoToast(service.getString(R.string.deleting)) }
+        totalItemCount = getTotalSizeAndFileCount(sourceFiles).second
         delete()
     }
 
@@ -77,20 +79,6 @@ class DeleteFileJob(
                 }
             },
         )
-    }
-
-    private fun calculateItemCount(items: List<FileModel>): Long {
-        return items.sumOf {
-            if (Files.isDirectory(Paths.get(it.absolutePath))) {
-                Files.walk(
-                    Paths.get(
-                        it.absolutePath,
-                    ),
-                ).count()
-            } else {
-                1
-            }
-        }
     }
 
     private fun updateProgress() {

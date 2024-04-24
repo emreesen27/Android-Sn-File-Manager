@@ -1,33 +1,25 @@
 package com.sn.snfilemanager.view.dialog.permission
 
-import android.app.Dialog
-import android.content.Context
-import android.os.Bundle
-import android.view.Gravity
-import android.view.ViewGroup
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textview.MaterialTextView
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.base.BaseDialog
 import com.sn.snfilemanager.core.extensions.click
+import com.sn.snfilemanager.databinding.DialogPermissionBinding
 
 class PermissionDialog(
-    context: Context,
     private val type: PermissionDialogType,
-) : Dialog(context) {
+) : BaseDialog<DialogPermissionBinding>() {
     var onAllow: (() -> Unit)? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_permission)
+    override fun getViewBinding() = DialogPermissionBinding.inflate(layoutInflater)
 
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window?.setGravity(Gravity.CENTER)
+    override var setCancelable: Boolean = false
+    override val dialogTag: String
+        get() = "PERMISSION_DIALOG"
 
-        setCancelable(false)
-
+    override fun setupViews() {
         val values = getValuesByType()
-        findViewById<MaterialTextView>(R.id.tv_permission_info).text = values.first
-        findViewById<MaterialButton>(R.id.btn_allow).apply {
+        binding.tvPermissionInfo.text = values.first
+        binding.btnAllow.apply {
             text = values.second
             click {
                 onAllow?.invoke()
@@ -39,13 +31,13 @@ class PermissionDialog(
     private fun getValuesByType(): Pair<String, String> =
         if (type == PermissionDialogType.DEFAULT) {
             Pair(
-                context.getString(R.string.permission_message),
-                context.getString(R.string.click_to_allow),
+                requireContext().getString(R.string.permission_message),
+                requireContext().getString(R.string.click_to_allow),
             )
         } else {
             Pair(
-                context.getString(R.string.permission_warning_message),
-                context.getString(R.string.go_to_settings),
+                requireContext().getString(R.string.permission_warning_message),
+                requireContext().getString(R.string.go_to_settings),
             )
         }
 }

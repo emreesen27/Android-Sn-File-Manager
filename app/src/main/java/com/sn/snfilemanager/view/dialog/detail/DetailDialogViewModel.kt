@@ -10,15 +10,12 @@ import com.sn.snfilemanager.R
 import com.sn.snfilemanager.core.extensions.getDirectoryNameFromPath
 import com.sn.snfilemanager.core.extensions.toFormattedDateFromUnixTime
 import com.sn.snfilemanager.core.extensions.toHumanReadableByteCount
+import com.sn.snfilemanager.core.util.FileUtils.getTotalSizeAndFileCount
 import com.sn.snfilemanager.core.util.StringValue
 import com.sn.snfilemanager.feature.files.data.FileModel
-import com.sn.snfilemanager.feature.files.data.toFileModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.stream.Collectors
 
 class DetailDialogViewModel : ViewModel() {
     private val _detailItemLiveData: MutableLiveData<MutableList<Detail>> = MutableLiveData()
@@ -113,20 +110,6 @@ class DetailDialogViewModel : ViewModel() {
         }
         _detailItemLiveData.postValue(detailItemList)
     }
-
-    private fun getTotalSizeAndFileCount(itemList: List<FileModel>): Pair<Long, Int> =
-        itemList.fold(Pair(0L, 0)) { acc, item ->
-            if (item.isDirectory && Files.isReadable(Paths.get(item.absolutePath))) {
-                val childResult =
-                    getTotalSizeAndFileCount(
-                        Files.list(Paths.get(item.absolutePath)).collect(Collectors.toList())
-                            .map { it.toFileModel() },
-                    )
-                Pair(acc.first + childResult.first, acc.second + childResult.second)
-            } else {
-                Pair(acc.first + item.size, acc.second + 1)
-            }
-        }
 
     private fun itemsContainsFolder(itemList: List<FileModel>): Boolean = itemList.any { it.isDirectory }
 

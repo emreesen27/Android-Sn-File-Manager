@@ -32,7 +32,7 @@ class MediaViewModel
     ) : ViewModel() {
         private var fullMediaList: List<Media>? = null
         private var selectedItemList: MutableList<Media> = mutableListOf()
-        private var filteredMediaList: List<Media>? = null
+        private var filteredMediaList: MutableList<Media>? = null
 
         private var mediaType: MediaType? = null
         private var documentType: String? = null
@@ -53,6 +53,9 @@ class MediaViewModel
 
         private val _startDeleteJobLiveData: MutableLiveData<Event<List<Media>>> = MutableLiveData()
         val startDeleteJobLiveData: LiveData<Event<List<Media>>> = _startDeleteJobLiveData
+
+        private val _completedRenameMediaJob: MutableLiveData<Event<Media>> = MutableLiveData()
+        val completedRenameMediaJob: LiveData<Event<Media>> = _completedRenameMediaJob
 
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
@@ -92,7 +95,7 @@ class MediaViewModel
                                     applyFilter(filteredMediaTypes)
                                 } else {
                                     _getMediaLiveData.value = Event(mediaList)
-                                    filteredMediaList = mediaList
+                                    filteredMediaList = mediaList.toMutableList()
                                 }
                             }
                         }
@@ -153,6 +156,29 @@ class MediaViewModel
             _startDeleteJobLiveData.postValue(Event(operationItemList))
         }
 
+        fun renameMedia(
+            media: Media,
+            newName: String,
+        ) {
+            viewModelScope.launch {
+                when (val result = mediaStoreProvider.renameMedia(media, newName)) {
+                    is BaseResult.Success -> {
+                        _completedRenameMediaJob.postValue(Event(result.data))
+                    }
+                    is BaseResult.Failure -> {
+                        println("err:${result.exception}")
+                    }
+                }
+            }
+        }
+
+        fun updateFilterList(media: Media) {
+            filteredMediaList?.let { list ->
+                val index = list.indexOfFirst { it.id == media.id }
+                list[index] = media
+            }
+        }
+
         fun getMimeByMediaType() =
             when (mediaType) {
                 MediaType.IMAGES -> MimeTypes.IMAGES
@@ -189,12 +215,12 @@ class MediaViewModel
         fun applyFilter(filter: MutableSet<String>) {
             if (filter.isEmpty()) {
                 fullMediaList?.let {
-                    filteredMediaList = it
+                    filteredMediaList = it.toMutableList()
                     _getMediaLiveData.value = Event(it)
                 }
             } else {
                 fullMediaList?.filter { filter.contains(it.ext) }?.let { filteredList ->
-                    filteredMediaList = filteredList
+                    filteredMediaList = filteredList.toMutableList()
                     _getMediaLiveData.value = Event(filteredList)
                 }
             }

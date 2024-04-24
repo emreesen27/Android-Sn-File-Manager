@@ -108,4 +108,9 @@
     <string name="folder_name">Folder name</string>
     <string name="folder_exists_warning">The folder with this name already exists</string>
     <string name="no_folder">There is no folder to display</string>
+    <string name="rename">Rename</string>
+    <string name="extension">Extension</string>
+    <string name="change_ext_warning">Changing the extension may cause the file to become unusable</string>
+    <string name="current_file_name_warning">"You entered the current file name"</string>
+    <string name="file_exists_warning">The file with this name already exists</string>
 </resources>

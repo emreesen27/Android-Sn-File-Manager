@@ -19,7 +19,6 @@ import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.warningToast
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
-import com.sn.snfilemanager.feature.filter.FilterBottomSheet
 import com.sn.snfilemanager.feature.media.adapter.MediaItemAdapter
 import com.sn.snfilemanager.feature.pathpicker.presentation.PathPickerFragment
 import com.sn.snfilemanager.job.JobCompletedCallback
@@ -27,6 +26,8 @@ import com.sn.snfilemanager.job.JobService
 import com.sn.snfilemanager.job.JobType
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
+import com.sn.snfilemanager.view.dialog.FilterBottomSheetDialog
+import com.sn.snfilemanager.view.dialog.RenameFileDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.nio.file.Path
@@ -124,6 +125,10 @@ class MediaFragment :
             R.id.action_select_all -> {
                 adapter?.selectAll()
             }
+
+            R.id.action_rename -> {
+                showRenameDialog()
+            }
         }
 
         return true
@@ -175,7 +180,9 @@ class MediaFragment :
                     data?.filterIsInstance<Media>()?.let { adapter?.removeItems(it) }
                 }
             }
+
             JobType.CREATE -> {}
+            JobType.RENAME -> {}
         }
         activity?.runOnUiThread { context?.infoToast(getString(R.string.completed)) }
     }
@@ -184,17 +191,17 @@ class MediaFragment :
         viewModel.run {
             observe(getMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { data ->
-                    adapter?.setItems(data)
+                    adapter?.setItems(data.toMutableList())
                 }
             }
             observe(conflictQuestionLiveData) { event ->
                 event.getContentIfNotHandled()?.let { mediaName ->
-                    ConflictDialog(requireContext(), mediaName).apply {
+                    ConflictDialog(mediaName).apply {
                         onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                             viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                         }
                         onDismiss = { actionMode?.finish() }
-                    }.show()
+                    }.showDialog(childFragmentManager)
                 }
             }
             observe(viewModel.startMoveJobLiveData) { event ->
@@ -216,6 +223,13 @@ class MediaFragment :
                     context?.warningToast(getString(R.string.path_conflict_warning))
                 }
             }
+            observe(viewModel.completedRenameMediaJob) { event ->
+                event.getContentIfNotHandled()?.let { media ->
+                    adapter?.updateItem(media)
+                    viewModel.updateFilterList(media)
+                    context?.infoToast(getString(R.string.completed))
+                }
+            }
         }
     }
 
@@ -226,7 +240,6 @@ class MediaFragment :
 
     private fun actionDelete() {
         ConfirmationDialog(
-            requireContext(),
             getString(R.string.are_you_sure),
             getString(R.string.delete_warning),
         ).apply {
@@ -237,7 +250,7 @@ class MediaFragment :
                     actionMode?.finish()
                 }
             }
-        }.show()
+        }.showDialog(childFragmentManager)
     }
 
     private fun startCopyService(
@@ -262,9 +275,8 @@ class MediaFragment :
     }
 
     private fun actionDetail() {
-        DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
+        DetailDialog(requireContext(), viewModel.getSelectedItem()).showDialog(
             childFragmentManager,
-            DetailDialog.TAG,
         )
     }
 
@@ -277,6 +289,8 @@ class MediaFragment :
     private fun checkActionMenuStatus() {
         actionMode?.menu?.findItem(R.id.action_open_with)?.isVisible =
             viewModel.isSingleItemSelected()
+        actionMode?.menu?.findItem(R.id.action_rename)?.isVisible =
+            viewModel.isSingleItemSelected()
     }
 
     private fun showPathSelectionDialog() {
@@ -287,10 +301,15 @@ class MediaFragment :
             } else {
                 viewModel.moveMedia(Paths.get(path))
             }
-        }).show(
-            childFragmentManager,
-            DetailDialog.TAG,
-        )
+        }).showDialog(childFragmentManager)
+    }
+
+    private fun showRenameDialog() {
+        val media = viewModel.getSelectedItem().first()
+        RenameFileDialog(file = media, onRename = { newName ->
+            actionMode?.finish()
+            viewModel.renameMedia(media, newName)
+        }).showDialog(childFragmentManager)
     }
 
     private fun clearSelection() {
@@ -337,11 +356,11 @@ class MediaFragment :
 
     private fun showFilterBottomSheet() {
         viewModel.getMimeByMediaType()?.let { type ->
-            FilterBottomSheet.newInstance(type).apply {
+            FilterBottomSheetDialog.newInstance(type).apply {
                 onFilterApplyClick = { filters ->
                     viewModel.applyFilter(filters)
                 }
-            }.show(childFragmentManager, FilterBottomSheet.TAG)
+            }.show(childFragmentManager, FilterBottomSheetDialog.TAG)
         }
     }
 
