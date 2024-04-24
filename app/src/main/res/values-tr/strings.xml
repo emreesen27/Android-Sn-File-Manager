@@ -104,4 +104,9 @@
     <string name="folder_name">Klasör adı</string>
     <string name="folder_exists_warning">Bu ada sahip klasör zaten mevcut</string>
     <string name="no_folder">Görüntülenecek bir klasör yok</string>
+    <string name="rename">Yeniden adlandır</string>
+    <string name="extension">Uzantı</string>
+    <string name="change_ext_warning">Uzantıyı değiştirmek dosyanın kullanılamaz hale gelmesine neden olabilir</string>
+    <string name="current_file_name_warning">Mevcut dosya adını girdiniz</string>
+    <string name="file_exists_warning">Bu isimde dosya zaten mevcut</string>
 </resources>

@@ -39,4 +39,9 @@
         android:title="@string/select_all"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_rename"
+        android:title="@string/rename"
+        app:showAsAction="never" />
+
 </menu>

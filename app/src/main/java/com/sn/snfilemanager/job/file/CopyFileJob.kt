@@ -7,6 +7,7 @@ import com.sn.snfilemanager.core.extensions.getUniqueFileNameWithCounter
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.postNotification
 import com.sn.snfilemanager.core.extensions.scanFile
+import com.sn.snfilemanager.core.util.FileUtils.getTotalSizeAndFileCount
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.job.JobCompletedCallback
 import com.sn.snfilemanager.job.JobType
@@ -28,11 +29,12 @@ class CopyFileJob(
 ) : BaseJob() {
     private var movedItemCount: Int = 0
     private var title = if (isCopy) R.string.copying else R.string.moving
-    private val totalItemCount: Long = calculateItemCount(sourceFiles)
+    private var totalItemCount: Long = 0
     private val movedItemPathList: MutableList<String> = mutableListOf()
 
     override fun run() {
         handler.post { service.infoToast(service.getString(title)) }
+        totalItemCount = getTotalSizeAndFileCount(sourceFiles).second
         moveFilesAndDirectories()
     }
 
@@ -46,6 +48,10 @@ class CopyFileJob(
     private fun moveFilesAndDirectories() {
         for (sourceFile in sourceFiles) {
             val sourcePath = Paths.get(sourceFile.absolutePath)
+            if (!Files.isReadable(sourcePath)) {
+                continue
+            }
+
             var targetPath = targetPath.resolve(sourcePath.fileName)
             if (Files.exists(targetPath)) {
                 if (sourceFile.conflictStrategy == ConflictStrategy.SKIP) {
@@ -125,20 +131,6 @@ class CopyFileJob(
 
         if (!isCopy) {
             Files.deleteIfExists(source)
-        }
-    }
-
-    private fun calculateItemCount(items: List<FileModel>): Long {
-        return items.sumOf {
-            if (Files.isDirectory(Paths.get(it.absolutePath))) {
-                Files.walk(
-                    Paths.get(
-                        it.absolutePath,
-                    ),
-                ).count()
-            } else {
-                1
-            }
         }
     }
 

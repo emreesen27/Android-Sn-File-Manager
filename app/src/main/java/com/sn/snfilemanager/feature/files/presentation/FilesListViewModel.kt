@@ -73,6 +73,9 @@ class FilesListViewModel
         private val _startCreateFolderJob: MutableLiveData<Event<Path>> = MutableLiveData()
         val startCreateFolderJob: LiveData<Event<Path>> = _startCreateFolderJob
 
+        private val _startRenameFileJob: MutableLiveData<Event<Pair<FileModel, String>>> = MutableLiveData()
+        val startRenameFileJob: LiveData<Event<Pair<FileModel, String>>> = _startRenameFileJob
+
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
 
         companion object {
@@ -223,6 +226,17 @@ class FilesListViewModel
             }
         }
 
+        fun renameFile(newName: String) {
+            val file = selectedItemList.firstOrNull()
+            file?.let {
+                if (Files.isWritable(Paths.get(file.absolutePath))) {
+                    _startRenameFileJob.value = Event(Pair(file, newName))
+                } else {
+                    // show toast
+                }
+            }
+        }
+
         // Todo check free space
         fun createFolder(targetPath: Path) {
             _startCreateFolderJob.value = Event(targetPath)
@@ -270,7 +284,14 @@ class FilesListViewModel
                                     )
                             ) {
                                 is BaseResult.Success -> {
-                                    val list = result.data.map { Paths.get(it).toFileModel() }
+                                    val list =
+                                        result.data.mapNotNull {
+                                            if (Files.exists(Paths.get(it))) {
+                                                Paths.get(it).toFileModel()
+                                            } else {
+                                                null
+                                            }
+                                        }
                                     _searchStateLiveData.postValue(Event(Pair(false, false)))
                                     _updateListLiveData.postValue(Event(list.toMutableList()))
                                 }

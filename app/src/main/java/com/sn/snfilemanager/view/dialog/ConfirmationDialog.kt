@@ -1,30 +1,23 @@
 package com.sn.snfilemanager.view.dialog
 
-import android.app.Dialog
-import android.content.Context
-import android.os.Bundle
-import android.view.Gravity
-import android.view.ViewGroup
+import com.sn.snfilemanager.core.base.BaseDialog
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.databinding.DialogConfirmationBinding
 
 class ConfirmationDialog(
-    context: Context,
     private val title: String,
     private val question: String,
-) : Dialog(context) {
+) : BaseDialog<DialogConfirmationBinding>() {
     var onSelected: ((Boolean) -> Unit)? = null
 
-    private val binding: DialogConfirmationBinding by lazy {
-        DialogConfirmationBinding.inflate(layoutInflater)
-    }
+    override val dialogTag: String
+        get() = "CONFIRMATION_DIALOG"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        setCancelable(false)
-        setWindowProperty()
+    override fun getViewBinding() = DialogConfirmationBinding.inflate(layoutInflater)
 
+    override var setCancelable: Boolean = false
+
+    override fun setupViews() {
         binding.tvTitle.text = title
         binding.tvQuestion.text = question
 
@@ -35,13 +28,6 @@ class ConfirmationDialog(
         binding.btnNo.click {
             onSelected?.invoke(false)
             dismiss()
-        }
-    }
-
-    private fun setWindowProperty() {
-        window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setGravity(Gravity.CENTER)
         }
     }
 }

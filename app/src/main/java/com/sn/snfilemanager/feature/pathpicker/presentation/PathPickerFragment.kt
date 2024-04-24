@@ -1,14 +1,10 @@
 package com.sn.snfilemanager.feature.pathpicker.presentation
 
-import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.sn.snfilemanager.R
+import com.sn.snfilemanager.core.base.BaseDialog
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.gone
 import com.sn.snfilemanager.core.extensions.visible
@@ -22,12 +18,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
 @AndroidEntryPoint
-class PathPickerFragment(private val pathCallback: ((String?) -> Unit)? = null) : DialogFragment() {
+class PathPickerFragment(private val pathCallback: ((String?) -> Unit)? = null) :
+    BaseDialog<FragmentPathPickerBinding>() {
     private var adapter: DirectoryItemAdapter? = null
     private val viewModel: PathPickerViewModel by viewModels()
-    private val binding: FragmentPathPickerBinding by lazy {
-        FragmentPathPickerBinding.inflate(layoutInflater)
-    }
+
+    override fun getViewBinding() = FragmentPathPickerBinding.inflate(layoutInflater)
+
+    override val dialogTag: String
+        get() = "PATH_PICKER_DIALOG"
 
     override fun onStart() {
         super.onStart()
@@ -37,25 +36,7 @@ class PathPickerFragment(private val pathCallback: ((String?) -> Unit)? = null) 
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_TITLE, R.style.DialogTheme_transparent)
-        dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        return binding.root
-    }
-
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setupViews() {
         initAdapter()
         handleBackPressed()
         initBreadListener()

@@ -35,6 +35,7 @@ import com.sn.snfilemanager.view.component.breadcrumb.BreadItem
 import com.sn.snfilemanager.view.dialog.ConfirmationDialog
 import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.CreateDirectoryDialog
+import com.sn.snfilemanager.view.dialog.RenameFileDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -133,6 +134,10 @@ class FilesListFragment :
             R.id.action_select_all -> {
                 adapter?.selectAll()
             }
+
+            R.id.action_rename -> {
+                showRenameDialog()
+            }
         }
 
         return true
@@ -177,7 +182,6 @@ class FilesListFragment :
             JobType.DELETE -> {
                 activity?.runOnUiThread {
                     data?.filterIsInstance<FileModel>()?.let { adapter?.removeItems(it) }
-                    adapter?.getItems()?.let { viewModel.setUpdateList(it) }
                 }
             }
 
@@ -185,7 +189,14 @@ class FilesListFragment :
                 activity?.runOnUiThread {
                     data?.filterIsInstance<Path>()?.firstOrNull()?.toFileModel()?.let { file ->
                         adapter?.addItem(file)
-                        adapter?.getItems()?.let { viewModel.setUpdateList(it) }
+                    }
+                }
+            }
+
+            JobType.RENAME -> {
+                activity?.runOnUiThread {
+                    data?.filterIsInstance<FileModel>()?.firstOrNull()?.let { file ->
+                        adapter?.updateItem(file)
                     }
                 }
             }
@@ -196,12 +207,12 @@ class FilesListFragment :
     override fun observeData() {
         observe(viewModel.conflictQuestionLiveData) { event ->
             event.getContentIfNotHandled()?.let { fileName ->
-                ConflictDialog(requireContext(), fileName).apply {
+                ConflictDialog(fileName).apply {
                     onSelected = { strategy: ConflictStrategy, isAll: Boolean ->
                         viewModel.conflictDialogDeferred.complete(Pair(strategy, isAll))
                     }
                     onDismiss = { actionMode?.finish() }
-                }.show()
+                }.showDialog(childFragmentManager)
             }
         }
         observe(viewModel.startMoveJobLiveData) { event ->
@@ -220,7 +231,7 @@ class FilesListFragment :
         }
         observe(viewModel.startCreateFolderJob) { event ->
             event.getContentIfNotHandled()?.let { path ->
-                startCreateDirectory(path)
+                startCreateDirectoryService(path)
             }
         }
         observe(viewModel.updateListLiveData) { event ->
@@ -240,6 +251,12 @@ class FilesListFragment :
                 } else {
                     binding.rcvFiles.visible()
                 }
+            }
+        }
+        observe(viewModel.startRenameFileJob) { event ->
+            event.getContentIfNotHandled()?.let { data ->
+                actionMode?.finish()
+                startRenameService(data.first, data.second)
             }
         }
     }
@@ -303,6 +320,7 @@ class FilesListFragment :
             actionMode?.menu?.findItem(R.id.action_open_with)?.isVisible =
                 viewModel.isSingleItemSelected()
         }
+        actionMode?.menu?.findItem(R.id.action_rename)?.isVisible = viewModel.isSingleItemSelected()
     }
 
     private fun initAdapter() {
@@ -352,23 +370,26 @@ class FilesListFragment :
             } else {
                 viewModel.moveFilesAndDirectories(Paths.get(path))
             }
-        }).show(
-            childFragmentManager,
-            DetailDialog.TAG,
-        )
+        }).showDialog(childFragmentManager)
     }
 
     private fun showCreateDirectoryDialog(path: String) {
         CreateDirectoryDialog(path = path, onCreate = { folderName ->
             viewModel.createFolder(folderName)
-        }).show(childFragmentManager, CreateDirectoryDialog.TAG)
+        }).showDialog(childFragmentManager)
+    }
+
+    private fun showRenameDialog() {
+        RenameFileDialog(file = viewModel.getSelectedItem().first(), onRename = { newName ->
+            viewModel.renameFile(newName)
+        }).showDialog(childFragmentManager)
     }
 
     private fun actionDetail() {
-        DetailDialog(requireContext(), viewModel.getSelectedItem()).show(
-            childFragmentManager,
-            DetailDialog.TAG,
-        )
+        DetailDialog(
+            requireContext(),
+            viewModel.getSelectedItem(),
+        ).showDialog(childFragmentManager)
     }
 
     private fun actionOpenWith() {
@@ -388,7 +409,6 @@ class FilesListFragment :
 
     private fun actionDelete() {
         ConfirmationDialog(
-            requireContext(),
             getString(R.string.are_you_sure),
             getString(R.string.delete_warning),
         ).apply {
@@ -399,7 +419,7 @@ class FilesListFragment :
                     actionMode?.finish()
                 }
             }
-        }.show()
+        }.showDialog(childFragmentManager)
     }
 
     private fun startCopyService(
@@ -423,9 +443,21 @@ class FilesListFragment :
         )
     }
 
-    private fun startCreateDirectory(destinationPath: Path) {
+    private fun startCreateDirectoryService(destinationPath: Path) {
         JobService.createDirectory(
             destinationPath,
+            this@FilesListFragment,
+            requireContext(),
+        )
+    }
+
+    private fun startRenameService(
+        file: FileModel,
+        newName: String,
+    ) {
+        JobService.rename(
+            file,
+            newName,
             this@FilesListFragment,
             requireContext(),
         )

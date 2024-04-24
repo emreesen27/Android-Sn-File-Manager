@@ -1,12 +1,8 @@
 package com.sn.snfilemanager.view.dialog.detail
 
 import android.content.Context
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.sn.snfilemanager.core.base.BaseDialog
 import com.sn.snfilemanager.core.extensions.click
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.databinding.DialogDetailBinding
@@ -14,30 +10,16 @@ import com.sn.snfilemanager.databinding.DialogDetailBinding
 class DetailDialog<T>(
     private val context: Context,
     private val itemList: MutableList<T>,
-) : DialogFragment() {
-    private var adapter: DetailItemAdapter? = null
+) : BaseDialog<DialogDetailBinding>() {
     private val viewModel: DetailDialogViewModel by viewModels()
-    private val binding: DialogDetailBinding by lazy {
-        DialogDetailBinding.inflate(layoutInflater)
-    }
+    private var adapter: DetailItemAdapter? = null
 
-    companion object {
-        const val TAG = "DETAIL_DIALOG"
-    }
+    override fun getViewBinding() = DialogDetailBinding.inflate(layoutInflater)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        return binding.root
-    }
+    override val dialogTag: String
+        get() = "DETAIL_DIALOG"
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setupViews() {
         binding.vm = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         isCancelable = true

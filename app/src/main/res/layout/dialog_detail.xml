@@ -48,8 +48,8 @@
 
         <com.sn.lib.NestedProgress
             android:id="@+id/progress"
-            android:layout_width="@dimen/_80sdp"
-            android:layout_height="@dimen/_80sdp"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
             app:innerLoaderColor="@color/soft_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
