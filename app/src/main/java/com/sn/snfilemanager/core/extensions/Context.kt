@@ -112,7 +112,7 @@ fun Context.startActivitySafely(intent: Intent) {
     try {
         startActivity(intent)
     } catch (e: ActivityNotFoundException) {
-        // Todo
+        e.message?.let { errorToast(it) }
     }
 }
 
