@@ -1,4 +1,9 @@
+## v1.0.0-beta7 (26.04.2024)
+
+* ActivityNotFoundException and ClassNotFoundException fixed.
+
 ## v1.0.0-beta6 (24.04.2024)
+
 * The "Rename" feature added.
 * Dialogs UI improvement
 * The issue of license URLs redirecting to the wrong address fixed

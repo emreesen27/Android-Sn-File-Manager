@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -22,6 +21,7 @@ import com.sn.snfilemanager.core.extensions.getPackage
 import com.sn.snfilemanager.core.extensions.infoToast
 import com.sn.snfilemanager.core.extensions.observe
 import com.sn.snfilemanager.core.extensions.openUrl
+import com.sn.snfilemanager.core.extensions.startActivitySafely
 import com.sn.snfilemanager.core.util.Constant
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.RootPath
@@ -129,14 +129,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     private fun routeFileAccessSettings() {
-        val intent =
-            Intent(
-                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                Uri.parse(context?.getPackage()),
-            )
-        startActivity(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val intent =
+                Intent(
+                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                    Uri.parse(context?.getPackage()),
+                )
+            context?.startActivitySafely(intent)
+        }
     }
 
     private fun routeAppSettings() {
@@ -145,7 +146,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                 Uri.parse(context?.getPackage()),
             )
-        startActivity(intent)
+        context?.startActivitySafely(intent)
     }
 
     private fun routeNotificationSettings() {
@@ -156,7 +157,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
                     putExtra(Settings.EXTRA_APP_PACKAGE, context?.packageName)
                 }
-            context?.startActivity(settingsIntent)
+            context?.startActivitySafely(settingsIntent)
         }
     }
 
