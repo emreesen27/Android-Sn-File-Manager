@@ -184,6 +184,7 @@ class FilesListViewModel
         // Todo check free space
         fun moveFilesAndDirectories(destinationPath: Path) {
             val operationItemList: MutableList<FileModel> = mutableListOf()
+            var allSkip = true
             viewModelScope.launch {
                 val job =
                     async {
@@ -204,6 +205,9 @@ class FilesListViewModel
                                 if (!result.second) {
                                     file.conflictStrategy = result.first
                                     operationItemList.add(file)
+                                    if (file.conflictStrategy != ConflictStrategy.SKIP) {
+                                        allSkip = false
+                                    }
                                 } else {
                                     if (i < selectedItemList.size - 1) {
                                         for (remainingFile in selectedItemList.subList(
@@ -212,6 +216,9 @@ class FilesListViewModel
                                         )) {
                                             remainingFile.conflictStrategy = result.first
                                             operationItemList.add(remainingFile)
+                                            if (file.conflictStrategy != ConflictStrategy.SKIP) {
+                                                allSkip = false
+                                            }
                                         }
                                     }
                                     break
@@ -222,7 +229,9 @@ class FilesListViewModel
                         }
                     }
                 job.await()
-                _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+                if (operationItemList.isNotEmpty() && !allSkip) {
+                    _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+                }
             }
         }
 

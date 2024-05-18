@@ -109,6 +109,8 @@ class MediaViewModel
 
         fun moveMedia(destinationPath: Path) {
             val operationItemList: MutableList<Media> = mutableListOf()
+            var allSkip = true
+
             viewModelScope.launch {
                 val job =
                     async {
@@ -129,6 +131,9 @@ class MediaViewModel
                                 if (!result.second) {
                                     media.conflictStrategy = result.first
                                     operationItemList.add(media)
+                                    if (media.conflictStrategy != ConflictStrategy.SKIP) {
+                                        allSkip = false
+                                    }
                                 } else {
                                     if (i < selectedItemList.size - 1) {
                                         for (remainingFile in selectedItemList.subList(
@@ -137,6 +142,9 @@ class MediaViewModel
                                         )) {
                                             remainingFile.conflictStrategy = result.first
                                             operationItemList.add(remainingFile)
+                                            if (remainingFile.conflictStrategy != ConflictStrategy.SKIP) {
+                                                allSkip = false
+                                            }
                                         }
                                     }
                                     break
@@ -147,7 +155,9 @@ class MediaViewModel
                         }
                     }
                 job.await()
-                _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+                if (operationItemList.isNotEmpty() && !allSkip) {
+                    _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+                }
             }
         }
 
