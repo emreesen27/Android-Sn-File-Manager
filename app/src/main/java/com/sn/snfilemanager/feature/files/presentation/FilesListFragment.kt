@@ -507,6 +507,7 @@ class FilesListFragment :
             item.setOnActionExpandListener(
                 object : MenuItem.OnActionExpandListener {
                     override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                        getToolbar().menu.findItem(R.id.sort).isVisible = false
                         return true
                     }
 
@@ -515,6 +516,8 @@ class FilesListFragment :
                             actionMode?.finish()
                             false
                         } else {
+                            getToolbar().menu.findItem(R.id.sort).isVisible = true
+                            invalidateOptionsMenu()
                             true
                         }
                     }
