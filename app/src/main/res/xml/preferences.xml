@@ -31,7 +31,7 @@
             android:layout="@layout/item_switch_preference"
             android:summaryOff="@string/hidden_file_off"
             android:title="@string/hidden_file"
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:key="sn.hidden.file"
             app:summaryOn="@string/hidden_file_on" />
 

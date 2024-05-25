@@ -46,7 +46,7 @@
     <string name="share">Paylaş</string>
     <string name="detail">Detay</string>
     <string name="skip">Atla</string>
-    <string name="keep_both">İkisinide sakla</string>
+    <string name="keep_both">İkisinide tut</string>
     <string name="overwrite">Üstüne yaz</string>
     <string name="apply_selection_to_all">Hepsine uygula</string>
     <string name="yes">Evet</string>
@@ -109,4 +109,8 @@
     <string name="change_ext_warning">Uzantıyı değiştirmek dosyanın kullanılamaz hale gelmesine neden olabilir</string>
     <string name="current_file_name_warning">Mevcut dosya adını girdiniz</string>
     <string name="file_exists_warning">Bu isimde dosya zaten mevcut</string>
+    <string name="sort">Sırala</string>
+    <string name="sort_by">Sıralama ölçütü</string>
+    <string name="ascending">Artan</string>
+    <string name="descending">Azalan</string>
 </resources>
