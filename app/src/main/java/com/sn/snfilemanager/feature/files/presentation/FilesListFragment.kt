@@ -21,6 +21,8 @@ import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.visible
 import com.sn.snfilemanager.core.extensions.warningToast
+import com.sn.snfilemanager.core.util.Config.sortCriterion
+import com.sn.snfilemanager.core.util.Config.sortOrder
 import com.sn.snfilemanager.core.util.RootPath
 import com.sn.snfilemanager.databinding.FragmentFilesListBinding
 import com.sn.snfilemanager.feature.files.adapter.FileItemAdapter
@@ -37,6 +39,7 @@ import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.CreateDirectoryDialog
 import com.sn.snfilemanager.view.dialog.RenameFileDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
+import com.sn.snfilemanager.view.dialog.sort.SortDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.nio.file.Files
@@ -65,6 +68,11 @@ class FilesListFragment :
         when (menuItemId) {
             R.id.action_search -> {
                 initSearch()
+                true
+            }
+
+            R.id.sort -> {
+                showSortDialog()
                 true
             }
 
@@ -188,7 +196,10 @@ class FilesListFragment :
             JobType.CREATE -> {
                 activity?.runOnUiThread {
                     data?.filterIsInstance<Path>()?.firstOrNull()?.toFileModel()?.let { file ->
-                        adapter?.addItem(file)
+                        // adapter?.addItem(file)
+                        viewModel.currentPath?.let { path ->
+                            viewModel.getFilesList(path)
+                        }
                     }
                 }
             }
@@ -196,7 +207,10 @@ class FilesListFragment :
             JobType.RENAME -> {
                 activity?.runOnUiThread {
                     data?.filterIsInstance<FileModel>()?.firstOrNull()?.let { file ->
-                        adapter?.updateItem(file)
+                        // adapter?.updateItem(file)
+                        viewModel.currentPath?.let { path ->
+                            viewModel.getFilesList(path)
+                        }
                     }
                 }
             }
@@ -376,6 +390,14 @@ class FilesListFragment :
     private fun showCreateDirectoryDialog(path: String) {
         CreateDirectoryDialog(path = path, onCreate = { folderName ->
             viewModel.createFolder(folderName)
+        }).showDialog(childFragmentManager)
+    }
+
+    private fun showSortDialog() {
+        SortDialog(isMedia = false, onConfirm = { sortData ->
+            sortCriterion = sortData.first
+            sortOrder = sortData.second
+            with(viewModel) { currentPath?.let { getFilesList(it) } }
         }).showDialog(childFragmentManager)
     }
 

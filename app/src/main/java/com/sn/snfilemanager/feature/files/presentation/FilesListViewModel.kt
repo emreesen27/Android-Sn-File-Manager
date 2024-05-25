@@ -9,9 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.MediaType
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.extensions.toDate
 import com.sn.snfilemanager.core.util.Config
+import com.sn.snfilemanager.core.util.Config.sortCriterion
+import com.sn.snfilemanager.core.util.Config.sortOrder
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.RootPath
+import com.sn.snfilemanager.core.util.SortCriterion
+import com.sn.snfilemanager.core.util.SortOrder
 import com.sn.snfilemanager.feature.files.data.FileModel
 import com.sn.snfilemanager.feature.files.data.toFileModel
 import com.sn.snfilemanager.providers.filepath.FilePathProvider
@@ -28,6 +33,7 @@ import java.lang.Long.min
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -73,7 +79,8 @@ class FilesListViewModel
         private val _startCreateFolderJob: MutableLiveData<Event<Path>> = MutableLiveData()
         val startCreateFolderJob: LiveData<Event<Path>> = _startCreateFolderJob
 
-        private val _startRenameFileJob: MutableLiveData<Event<Pair<FileModel, String>>> = MutableLiveData()
+        private val _startRenameFileJob: MutableLiveData<Event<Pair<FileModel, String>>> =
+            MutableLiveData()
         val startRenameFileJob: LiveData<Event<Pair<FileModel, String>>> = _startRenameFileJob
 
         var conflictDialogDeferred = CompletableDeferred<Pair<ConflictStrategy, Boolean>>()
@@ -153,15 +160,13 @@ class FilesListViewModel
                                 .limit(currentBatchSize)
                                 .forEach { file ->
                                     if (Files.isReadable(file) && (
-                                            Config.hiddenFile ||
-                                                !Files.isHidden(
-                                                    file,
-                                                )
+                                            Config.hiddenFile || !Files.isHidden(file)
                                         )
                                     ) {
                                         fileList.add(file.toFileModel())
                                     }
                                 }
+                            sortFileList(fileList)
                         }
                         withContext(Dispatchers.Main) {
                             _updateListLiveData.postValue(Event(fileList))
@@ -169,10 +174,6 @@ class FilesListViewModel
                         processedFiles += currentBatchSize
                     }
                 }
-        }
-
-        fun setUpdateList(files: MutableList<FileModel>) {
-            _updateListLiveData.postValue(Event(files))
         }
 
         fun cancelFileListJob() {
@@ -184,7 +185,6 @@ class FilesListViewModel
         // Todo check free space
         fun moveFilesAndDirectories(destinationPath: Path) {
             val operationItemList: MutableList<FileModel> = mutableListOf()
-            var allSkip = true
             viewModelScope.launch {
                 val job =
                     async {
@@ -205,9 +205,6 @@ class FilesListViewModel
                                 if (!result.second) {
                                     file.conflictStrategy = result.first
                                     operationItemList.add(file)
-                                    if (file.conflictStrategy != ConflictStrategy.SKIP) {
-                                        allSkip = false
-                                    }
                                 } else {
                                     if (i < selectedItemList.size - 1) {
                                         for (remainingFile in selectedItemList.subList(
@@ -216,9 +213,6 @@ class FilesListViewModel
                                         )) {
                                             remainingFile.conflictStrategy = result.first
                                             operationItemList.add(remainingFile)
-                                            if (file.conflictStrategy != ConflictStrategy.SKIP) {
-                                                allSkip = false
-                                            }
                                         }
                                     }
                                     break
@@ -229,7 +223,7 @@ class FilesListViewModel
                         }
                     }
                 job.await()
-                if (operationItemList.isNotEmpty() && !allSkip) {
+                if (operationItemList.isNotEmpty()) {
                     _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
                 }
             }
@@ -254,6 +248,26 @@ class FilesListViewModel
         fun deleteFiles() {
             val operationItemList: List<FileModel> = selectedItemList.toList()
             _startDeleteJobLiveData.postValue(Event(operationItemList))
+        }
+
+        private fun sortFileList(fileList: MutableList<FileModel>) {
+            when (sortCriterion) {
+                SortCriterion.NAME -> {
+                    if (sortOrder == SortOrder.ASCENDING) {
+                        fileList.sortBy { it.name.lowercase(Locale.getDefault()) }
+                    } else {
+                        fileList.sortByDescending { it.name.lowercase(Locale.getDefault()) }
+                    }
+                }
+
+                SortCriterion.LAST_MODIFIED -> {
+                    if (sortOrder == SortOrder.ASCENDING) {
+                        fileList.sortBy { it.lastModified.toDate() }
+                    } else {
+                        fileList.sortByDescending { it.lastModified.toDate() }
+                    }
+                }
+            }
         }
 
         private fun removeSearchCallback() {

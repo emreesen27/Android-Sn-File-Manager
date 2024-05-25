@@ -1,3 +1,6 @@
+## v1.0.0-beta-8 (25.05.2024)
+* Sorting feature added for file and media items 
+
 ## v1.0.0-beta7 (26.04.2024)
 
 * ActivityNotFoundException and ClassNotFoundException fixed.

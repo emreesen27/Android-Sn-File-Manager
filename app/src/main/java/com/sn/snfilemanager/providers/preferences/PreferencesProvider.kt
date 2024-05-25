@@ -14,9 +14,13 @@ enum class PrefsTag(val tag: String) {
     FILTER_VIDEOS("FILTER_VIDEOS"),
     FILTER_AUDIOS("FILTER_AUDIOS"),
     FILTER_DOCUMENTS("FILTER_DOCUMENTS"),
+    FILTER_ARCHIVES("FILTER_ARCHIVES"),
     PERMISSION_STORAGE("PERMISSION_STORAGE"),
     PERMISSION_NOTIFICATION("PERMISSION_NOTIFICATION"),
-    FILTER_ARCHIVES("FILTER_ARCHIVES"),
+    SORT_CRITERION("SORT_CRITERION"),
+    SORT_ORDER("SORT_ORDER"),
+    MEDIA_SORT_CRITERION("MEDIA_SORT_CRITERION"),
+    MEDIA_SORT_ORDER("MEDIA_SORT_ORDER"),
 }
 
 @Singleton
@@ -42,7 +46,7 @@ class MySharedPreferences
             data: String,
         ) = prefs.edit().putString(prefsTag.tag, data).apply()
 
-        fun getString(prefsTag: PrefsTag): String? = prefs.getString(prefsTag.tag, "")
+        fun getString(prefsTag: PrefsTag): String? = prefs.getString(prefsTag.tag, null)
 
         fun putStringArray(
             prefsTag: PrefsTag,
