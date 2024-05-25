@@ -17,6 +17,8 @@ import com.sn.snfilemanager.core.extensions.openFile
 import com.sn.snfilemanager.core.extensions.openFileWithOtherApp
 import com.sn.snfilemanager.core.extensions.shareFiles
 import com.sn.snfilemanager.core.extensions.warningToast
+import com.sn.snfilemanager.core.util.Config.mediaSortCriterion
+import com.sn.snfilemanager.core.util.Config.mediaSortOrder
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.databinding.FragmentMediaBinding
 import com.sn.snfilemanager.feature.media.adapter.MediaItemAdapter
@@ -29,6 +31,7 @@ import com.sn.snfilemanager.view.dialog.ConflictDialog
 import com.sn.snfilemanager.view.dialog.FilterBottomSheetDialog
 import com.sn.snfilemanager.view.dialog.RenameFileDialog
 import com.sn.snfilemanager.view.dialog.detail.DetailDialog
+import com.sn.snfilemanager.view.dialog.sort.SortDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -65,6 +68,10 @@ class MediaFragment :
                 true
             }
 
+            R.id.sort -> {
+                showSortDialog()
+                true
+            }
             else -> super.onMenuItemSelected(menuItemId)
         }
 
@@ -192,6 +199,7 @@ class MediaFragment :
             observe(getMediaLiveData) { event ->
                 event.getContentIfNotHandled()?.let { data ->
                     adapter?.setItems(data.toMutableList())
+                    binding.recyclerView.scrollToPosition(0)
                 }
             }
             observe(conflictQuestionLiveData) { event ->
@@ -236,6 +244,16 @@ class MediaFragment :
     private fun actionShare() {
         val uris = viewModel.getSelectedItem().map { it.uri }
         context?.shareFiles(uris)
+    }
+
+    private fun showSortDialog() {
+        SortDialog(isMedia = true, onConfirm = { sortData ->
+            with(viewModel) {
+                mediaSortCriterion = sortData.first
+                mediaSortOrder = sortData.second
+                getMedia()
+            }
+        }).showDialog(childFragmentManager)
     }
 
     private fun actionDelete() {

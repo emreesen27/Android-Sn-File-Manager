@@ -8,10 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.sn.mediastorepv.data.ConflictStrategy
 import com.sn.mediastorepv.data.Media
 import com.sn.mediastorepv.data.MediaType
+import com.sn.mediastorepv.data.OrderStrategy
 import com.sn.snfilemanager.core.base.BaseResult
+import com.sn.snfilemanager.core.util.Config.mediaSortCriterion
+import com.sn.snfilemanager.core.util.Config.mediaSortOrder
 import com.sn.snfilemanager.core.util.DocumentType
 import com.sn.snfilemanager.core.util.Event
 import com.sn.snfilemanager.core.util.MimeTypes
+import com.sn.snfilemanager.core.util.SortCriterion
+import com.sn.snfilemanager.core.util.SortOrder
 import com.sn.snfilemanager.providers.mediastore.MediaStoreProvider
 import com.sn.snfilemanager.providers.preferences.MySharedPreferences
 import com.sn.snfilemanager.providers.preferences.PrefsTag
@@ -83,11 +88,31 @@ class MediaViewModel
             }
         }
 
+        private fun getOrderStrategy(): String {
+            return when (mediaSortCriterion) {
+                SortCriterion.NAME -> {
+                    if (mediaSortOrder == SortOrder.ASCENDING) {
+                        OrderStrategy.name(OrderStrategy.ASC)
+                    } else {
+                        OrderStrategy.name(OrderStrategy.DESC)
+                    }
+                }
+
+                SortCriterion.LAST_MODIFIED -> {
+                    if (mediaSortOrder == SortOrder.ASCENDING) {
+                        OrderStrategy.dateModified(OrderStrategy.ASC)
+                    } else {
+                        OrderStrategy.dateModified(OrderStrategy.DESC)
+                    }
+                }
+            }
+        }
+
         fun getMedia() =
             viewModelScope.launch {
                 val filteredMediaTypes: MutableSet<String>? = getFilteredMediaTypes()
                 mediaType?.let {
-                    when (val result = mediaStoreProvider.getMedia(it, getDocumentMime())) {
+                    when (val result = mediaStoreProvider.getMedia(it, getDocumentMime(), order = getOrderStrategy())) {
                         is BaseResult.Success -> {
                             fullMediaList = result.data
                             fullMediaList?.let { mediaList ->
@@ -147,7 +172,9 @@ class MediaViewModel
                         }
                     }
                 job.await()
-                _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+                if (operationItemList.isNotEmpty()) {
+                    _startMoveJobLiveData.postValue(Event(Pair(operationItemList, destinationPath)))
+                }
             }
         }
 

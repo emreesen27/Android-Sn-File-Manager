@@ -12,6 +12,12 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
+        android:id="@+id/sort"
+        android:icon="@drawable/ic_sort"
+        android:title="@string/sort"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/create_folder"
         android:title="@string/create_folder"
         app:showAsAction="never" />

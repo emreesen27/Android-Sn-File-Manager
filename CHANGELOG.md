@@ -1,13 +1,17 @@
+## v1.0.0-beta-8 (25.05.2024)
+* Sorting feature added for file and media items
+* The synchronization issue with the show hidden files setting button has been fixed
+
 ## v1.0.0-beta7 (26.04.2024)
 
-* ActivityNotFoundException and ClassNotFoundException fixed.
+* ActivityNotFoundException and ClassNotFoundException fixed
 
 ## v1.0.0-beta6 (24.04.2024)
 
 * The "Rename" feature added.
 * Dialogs UI improvement
 * The issue of license URLs redirecting to the wrong address fixed
-* The 'Access Denied' error in the function calculating file count and size fixed.
+* The 'Access Denied' error in the function calculating file count and size fixed
 
 ## v1.0.0-beta5 (08.04.2024)
 
