@@ -190,6 +190,7 @@ class FilesListFragment :
             JobType.DELETE -> {
                 activity?.runOnUiThread {
                     data?.filterIsInstance<FileModel>()?.let { adapter?.removeItems(it) }
+                    adapter?.itemCount?.let { count -> if (count == 0) viewModel.setEmptyToFileList() }
                 }
             }
 

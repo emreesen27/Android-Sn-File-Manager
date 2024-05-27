@@ -119,6 +119,10 @@ class FilesListViewModel
 
         fun isSingleItemSelected(): Boolean = selectedItemList.size == 1
 
+        fun setEmptyToFileList() {
+            _updateListLiveData.value = Event(mutableListOf())
+        }
+
         fun addSelectedItem(
             file: FileModel,
             selected: Boolean,

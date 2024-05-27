@@ -1,3 +1,7 @@
+## v1.0.0-beta9 (**.**.****)
+* The issue of the screen not refreshing when a single file is deleted has been resolved
+* The sorting feature is hidden while the search is active
+
 ## v1.0.0-beta-8 (25.05.2024)
 * Sorting feature added for file and media items
 * The synchronization issue with the show hidden files setting button has been fixed
