@@ -1,4 +1,4 @@
-## v1.0.0-beta9 (**.**.****)
+## v1.0.0-beta9 (31.05.2024)
 * The issue of the screen not refreshing when a single file is deleted has been resolved
 * The sorting feature is hidden while the search is active
 
