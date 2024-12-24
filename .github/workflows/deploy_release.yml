@@ -42,7 +42,7 @@ jobs:
           BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: Upload Signed APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Signed app APK
           path: ${{ steps.sign_app.outputs.signedReleaseFile }}
