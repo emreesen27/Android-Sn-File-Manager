@@ -2,8 +2,8 @@ package com.sn.snfilemanager.core.util
 
 object Config {
     var hiddenFile: Boolean = false
-    var sortCriterion: SortCriterion = SortCriterion.NAME
-    var sortOrder: SortOrder = SortOrder.ASCENDING
-    var mediaSortCriterion: SortCriterion = SortCriterion.NAME
-    var mediaSortOrder: SortOrder = SortOrder.ASCENDING
+    var sortCriterion: SortCriterion = SortCriterion.LAST_MODIFIED
+    var sortOrder: SortOrder = SortOrder.DESCENDING
+    var mediaSortCriterion: SortCriterion = SortCriterion.LAST_MODIFIED
+    var mediaSortOrder: SortOrder = SortOrder.DESCENDING
 }

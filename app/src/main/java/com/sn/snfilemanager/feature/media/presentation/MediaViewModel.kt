@@ -105,6 +105,14 @@ class MediaViewModel
                         OrderStrategy.dateModified(OrderStrategy.DESC)
                     }
                 }
+
+                SortCriterion.EXTENSION -> {
+                    if (mediaSortOrder == SortOrder.ASCENDING) {
+                        OrderStrategy.extension(OrderStrategy.ASC)
+                    } else {
+                        OrderStrategy.extension(OrderStrategy.DESC)
+                    }
+                }
             }
         }
 

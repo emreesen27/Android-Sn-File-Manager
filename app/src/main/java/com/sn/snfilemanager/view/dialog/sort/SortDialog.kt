@@ -20,8 +20,8 @@ class SortDialog(
         get() = "SORT_DIALOG"
 
     private val vm: SortDialogViewModel by viewModels()
-    private var criterion = SortCriterion.NAME
-    private var sortOrder = SortOrder.ASCENDING
+    private var criterion = SortCriterion.LAST_MODIFIED
+    private var sortOrder = SortOrder.DESCENDING
 
     override fun setupViews() {
         setPrefsTag()
@@ -43,6 +43,7 @@ class SortDialog(
             when (criterion) {
                 SortCriterion.NAME -> rbName.isChecked = true
                 SortCriterion.LAST_MODIFIED -> rbModified.isChecked = true
+                SortCriterion.EXTENSION -> rbExtension.isChecked = true
             }
             when (sortOrder) {
                 SortOrder.ASCENDING -> rbAscending.isChecked = true
@@ -58,6 +59,7 @@ class SortDialog(
                     when (checkedId) {
                         R.id.rb_name -> SortCriterion.NAME
                         R.id.rb_modified -> SortCriterion.LAST_MODIFIED
+                        R.id.rb_extension -> SortCriterion.EXTENSION
                         else -> criterion
                     }
             }

@@ -1,8 +1,15 @@
+## v1.0.0-beta10 (24.12.2024)
+
+* The Details dialog now displays file information instantly, while continuing to calculate total sizes in the background.
+* Added the ability to sort files by extension in the sorting options.
+
 ## v1.0.0-beta9 (31.05.2024)
+
 * The issue of the screen not refreshing when a single file is deleted has been resolved
 * The sorting feature is hidden while the search is active
 
 ## v1.0.0-beta-8 (25.05.2024)
+
 * Sorting feature added for file and media items
 * The synchronization issue with the show hidden files setting button has been fixed
 

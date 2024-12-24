@@ -38,7 +38,7 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ) = binding.root.also {
         getToolbar()?.let { toolbar ->
             getMenuResId()?.let { menuId ->
                 initMenu(menuId, toolbar)
@@ -47,7 +47,6 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
                 findNavController().popBackStack()
             }
         }
-        return binding.root
     }
 
     override fun onViewCreated(
@@ -63,17 +62,11 @@ abstract class BaseFragment<VBinding : ViewBinding, VModel : ViewModel> : Fragme
 
     open fun observeData() {}
 
-    open fun getMenuResId(): Int? {
-        return null
-    }
+    open fun getMenuResId(): Int? = null
 
-    open fun getToolbar(): Toolbar? {
-        return null
-    }
+    open fun getToolbar(): Toolbar? = null
 
-    open fun onMenuItemSelected(menuItemId: Int): Boolean {
-        return false
-    }
+    open fun onMenuItemSelected(menuItemId: Int): Boolean = false
 
     fun navigate(directions: NavDirections) {
         findNavController().navigate(directions)
