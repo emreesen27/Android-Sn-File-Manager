@@ -11,7 +11,5 @@ class LoadingFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_loading, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_loading, container, false)
 }

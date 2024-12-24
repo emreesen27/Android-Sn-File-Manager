@@ -37,8 +37,8 @@ class SortDialogViewModel
             val criterionString = sharedPreferences.getString(tags.first)
             val sortOrderString = sharedPreferences.getString(tags.second)
 
-            val criterion = SortCriterion.valueOf(criterionString ?: SortCriterion.NAME.name)
-            val sortOrder = SortOrder.valueOf(sortOrderString ?: SortOrder.ASCENDING.name)
+            val criterion = SortCriterion.valueOf(criterionString ?: SortCriterion.LAST_MODIFIED.name)
+            val sortOrder = SortOrder.valueOf(sortOrderString ?: SortOrder.DESCENDING.name)
 
             return Pair(criterion, sortOrder)
         }

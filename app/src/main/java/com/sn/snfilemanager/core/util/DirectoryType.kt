@@ -1,6 +1,8 @@
 package com.sn.snfilemanager.core.util
 
-enum class DirectoryType(val type: String) {
+enum class DirectoryType(
+    val type: String,
+) {
     ANDROID("Android"),
     DOWNLOAD("Download"),
     MUSIC("Music"),

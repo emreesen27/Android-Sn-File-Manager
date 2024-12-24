@@ -37,6 +37,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/last_modified" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rb_extension"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/extension" />
     </RadioGroup>
 
 

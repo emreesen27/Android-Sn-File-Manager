@@ -45,9 +45,7 @@ abstract class BaseDialog<VBinding : ViewBinding> : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return binding.root
-    }
+    ): View = binding.root
 
     override fun onViewCreated(
         view: View,
