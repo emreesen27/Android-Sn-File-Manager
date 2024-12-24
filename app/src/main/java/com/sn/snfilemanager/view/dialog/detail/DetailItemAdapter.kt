@@ -10,11 +10,12 @@ import com.sn.snfilemanager.databinding.ItemDetailBinding
 class DetailItemAdapter(
     private val context: Context,
 ) : RecyclerView.Adapter<DetailItemAdapter.DetailViewHolder>() {
-    private var detailItems: List<Detail> = emptyList()
+    private var detailItems: MutableList<Detail> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
     fun setItems(newItems: List<Detail>) {
-        detailItems = newItems
+        detailItems.clear()
+        detailItems.addAll(newItems)
         notifyDataSetChanged()
     }
 
