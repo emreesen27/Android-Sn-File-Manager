@@ -271,6 +271,14 @@ class FilesListViewModel
                         fileList.sortByDescending { it.lastModified.toDate() }
                     }
                 }
+
+                SortCriterion.EXTENSION -> {
+                    if (sortOrder == SortOrder.ASCENDING) {
+                        fileList.sortBy { it.extension.lowercase(Locale.getDefault()) }
+                    } else {
+                        fileList.sortByDescending { it.extension.lowercase(Locale.getDefault()) }
+                    }
+                }
             }
         }
 
